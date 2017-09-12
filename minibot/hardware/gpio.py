@@ -1,8 +1,10 @@
-"""GPIO classes on a minibot.
+"""
+Minibot GPIO classes.
 """
 
 class PWM():
-    """Class for any PWM used on a minibot.
+    """
+    PWM used on a minibot.
     """
     def __init__(self, pin, frequency, duty_cycle=0):
         """Constructor.

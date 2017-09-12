@@ -1,8 +1,10 @@
-"""Servos on the minibot.
+"""
+Minibot Servos.
 """
 
 class Servo():
-    """Servo class for a given minibot.
+    """
+    Minibot Servo class.
     """
     def __init__(self, pwm):
         """Constructor.
