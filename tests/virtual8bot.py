@@ -1,16 +1,15 @@
-from minibot.bot import Bot
-
 import math
-import time
+
+from minibot.bot import Bot
 
 class Virtual8Bot(Bot):
     is_simulatable = True
     figure8 = [
-        ( 1.0, 1.0, 1.0),
-        ( math.pi * 1.5, 0.0, 2.0),
-        ( 2.0, 1.0, 1.0),
-        ( math.pi * 1.5, 2.0, 0.0),
-        ( 1.0, 1.0, 1.0),
+        (1.0, 1.0, 1.0),
+        (math.pi * 1.5, 0.0, 2.0),
+        (2.0, 1.0, 1.0),
+        (math.pi * 1.5, 2.0, 0.0),
+        (1.0, 1.0, 1.0),
     ]
 
     def __init__(self):
