@@ -10,11 +10,11 @@ RGPIO.setmode(RGPIO.BCM)
 
 class PWM(MPWM):
     """
-    Defines PWM used for a minibot. Inherits from MPWM.
+    PWM for MiniBot used for RPi. Inherits from general PWM class.
     """
     def __init__(self, pin, frequency, duty_cycle=0):
-        """Constructor.
-
+        """
+        Constructor.
         Args:
             pin (int): pin used for minibot.
             frequency (int):  frequency used for minibot's PWM.
@@ -26,7 +26,8 @@ class PWM(MPWM):
         self.pwm.start(duty_cycle)
 
     def set_frequency(self, frequency):
-        """Sets frequency of the PWM on the minibot.
+        """
+        Sets frequency of the PWM on the minibot.
         Args:
             frequency (int): New frequency on the minibot.
         """
@@ -34,7 +35,8 @@ class PWM(MPWM):
         self.pwm.ChangeFrequency(frequency)
 
     def set_duty_cycle(self, duty_cycle):
-        """Sets duty cycle of the PWM on the minibot.
+        """
+        Sets duty cycle of the PWM on the minibot.
         Args:
             duty_cycle (int): New duty cycle for the PWM.
         """
@@ -42,7 +44,8 @@ class PWM(MPWM):
         self.pwm.ChangeDutyCycle(duty_cycle)
 
     def stop(self):
-        """Stops the PWM on the minibot.
+        """
+        Stops the PWM on the minibot.
         """
         MPWM.stop(self)
         self.pwm.stop()
