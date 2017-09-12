@@ -2,7 +2,9 @@
 """
 
 class BotState():
-    """Keeps track of the current state of the minibot.
+    """
+    BotState class.
+    Keeps track of the current state of the minibot.
     """
     x = 0
     y = 0
@@ -10,7 +12,10 @@ class BotState():
     radius = 0
 
     def __init__(self, x=0, y=0, angle=0, radius=0):
-        """Constructor.
+        """
+        Constructor for BotState. Assumes bot begins at origin with no orientation offset.
+        Note:
+            All parameters default to 0.
         Args:
             x (int): X coordinate of the bot.
             y (int): Y coordinate of the bot.

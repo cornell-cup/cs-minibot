@@ -1,4 +1,5 @@
-"""GPIO of the minibot, specific to the raspberry pi.
+"""
+Minibot GPIO, specific to Raspberry Pi.
 """
 
 from minibot.hardware.gpio import PWM as MPWM

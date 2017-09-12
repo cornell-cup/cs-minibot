@@ -1,13 +1,17 @@
-"""Minibot object.
+"""
+Minibot object.
 """
 
 from minibot.botstate import BotState
 
 class Bot():
-    """Class for minibot object.
+    """
+    Minibot object class.
+    Keeps track of the BotState (orientation, location, etc.) of the instance of MiniBot.
     """
     def __init__(self, name):
-        """Constructor for minibot.
+        """
+        Constructor for minibot.
         Args:
             name (:obj:`str`): Name of minibot.
             state (:obj:`BotState`): BotState of the minibot.
@@ -16,13 +20,15 @@ class Bot():
         self.state = BotState()
 
     def get_state(self):
-        """Gets the BotState of the minibot.
+        """
+        Gets the BotState of the minibot.
         Returns:
             BotState of the minibot.
         """
         return self.state
 
     def run(self):
-        """Runs the minibot.
+        """
+        Runs the minibot.
         """
         raise NotImplementedError("Bot.run not implemented")
