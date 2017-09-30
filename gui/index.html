@@ -3,8 +3,8 @@
 <head>
 	<title>ModBot GUI</title>
 	<!-- IMPORTS -->
-	<link rel="stylesheet" href="../web/css/general.css"/>
-	<link rel="stylesheet" href="../web/css/vendor/prettify/prettify.css">
+	<link rel="stylesheet" href={{ static_url("css/general.css") }}/>
+	<link rel="stylesheet" href={{ static_url("css/vendor/prettify/prettify.css") }}>
 	<!-- END IMPORTS -->
 </head>
 
@@ -191,20 +191,20 @@
 	<script src="http://pixijs.download/release/pixi.min.js"></script>
 
 	<!-- blockly imports -->
-	<script src="../web/js/vendor/blockly/blockly_compressed.js"></script>
-	<script src="../web/js/vendor/blockly/javascript_compressed.js"></script>
-	<script src="../web/js/vendor/blockly/python_compressed.js"></script>
-	<script src="../web/js/vendor/blockly/blocks_compressed.js"></script>
-	<script src="../web/js/vendor/blockly/en.js"></script>
-	<script src="../web/js/vendor/prettify/prettify.js"></script>
+	<script src={{ static_url("js/vendor/blockly/blockly_compressed.js") }}></script>
+	<script src={{ static_url("js/vendor/blockly/javascript_compressed.js") }}></script>
+	<script src={{ static_url("js/vendor/blockly/python_compressed.js") }}></script>
+	<script src={{ static_url("js/vendor/blockly/blocks_compressed.js") }}></script>
+	<script src={{ static_url("js/vendor/blockly/en.js") }}></script>
+	<script src={{ static_url("js/vendor/prettify/prettify.js") }}></script>
 
 	<!-- IMPORT CUSTOM BLOCKS -->
-	<script type="text/javascript" src="../js/blocks/custom_blocks.js"></script>
-	<script type="text/javascript" src="../js/blocks/custom_json.js"></script>
+	<script type="text/javascript" src={{ static_url("js/blocks/custom_blocks.js") }}></script>
+	<script type="text/javascript" src={{ static_url("js/blocks/custom_json.js") }}></script>
 
 	<!-- manual scripts -->
-	<script src="../web/js/blockly.js"></script>
-	<script src="../web/js/interface.js"></script>
-	<script src="../web/js/view.js"></script>
+	<script src={{ static_url("js/blockly.js") }}></script>
+	<script src={{ static_url("js/interface.js") }}></script>
+	<script src={{ static_url("js/view.js") }}></script>
 </body>
 </html>
