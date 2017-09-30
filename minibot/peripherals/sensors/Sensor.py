@@ -1,5 +1,5 @@
 # Abstract class representing a sensor
-class Sensor:
+class Sensor(object):
     def __init__(self, bot, name):
         self.name = name
         print "Sensor being registered: " + str(self.name)
