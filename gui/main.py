@@ -4,6 +4,7 @@ Main file from which BaseStation HTTP interface begins.
 
 import tornado
 import tornado.web
+import os.path
 
 class BaseInterface:
     """
@@ -16,6 +17,12 @@ class BaseInterface:
         :param port: Port number from which basestation runs.
         """
         self.port = port
+        self.handlers = [
+            ("/gui", BaseStationHandler),
+        ]
+        self.settings = {
+            "static_path": os.path.join(os.path.dirname(__file__), "static")
+        }
 
     def start(self):
         """
@@ -29,9 +36,7 @@ class BaseInterface:
         """
         Creates the application object (via Tornado).
         """
-        return tornado.web.Application([
-            ("/gui", BaseStationHandler),
-        ])
+        return tornado.web.Application(self.handlers, **self.settings)
 
 class BaseStationHandler(tornado.web.RequestHandler):
     def get(self):
