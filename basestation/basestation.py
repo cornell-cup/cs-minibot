@@ -1,6 +1,3 @@
-"""
-BaseStation for minibot.
-"""
 from basestation.bot.botmanager import BotManager as BotManager
 from basestation.vision.visionmanager import VisionManager as VisionManager
 
