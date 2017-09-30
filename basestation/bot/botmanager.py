@@ -14,7 +14,7 @@ class BotManager:
         """
         self.bot_counter = 0
         self.bot_map = {}
-        self.udp_connection = UdpConnection()
+        self.udp_connection = UDPConnection()
 
     def add_bot(self, bot):
         """
