@@ -1,11 +1,12 @@
 # MiniBot Platform
 
 This repo is a test python implementation of MiniBot. Original repo can be found
-[here](http://github.com/cornell-cup/cs-minibot-platform).
+[here](http://github.com/cornell-cup/cs-minibot-platform). This is a refactored
+version.
 
 ## Installing dependencies
 
-Before working with the code, make sure all dependencies are installed after cloning
+Before working with the code, make sure that all dependencies are installed after cloning
 the repository.
 
 Install pylint to use the Python linter.
