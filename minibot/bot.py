@@ -5,6 +5,7 @@ Minibot object.
 from minibot.botstate import BotState
 from minibot.peripherals.sensors.Sensor import Sensor
 from minibot.peripherals.actuators.Actuator import Actuator
+import logging
 
 class Bot():
     """
@@ -33,7 +34,7 @@ class Bot():
 
     def add_sensor(self, name):
         if name in self.sensors:
-            print "Sensor already exists"
+            logging.warn("Sensor already exists")
             return
 
         sensor = Sensor(self, name)
@@ -41,7 +42,7 @@ class Bot():
 
     def add_actuator(self, name):
         if name in self.actuators:
-            print "Actuator already exists"
+            logging.warn("Actuator already exists")
             return
 
         actuator = Actuator(self, name)

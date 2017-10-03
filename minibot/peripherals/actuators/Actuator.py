@@ -1,14 +1,16 @@
+import logging
+
 # Abstract class representing an actuator
 class Actuator(object):
     def __init__(self, bot, name):
         self.name = name
-        print "Actuator being registered: " + str(self.name)
+        logging.info("Actuator being registered: " + str(self.name))
 
     def read(self):
-        return "Invalid: Abstract Class"
+        logging.warn("Invalid: Abstract Class")
 
     def set(self, value):
-        return "Invalid: Abstract Class"
+        logging.warn("Invalid: Abstract Class")
 
     def get_name(self):
         return self.name
