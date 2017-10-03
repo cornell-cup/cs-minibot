@@ -61,7 +61,16 @@ to run the hardware on the minibot when testing.
 After all dependencies are successfully installed, you can run the BaseStation on your
 computer and start working with the minibot.
 
-To run the BaseStation, open up any python editor (recommended:
-[PyCharm](https://www.jetbrains.com/pycharm/)). Open up `cs-minibot/gui/main.py` and
-run it. Go into any browser on your computer and go to `localhost:1234/gui` to see
-the GUI in action.
+The BaseStation is the intermediary that manages information flow between the minibot and
+hardware to the software and GUI. BaseStation runs on `cs-minibot/gui/main.py` and is a
+simple web application that runs on HTTP.
+
+To run the BaseStation, run the following line in your terminal from your root directory.
+
+```
+python3 gui/main.py
+```
+
+Go to any browser on your computer and go to `localhost:1234/gui` to see the GUI in action.
+If you are having trouble running the previous line, make sure that python3 is installed.
+You can check this by typing `python3` in your terminal. If there is an error,
