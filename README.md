@@ -65,7 +65,8 @@ The BaseStation is the intermediary that manages information flow between the mi
 hardware to the software and GUI. BaseStation runs on `cs-minibot/gui/main.py` and is a
 simple web application that runs on HTTP.
 
-To run the BaseStation, run the following line in your terminal from your root directory.
+To run the BaseStation, run the following line in your terminal from the root directory
+of this repo.
 
 ```
 python3 gui/main.py
@@ -73,4 +74,4 @@ python3 gui/main.py
 
 Go to any browser on your computer and go to `localhost:1234/gui` to see the GUI in action.
 If you are having trouble running the previous line, make sure that python3 is installed.
-You can check this by typing `python3` in your terminal. If there is an error,
+You can check this by typing `python3` in your terminal.
