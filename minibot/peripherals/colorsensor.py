@@ -2,8 +2,9 @@
 Color Sensor for the MiniBot.
 """
 
-import logging, math
 import Adafruit_TCS34725 as CSensor
+import logging
+import math
 
 # Abstract class representing a sensor
 class ColorSensor():
@@ -49,7 +50,9 @@ class ColorSensor():
         Args:
             n (int): Number of inputs to average.
         """
-        r = 0, g = 0, b = 0
+        r = 0
+        g = 0
+        b = 0
         for i in range(n):
             read = self.read()
             r += read[0]
