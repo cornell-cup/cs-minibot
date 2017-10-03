@@ -2,8 +2,7 @@
 Color Sensor for the MiniBot.
 """
 
-import logging
-from minibot.utils import Utils
+import logging, math
 import Adafruit_TCS34725 as CSensor
 
 # Abstract class representing a sensor
@@ -11,23 +10,27 @@ class ColorSensor():
     """
     Color Sensor class.
     """
-    def __init__(self, name):
+    def __init__(self, name, pin_number):
         """
         Constructor.
-        :param name: Name of sensor.
+        Args:
+             name (:obj:`str`): Name of sensor.
         """
         self.name = name
         self.pin_number = pin_number
         self.color_sensor = CSensor()
+
+        # Hard-coded normalized RGB values for color sensor
+        # input. Generated from self._get_rgb().
         self.colors = {
-            "RED": (171, 76, 78),
-            "BLUE": (86, 161, 194),
-            "GREEN": (98, 210, 173),
-            "YELLOW": (210, 203, 100),
-            "VIOLET": (142, 140, 160),
-            "WHITE": (344, 450, 372)
-            # "PINK":(195,157,156),
-            # "ORANGE":(140,83,51)
+            "RED": normalize((171, 76, 78)),
+            "BLUE": normalize((86, 161, 194)),
+            "GREEN": normalize((98, 210, 173)),
+            "YELLOW": normalize((210, 203, 100)),
+            "VIOLET": normalize((142, 140, 160)),
+            "WHITE": normalize((344, 450, 372))
+            # "PINK": normalize((195, 157, 156)),
+            # "ORANGE": normalize((140, 83, 51))
         }
         logging.warning("Sensor being registered: " + str(self.name))
 
@@ -37,61 +40,52 @@ class ColorSensor():
         """
         return self.name
 
-    def calibrate(self):
+    def _get_rgb(self, n):
         """
-        Calibrates colors. Takes 100 inputs per color, stores normalized average.
+        Given a single color input, generates normalized RGB 3-tuple based on
+        n sensor inputs. This is used only when calibrating and updating the
+        hard-coded RGB values in self.colors.
+
+        Args:
+            n (int): Number of inputs to average.
         """
-
-        """ UPDATE: calibrate() no longer actually calibrates sensors. Method name is kept in case we
-        do need calibration in the future. As of now, calibrate() normalizes the vectors during ColorSensor
-        initialization. """
-
-        #         print "================== COLOR CALIBRATION =================="
-        #         print """Before color-sensing, we must calibrate the colors. Please place
-        # the corresponding color under the color sensor at recommended distance
-        # (with wheels touching the ground) before pressing enter."""
-
-        #         for color in self.colors:
-        #             if len(raw_input("\nPlease place the " +color.lower() + " mat under the sensor and press enter."))>-1:
-        #                 self.colors[color] = normalize(self.super_read(100))
-        #                 time.sleep(0.01)
-        #                 print "Calibrated!"
-
-        #         print "Thank you! All of the colors have been calibrated.\n"
-
-        for c in self.colors:
-            self.colors[c] = Utils.normalize(self.colors[c])
-
-    def super_read(self, n):
-        """
-        Reads from the color sensor n times, and returns the non-normalized average.
-        """
-        color_data = {"R":0,"G":0,"B":0}
+        r = 0, g = 0, b = 0
         for i in range(n):
             read = self.read()
-            color_data["R"] += read[0]
-            color_data["G"] += read[1]
-            color_data["B"] += read[2]
-        color_data["R"] = color_data["R"]/n
-        color_data["G"] = color_data["G"]/n
-        color_data["B"] = color_data["B"]/n
-        return color_data["R"], color_data["G"], color_data["B"]
+            r += read[0]
+            g += read[1]
+            b += read[2]
+        return normalize(r/n, g/n, b/n)
 
     def read(self):
         """
-        Returns a NON-NORMALIZED 3-tuple of RGB value.
+        Reads and returns normalized RGB data from color sensor.
         """
         rd = self.color_sensor.get_raw_data()
-        return rd[0], rd[1], rd[2]
+        return normalize(rd[0], rd[1], rd[2])
 
-    def read_color_name(self):
+    def get_color_name(self):
         """
-        Returns string of color name.
+        Uses color sensor input to guess the color name. Used for
+        printing.
         """
         color_guess = ("", 99999999999999999999999999)  # tuple of (color, distance from color to input)
-        color_actual = Utils.normalize(self.read())
+        color_actual = self.read()
         for c in self.colors:
-            dist = Utils.distance(self.colors[c], color_actual)
-            if (dist < color_guess[1]):
+            dist = distance(self.colors[c], color_actual)
+            if dist < color_guess[1]:
                 color_guess = (c, dist)
         return color_guess[0]
+
+def distance(p1, p2):
+    """
+    Returns distance between two 3-tuples. Used for evaluating color.
+    """
+    return math.sqrt((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2 + (p1[2] - p2[2]) ** 2)
+
+def normalize(vector):
+    """
+    Returns a 3-element vector as a unit vector.
+    """
+    sum = vector[0] + vector[1] + vector[2]
+    return vector[0] / (sum + 0.0), vector[1] / (sum + 0.0), vector[2] / (sum + 0.0)
