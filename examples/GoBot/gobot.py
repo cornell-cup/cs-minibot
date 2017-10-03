@@ -1,14 +1,18 @@
+"""
+GoBot Example
+"""
+
 from minibot.bot import Bot
 from minibot.hardware.rpi.gpio import PWM
 from minibot.interface.servo import Servo
-
-import math
-import time
 
 L_MOTOR_PIN = 12
 R_MOTOR_PIN = 18
 
 class GoBot(Bot):
+    """
+    GoBot
+    """
 
     def __init__(self):
         Bot.__init__(self, "GoBot")
