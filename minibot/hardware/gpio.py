@@ -2,6 +2,44 @@
 Minibot GPIO classes.
 """
 
+class DigitalInput():
+    """
+    Digital input pin.
+    """
+    def __init__(self, pin):
+        """
+        Constructor.
+        Args:
+            pin (int): Digital pin number.
+        """
+        self.pin = pin
+
+    """
+    Read input from the digital pin.
+    Return:
+        int: 0 or 1 for LOW or HIGH voltage.
+    """
+    def read(self):
+        raise NotImplementedError
+
+class DigitalOutput():
+    """
+    Digital output pin.
+    """
+    def __init__(self, pin):
+        """
+        Constructor.
+        Args:
+            pin (int): Digital pin number.
+        """
+        self.pin = pin
+
+    def set_low(self):
+        raise NotImplementedError
+
+    def set_high(self):
+        raise NotImplementedError
+
 class PWM():
     """
     PWM used on a minibot.
@@ -34,4 +72,4 @@ class PWM():
         """
         Stops the PWM.
         """
-        pass
+        raise NotImplementedError("PWM.stop")
