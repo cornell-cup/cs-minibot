@@ -12,32 +12,44 @@ RGPIO.setmode(RGPIO.BCM)
 
 class DigitalInput(MDigitalInput):
     """
-    Digital input for the RPi.
-    Args:
-        pin (int): BCM pin number for the digital input.
-        pull_up_down (int): Whether to use an internal pull up or pull down resistor.
+    Digital input pin.
     """
     def __init__(self, pin, pull_up_down=None):
+        """
+        Digital input for the RPi.
+        Args:
+            pin (int): BCM pin number for the digital input.
+            pull_up_down (int): Whether to use an internal pull up or pull down resistor.
+        """
         MDigitalInput.__init__(self, pin)
         RGPIO.setup(pin, RGPIO.IN, pull_up_down=pull_up_down)
 
-    """
-    Read digital input from the pin.
-    Return:
-        int: 0 or 1 for LOW or HIGH voltage.
-    """
     def read(self):
+        """
+        Read digital input from the pin.
+        Return:
+            int: 0 or 1 for LOW or HIGH voltage.
+        """
         return RGPIO.input(self.pin)
 
 class DigitalOutput(MDigitalOutput):
+    """
+    Digital output pin.
+    """
     def __init__(self, pin):
         MDigitalOutput.__init__(self, pin)
         RGPIO.setup(pin, RGPIO.OUT)
 
     def set_low(self):
+        """
+        Set the digital output pin to low.
+        """
         RGPIO.output(self.pin, RGPIO.LOW)
 
     def set_high(self):
+        """
+        Set the digital output pin to high.
+        """
         RGPIO.output(self.pin, RGPIO.HIGH)
 
 class PWM(MPWM):

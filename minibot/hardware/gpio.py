@@ -14,12 +14,12 @@ class DigitalInput():
         """
         self.pin = pin
 
-    """
-    Read input from the digital pin.
-    Return:
-        int: 0 or 1 for LOW or HIGH voltage.
-    """
     def read(self):
+        """
+        Read input from the digital pin.
+        Return:
+            int: 0 or 1 for LOW or HIGH voltage.
+        """
         raise NotImplementedError
 
 class DigitalOutput():
@@ -35,9 +35,15 @@ class DigitalOutput():
         self.pin = pin
 
     def set_low(self):
+        """
+        Set the digital output pin to low.
+        """
         raise NotImplementedError
 
     def set_high(self):
+        """
+        Set the digital output pin to high.
+        """
         raise NotImplementedError
 
 class PWM():
