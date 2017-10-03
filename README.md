@@ -1,4 +1,4 @@
-# M i n i B o t   P l a t f o r m
+# MiniBot Platform
 
 This repo is a test python implementation of MiniBot. Original repo can be found
 [here](http://github.com/cornell-cup/cs-minibot-platform). This is a refactored
