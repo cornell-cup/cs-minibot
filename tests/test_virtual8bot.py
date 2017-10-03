@@ -10,7 +10,8 @@ from tests.virtual8bot import Virtual8Bot
 
 def dist(x1, y1, x2, y2):
     """
-    Return the Euclidean distance between two points.
+    Returns:
+        float: The Euclidean distance between two points.
     """
     return math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1))
 

@@ -30,8 +30,6 @@ class ColorSensor():
             "YELLOW": normalize((210, 203, 100)),
             "VIOLET": normalize((142, 140, 160)),
             "WHITE": normalize((344, 450, 372))
-            # "PINK": normalize((195, 157, 156)),
-            # "ORANGE": normalize((140, 83, 51))
         }
         logging.warning("Sensor being registered: " + str(self.name))
 
@@ -53,26 +51,26 @@ class ColorSensor():
         r = 0
         g = 0
         b = 0
-        for i in range(n):
+        for _ in range(n):
             read = self.read()
             r += read[0]
             g += read[1]
             b += read[2]
-        return normalize(r/n, g/n, b/n)
+        return r / n, g / n, b / n
 
     def read(self):
         """
         Reads and returns normalized RGB data from color sensor.
         """
         rd = self.color_sensor.get_raw_data()
-        return normalize(rd[0], rd[1], rd[2])
+        return normalize((rd[0], rd[1], rd[2]))
 
     def get_color_name(self):
         """
         Uses color sensor input to guess the color name. Used for
         printing.
         """
-        color_guess = ("", 99999999999999999999999999)  # tuple of (color, distance from color to input)
+        color_guess = ("", 99999999999999999999999999)
         color_actual = self.read()
         for c in self.colors:
             dist = distance(self.colors[c], color_actual)
@@ -90,5 +88,5 @@ def normalize(vector):
     """
     Returns a 3-element vector as a unit vector.
     """
-    sum = vector[0] + vector[1] + vector[2]
-    return vector[0] / (sum + 0.0), vector[1] / (sum + 0.0), vector[2] / (sum + 0.0)
+    magnitude = vector[0] + vector[1] + vector[2] + 0.0
+    return vector[0] / magnitude, vector[1] / magnitude, vector[2] / magnitude
