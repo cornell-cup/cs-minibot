@@ -34,7 +34,7 @@ class Bot():
 
     def add_sensor(self, name):
         if name in self.sensors:
-            logging.warn("Sensor already exists")
+            logging.warning("Sensor already exists")
             return
 
         sensor = Sensor(self, name)
@@ -42,7 +42,7 @@ class Bot():
 
     def add_actuator(self, name):
         if name in self.actuators:
-            logging.warn("Actuator already exists")
+            logging.warning("Actuator already exists")
             return
 
         actuator = Actuator(self, name)
