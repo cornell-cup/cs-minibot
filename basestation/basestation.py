@@ -20,13 +20,12 @@ class Singleton(type):
         return cls.__instances
 
 
-class BaseStation(object):
+class BaseStation(object, metaclass=Singleton):
     """
     Contains logic to manage and unify input and output between bots and vision sources.
     This class is a singleton to prevent accidental BaseStation duplication.
     """
     # https://stackoverflow.com/questions/6760685/creating-a-singleton-in-python
-    __metaclass__ = Singleton       # python2 idiom
 
     def __init__(self):
         """

@@ -5,6 +5,7 @@ from basestation.bot.virtualbot.virtualbot import VirtualBot as VirtualBot
 
 from typing import Optional
 
+
 class BotManager:
     """
     Tracks and manages all virtual bots (vbots. Any vbot that you create a
@@ -47,3 +48,32 @@ class BotManager:
         vbot = self.__vbot_map[name]
         del self.__vbot_map[name]
         return vbot
+
+    def get_all_tracked_bots(self):
+        """Returns a view of the vbots currently tracked"""
+        return self.__vbot_map.values()
+
+    def get_all_tracked_bots_names(self):
+        """Returns a view of the names of the vbots currently tracked"""
+        return self.__vbot_map.keys()
+
+    def generate_bot_number(self):
+        """Returns the next available (int) for a vbot number. Should not be
+        used by anyone using the basestation. (?)"""
+        self.__vbot_counter += 1
+        return self.__vbot_counter
+
+    def get_all_discovered_bots(self):
+        """
+        Returns a set of vbots which are detectable through UDP
+        communication.
+        """
+        return self.__udp_connection.get_address_set()
+
+    def get_bot_exchange(self, bot_id):
+        """Returns the IP associated with vbot IP mapping"""
+        return self.__vbot_exchange_map[bot_id]
+
+    def set_bot_exchange(self, bot_id, bot_IP):
+        """Adds an internal mapping from bot_id to bot_IP"""
+        self.__vbot_exchange_map[bot_id] = bot_IP
