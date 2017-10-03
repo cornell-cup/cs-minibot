@@ -4,7 +4,7 @@ GoBot Example
 
 from minibot.bot import Bot
 from minibot.hardware.rpi.gpio import PWM
-from minibot.interface.servo import Servo
+from minibot.peripherals.servo import Servo
 
 L_MOTOR_PIN = 12
 R_MOTOR_PIN = 18
