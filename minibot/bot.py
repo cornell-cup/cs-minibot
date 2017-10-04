@@ -18,6 +18,8 @@ class Bot():
         """
         self.name = name
         self.state = BotState()
+        self.sensors = {}
+        self.actuators = {}
 
     def get_state(self):
         """

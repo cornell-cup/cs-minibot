@@ -1,4 +1,5 @@
-"""BotState object.
+"""
+BotState object.
 """
 
 class BotState():
