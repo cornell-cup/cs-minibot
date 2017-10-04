@@ -1,7 +1,6 @@
-from __future__ import print_function
-from basestation.bot.connection.udpconnection import UDPConnection as \
+from basestation.bot.connection.udp_connection import UDPConnection as \
     UDPConnection
-from basestation.bot.virtualbot.virtualbot import VirtualBot as VirtualBot
+from basestation.bot.virtualbot.virtual_bot import VirtualBot as VirtualBot
 
 from typing import Optional
 

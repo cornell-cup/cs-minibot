@@ -1,5 +1,5 @@
-from basestation.bot.botmanager import BotManager as BotManager
-from basestation.vision.visionmanager import VisionManager as VisionManager
+from basestation.bot.bot_manager import BotManager as BotManager
+from basestation.vision.vision_manager import VisionManager as VisionManager
 
 # We define a metaclass for BaseStation - the BaseStation will be an instance
 #  of the metaclass Singleton. This is very powerful as it reflects how the
