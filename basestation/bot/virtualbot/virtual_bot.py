@@ -4,8 +4,7 @@ from basestation.bot.sensors.sensor_center import SensorCenter
 from basestation.bot.commands.command_center import CommandCenter
 
 import threading
-import logging
-import sys
+import traceback
 
 
 class VirtualBot(object):
@@ -79,10 +78,9 @@ class VirtualBot(object):
                         if message is not None:
                             self.__parse_incoming(message)
             except RuntimeError as e:
-                logging.debug("TCP receive failed.")
+                print("TCP receive failed.")
                 # print traceback
-                tb = sys.exc_info()[2]
-                e.with_traceback(tb)
+                traceback.print_tb(e.__traceback__)
             return
 
         def __parse_incoming(self, data):
