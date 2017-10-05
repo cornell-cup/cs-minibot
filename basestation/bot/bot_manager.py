@@ -5,7 +5,7 @@ from basestation.bot.virtualbot.virtual_bot import VirtualBot as VirtualBot
 from typing import Optional
 
 
-class BotManager:
+class BotManager(object):
     """
     Tracks and manages all virtual bots (vbots. Any vbot that you create a
     connection to should be tracked under this manager to prevent errors.
