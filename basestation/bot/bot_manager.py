@@ -22,6 +22,7 @@ class BotManager(object):
         self.__udp_connection = UDPConnection()
         self.__udp_connection.start()
         self.__vbot_exchange_map = {}
+        return
 
     def add_bot(self, vbot):
         """
@@ -39,6 +40,7 @@ class BotManager(object):
             return vbot_name
         else:
             raise Exception("The connection was not active. Not adding the bot.")
+        return
 
     def get_bot_by_name(self, name: str) -> Optional[VirtualBot]:
         return self.__vbot_map[name]
@@ -76,3 +78,4 @@ class BotManager(object):
     def set_bot_exchange(self, bot_id, bot_IP):
         """Adds an internal mapping from bot_id to bot_IP"""
         self.__vbot_exchange_map[bot_id] = bot_IP
+        return

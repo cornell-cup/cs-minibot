@@ -29,6 +29,7 @@ class VirtualBot(object):
         self.__command_center_obj = CommandCenter(tcp_connection_obj)
         self.__sensor_center_obj = SensorCenter()
         # todo: start the tcp_listener_thread
+        return
 
     def get_command_center(self):
         return self.__command_center_obj
@@ -82,6 +83,7 @@ class VirtualBot(object):
                 # print traceback
                 tb = sys.exc_info()[2]
                 e.with_traceback(tb)
+            return
 
         def __parse_incoming(self, data):
             """
@@ -100,6 +102,7 @@ class VirtualBot(object):
                     key = data[start + 4:comma]
                     value = data[comma + 1:end]
                     self.__act_on_incoming(key, value)
+            return
 
         def __act_on_incoming(self, key, value):
             """
@@ -118,3 +121,4 @@ class VirtualBot(object):
             else:
                 # MiniBot sending information
                 bot_manager_obj.set_bot_exchange(key, value)
+            return

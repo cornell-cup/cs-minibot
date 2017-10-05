@@ -1,2 +1,5 @@
-class TCPConnection:
+import socket
+
+
+class TCPConnection(object):
     pass
