@@ -1,6 +1,3 @@
-from basestation.bot.virtualbot.virtual_bot import VirtualBot
-from basestation.bot.connection.tcp_connection import TCPConnection
-
 import json
 
 

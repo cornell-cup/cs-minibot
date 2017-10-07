@@ -1,4 +1,3 @@
-from basestation.base_station import BaseStation as BaseStation
 from basestation.bot.connection.tcp_connection import TCPConnection
 from basestation.bot.sensors.sensor_center import SensorCenter
 from basestation.bot.commands.command_center import CommandCenter
@@ -23,7 +22,7 @@ class VirtualBot(object):
             already been created
         """
         self.__connection = tcp_connection_obj
-        self.__name = self.__safe_escape_name(vbot_name)
+        self.__name = vbot_name
 
         self.__command_center_obj = CommandCenter(tcp_connection_obj)
         self.__sensor_center_obj = SensorCenter()
@@ -45,25 +44,6 @@ class VirtualBot(object):
 
     def get_connection(self):
         return self.__connection
-
-    @staticmethod
-    def __safe_escape_name(name):
-        """
-        Safely escapes the name of the vbot to ensure it is unique and
-        returns that string. This has a simple implementation for now,
-        but could be extended to guarantee uniqueness. For anyone using a
-        MiniBot, this means names should only used [a-zA-Z] characters.
-
-        Args:
-            name (str): The name to be escaped
-
-        Returns:
-            (str) The safely escaped name
-        """
-        bot_manager_obj = BaseStation().get_bot_manager()
-        if bot_manager_obj.get_bot_by_name(name).is_present():
-            name += str(bot_manager_obj.generate_bot_number())
-        return name
 
     class TCPListenerThread(threading.Thread):
 
