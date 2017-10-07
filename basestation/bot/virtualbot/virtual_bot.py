@@ -2,9 +2,9 @@ from basestation.base_station import BaseStation as BaseStation
 from basestation.bot.connection.tcp_connection import TCPConnection
 from basestation.bot.sensors.sensor_center import SensorCenter
 from basestation.bot.commands.command_center import CommandCenter
+from basestation.util.exception_handling import *
 
 import threading
-import traceback
 
 
 class VirtualBot(object):
@@ -27,7 +27,11 @@ class VirtualBot(object):
 
         self.__command_center_obj = CommandCenter(tcp_connection_obj)
         self.__sensor_center_obj = SensorCenter()
-        # todo: start the tcp_listener_thread
+
+        # start the tcp_listener_thread
+        self.__tcp_listener_obj = self.TCPListenerThread()
+        self.__tcp_listener_obj.start()
+
         return
 
     def get_command_center(self):
@@ -62,14 +66,15 @@ class VirtualBot(object):
         return name
 
     class TCPListenerThread(threading.Thread):
-        
+
         def __init__(self, t, group=None, target=None, name=None, args=(),
                      kwargs=None):
             super().__init__(group=group, target=target, name=name, args=args,
                              kwargs=kwargs)
             self.__tcp_connection = t
+
             return
-            
+
         def run(self):
             try:
                 while True:
@@ -77,10 +82,11 @@ class VirtualBot(object):
                         message = self.__tcp_connection.receive()
                         if message is not None:
                             self.__parse_incoming(message)
+
             except RuntimeError as e:
-                print("TCP receive failed.")
-                # print traceback
-                traceback.print_tb(e.__traceback__)
+                msg = "TCP receive failed."
+                log_exn_info(e, msg=msg)
+
             return
 
         def __parse_incoming(self, data):
@@ -100,6 +106,7 @@ class VirtualBot(object):
                     key = data[start + 4:comma]
                     value = data[comma + 1:end]
                     self.__act_on_incoming(key, value)
+
             return
 
         def __act_on_incoming(self, key, value):
@@ -116,7 +123,9 @@ class VirtualBot(object):
                 # MiniBot requesting information
                 value_to_send = bot_manager_obj.get_bot_exchange(key)
                 self.__tcp_connection.sendKV(key, value_to_send)
+
             else:
                 # MiniBot sending information
                 bot_manager_obj.set_bot_exchange(key, value)
+
             return

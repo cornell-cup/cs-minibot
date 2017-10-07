@@ -24,7 +24,7 @@ class BotManager(object):
         self.__vbot_exchange_map = {}
         return
 
-    def add_bot(self, vbot):
+    def add_bot(self, vbot: VirtualBot) -> Optional[str]:
         """
         Adds a virtual bot to the virtual bot manager list.
         Args:
@@ -38,9 +38,10 @@ class BotManager(object):
             vbot_name = vbot.get_name()
             self.__vbot_map[vbot_name] = vbot
             return vbot_name
+
         else:
             raise Exception("The connection was not active. Not adding the bot.")
-        return
+            return None
 
     def get_bot_by_name(self, name: str) -> Optional[VirtualBot]:
         return self.__vbot_map[name]
