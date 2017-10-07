@@ -21,9 +21,9 @@ class UDPConnection(threading.Thread):
         self.__port = 5001
         self.__IP_list = {}
 
-        self.__listener_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.__listener_socket = socket.socket(socket.AF_INET,
+                                               socket.SOCK_DGRAM)
         self.__listener_socket.bind(('', self.__port))
-        self.__listener_socket.setblocking(0)
 
         return
 
@@ -35,7 +35,11 @@ class UDPConnection(threading.Thread):
     def run(self):
         try:
             while True:
-                device_address = self.__listener_socket.recvfrom(1024)[1][0]
+                # todo: udp listener not working, blocking statement. When
+                # changed to non-blocking, gives an error
+                data = self.__listener_socket.recvfrom(1024)
+                device_address = data[1][0]
+                print("a")
                 self.__IP_list[device_address] = self.__get_current_time()
 
         except socket.error as e:

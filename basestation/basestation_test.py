@@ -5,3 +5,5 @@ from basestation.base_station import BaseStation as BaseStation
 
 if __name__ == "__main__":
     bot = BaseStation()
+    while True:
+        pass
