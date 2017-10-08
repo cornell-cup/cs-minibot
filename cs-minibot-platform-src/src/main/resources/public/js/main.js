@@ -62,6 +62,25 @@ class Scenarios extends React.Component {
     }
 }
 
+
+class DiscoveredBot extends React.Component {
+    render() {
+        var styles = {
+            ipAddress: {
+                float: "left"
+            }
+        }
+        return (
+            <div className="discoveredbot">
+                <p style={styles.ipAddress}>{this.props.ip_address}</p>
+                <button id={'discoverBot' + this.props.idx} value={this.props.ip_address} className="addBot">
+                    add bot
+                </button>
+            </div>
+        )
+    }
+}
+
 class AddBot extends React.Component {
     //TODO
     constructor(props) {
@@ -70,11 +89,13 @@ class AddBot extends React.Component {
             ip: "",
             port: "10000",
             name: "Bot0",
-            type: "minibot"
+            type: "minibot",
+            discoveredBots: []
         };
 
         this.handleInputChange = this.handleInputChange.bind(this);
         this.addbot = this.addbot.bind(this);
+        this.updateDiscoveredBots = this.updateDiscoveredBots.bind(this);
     }
 
     handleInputChange(event) {
@@ -86,6 +107,7 @@ class AddBot extends React.Component {
             [name]: value
         });
     }
+
     addbot(e){
         //TODO
         console.log('addbot button clicked');
@@ -105,7 +127,59 @@ class AddBot extends React.Component {
         //     }
         // });
     }
+
+    /*
+        Get set of discoverable minibots
+    */
+    updateDiscoveredBots(){
+//        $.ajax({
+             //            method: "POST",
+             //            url: '/discoverBots',
+             //            dataType: 'json',
+             //            data: '',
+             //            contentType: 'application/json',
+             //            success: function (data) {
+             //                 //Check if discovered_bots and data are the same (check length and then contents)
+             //                if(data.length != discovered_bots.length){
+             //                    //If not then clear list and re-make displayed elements
+             //                    redoDiscoverList(data);
+             //                }
+             //                else{
+             //                    //Check value to ensure both structures contain the same data
+             //                    for(let x=0;x<data.length;x++){
+             //                        if(data[x]!=discovered_bots[x]){
+             //                            redoDiscoverList(data);
+             //                            //Prevent the list from being remade constantly
+             //                            break;
+             //                        }
+             //                    }
+             //                }
+             //                setTimeout(updateDiscoveredBots,3000); // Try again in 3 sec
+             //            }
+             //        });
+    }
+
+    redoDiscoverList(data){
+        let new_bots = [];
+
+        for (let i = 0; i < data.length; i++) {
+            //Trim the forward-slash
+            var ip_address = data[i].substring(1);
+            new_bots.push(ip_address)
+        }
+
+        this.setState({discoveredBots: new_bots})
+    }
+
     render(){
+        var styles = {
+            ActiveBotHeader: {
+                height: '25%'
+            },
+            ActiveBotTitle: {
+                float: "left"
+            }
+        }
         return (
             <div id ="component_addbot" className = "box">
                 <div className = "row">
@@ -139,7 +213,19 @@ class AddBot extends React.Component {
                         <button id="addBot" onClick={this.addbot}>Add Bot</button>
                     </div>
                     <div className = "col-md-6">
-                        Select Active Bot
+                        <div className="activeBotHeader" style={styles.ActiveBotHeader}>
+                            <p style={styles.ActiveBotTitle}>Select an Active Bot</p>
+                            <button className="refresh-discovery" onClick={this.updateDiscoveredBots}>
+                                Refresh
+                            </button>
+                        </div>
+                        <div className="discovered-bot" id="discovered">
+                            {
+                                this.state.discoveredBots.map(function(ip, idx){
+                                    return <DiscoveredBot key={idx} idx={idx} ip_address={ip} />;
+                                })
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
