@@ -4,8 +4,11 @@ GoBot Example
 
 from minibot.bot import Bot
 from minibot.hardware.rpi.gpio import DigitalOutput, PWM
-from minibot.interface.servo import Servo
 from minibot.peripherals.hbridge import HBridge
+
+L_MOTOR_PIN = 12
+R_MOTOR_PIN = 18
+>>>>>>> ed2810efcea8f7da469b228c6873411fabba6f8e
 
 class GoBot(Bot):
     """
