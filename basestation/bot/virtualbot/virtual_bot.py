@@ -28,7 +28,7 @@ class VirtualBot(object):
         self.__sensor_center_obj = SensorCenter()
 
         # start the tcp_listener_thread
-        self.__tcp_listener_obj = self.TCPListenerThread()
+        self.__tcp_listener_obj = self.TCPListenerThread(tcp_connection_obj)
         self.__tcp_listener_obj.start()
 
         return
@@ -58,7 +58,7 @@ class VirtualBot(object):
         def run(self):
             try:
                 while True:
-                    if self.__tcp_connection.is_active():
+                    if self.__tcp_connection.is_connection_active():
                         message = self.__tcp_connection.receive()
                         if message is not None:
                             self.__parse_incoming(message)

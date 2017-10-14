@@ -54,7 +54,7 @@ class BotManager(object):
                             "bot.")
 
     def get_bot_by_name(self, name: str) -> Optional[VirtualBot]:
-        return self.__vbot_map[name]
+        return self.__vbot_map.get(name, None)
 
     def remove_bot_by_name(self, name: str) -> Optional[VirtualBot]:
         vbot = self.__vbot_map[name]
@@ -84,7 +84,7 @@ class BotManager(object):
 
     def get_bot_exchange(self, bot_id):
         """Returns the IP associated with vbot IP mapping"""
-        return self.__vbot_exchange_map[bot_id]
+        return self.__vbot_exchange_map.get(bot_id, None)
 
     def set_bot_exchange(self, bot_id, bot_IP):
         """Adds an internal mapping from bot_id to bot_IP"""
