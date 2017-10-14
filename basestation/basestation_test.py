@@ -2,7 +2,6 @@
 # but will do
 
 from basestation.base_station import BaseStation
-from basestation.bot.connection.tcp_connection import TCPConnection
 import time
 
 forward = ("50.0", "50.0", "50.0", "50.0")
@@ -20,8 +19,8 @@ if __name__ == "__main__":
     if discovered_bots:
         # list is not empty
         print("discovered bots: ", discovered_bots)
-        tcp_connection_obj = TCPConnection(discovered_bots.pop(), 10000)
-        testbot = bs.get_bot_manager().add_bot(tcp_connection_obj, "testbot")
+        testbot = bs.get_bot_manager().add_bot(discovered_bots.pop(),
+                                               10000, "testbot")
 
         if testbot is not None:
             print("testbot added")

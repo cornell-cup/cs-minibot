@@ -1,5 +1,6 @@
 from basestation.bot.connection.udp_connection import UDPConnection
 from basestation.bot.virtualbot.virtual_bot import VirtualBot
+import basestation.bot.bot_exchange as bot_exchange
 
 from typing import Optional
 
@@ -20,7 +21,6 @@ class BotManager(object):
         self.__vbot_map = {}
         self.__udp_connection = UDPConnection()
         self.__udp_connection.start()
-        self.__vbot_exchange_map = {}
         return
 
     def add_bot(self, ip: str, port: int, vbot_name: str) -> Optional[str]:
@@ -39,7 +39,6 @@ class BotManager(object):
             Exception: If the vbot connection is not active
         """
         new_vbot = VirtualBot(ip, port, self.__safe_escape_name(vbot_name))
-
         if new_vbot.is_bot_connection_active():
             # vbot was successfully added; add it to the vbotmap and return
             # the vbot's name
@@ -83,14 +82,14 @@ class BotManager(object):
         """
         return list(self.__udp_connection.get_addresses())
 
-    def get_bot_exchange(self, bot_id):
-        """Returns the IP associated with vbot IP mapping"""
-        return self.__vbot_exchange_map.get(bot_id, None)
-
-    def set_bot_exchange(self, bot_id, bot_IP):
-        """Adds an internal mapping from bot_id to bot_IP"""
-        self.__vbot_exchange_map[bot_id] = bot_IP
-        return
+    # def get_bot_exchange(self, bot_id):
+    #     """Returns the IP associated with vbot IP mapping"""
+    #     return self.__vbot_exchange_map.get(bot_id, None)
+    #
+    # def set_bot_exchange(self, bot_id, bot_IP):
+    #     """Adds an internal mapping from bot_id to bot_IP"""
+    #     self.__vbot_exchange_map[bot_id] = bot_IP
+    #     return
 
     def __safe_escape_name(self, name: str) -> str:
         """
