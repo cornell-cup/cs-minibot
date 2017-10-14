@@ -1,5 +1,5 @@
 """
-Minibot GPIO classes.
+Fake GPIO class to help with testing
 """
 
 class DigitalInput():

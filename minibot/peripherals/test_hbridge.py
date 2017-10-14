@@ -2,8 +2,7 @@
 Test for hbridge
 """
 import unittest
-import minibot.hardware.fake.gpio import DigitalOutput, PWM
-from minibot.interface.servo import Servo
+import minibot.hardware.virtual_gpio.gpio import DigitalOutput, PWM
 from minibot.peripherals.hbridge import HBridge
 
 class TestHBridge(unittest.TestCase):
