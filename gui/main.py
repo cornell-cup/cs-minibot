@@ -53,6 +53,9 @@ class BaseStationHandler(tornado.web.RequestHandler):
         self.render("../gui/index.html", title="Title", items=[])
 
 class AddBotHandler(tornado.web.RequestHandler):
+    """
+    Adds a bot to the BotManager.
+    """
     def post(self):
         info = json.loads(self.request.body)
         discovered_bots = BaseStation().bot_manager.get_all_discovered_bots()
@@ -66,9 +69,15 @@ class AddBotHandler(tornado.web.RequestHandler):
         port = info['port']
         tcp_connection_obj = TCPConnection(ip, port)
 
-        return BaseStation().get_bot_manager().add_bot(tcp_connection_obj, name)
+        thing = BaseStation().get_bot_manager().add_bot(tcp_connection_obj, name)
+        print('THING')
+        print(thing)
+        self.write(thing)
 
 class CommandBotHandler(tornado.web.RequestHandler):
+    """
+    Used to send movement commands to minibots.
+    """
     def post(self):
         info = json.loads(self.request.body)
         name = info['name']
@@ -81,8 +90,8 @@ class CommandBotHandler(tornado.web.RequestHandler):
         bot = BaseStation().get_bot_manager().get_bot_by_name(name)
         # asdf
         cc = bot.get_command_center()
-        return cc.sendKV("WHEELS", front_left + "," + front_right + "," + back_left +
-                         "," + back_right)
+        self.write(cc.sendKV("WHEELS", front_left + "," + front_right + "," + back_left +
+                         "," + back_right))
 
 class DiscoverBotsHandler(tornado.web.RequestHandler):
     def post(self):

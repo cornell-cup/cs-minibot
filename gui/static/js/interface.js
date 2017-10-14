@@ -166,7 +166,7 @@ $('#xbox-off').click(function() {
 
 // when adding a bot
 $('#addBot').click(function() {
-    console.log("addbot from interface.js")
+    console.log("addbot from interface.js");
     $.ajax({
         method: "POST",
         url: '/addBot',
@@ -179,9 +179,12 @@ $('#addBot').click(function() {
             }),
         contentType: 'application/json',
         success: function addSuccess(data) {
+            console.log("Adding is a success!");
+            console.log(data);
             updateDropdown(true, data, data);
         }
     });
+    console.log("hello pls work");
 });
 
 //adding a scenario from the value in the scenario viewer
