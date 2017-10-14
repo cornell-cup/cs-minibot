@@ -1,5 +1,5 @@
 """
-Fake GPIO class to help with testing
+Fake class to help with testing GPIO without a physical bot (used to simulate gpio)
 """
 
 class DigitalInput():
