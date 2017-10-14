@@ -35,8 +35,9 @@ class UDPConnection(threading.Thread):
             while True:
                 # todo: udp listener not working, blocking statement. When
                 # changed to non-blocking, gives an error
-                data = self.__listener_socket.recvfrom(512)
+                data = self.__listener_socket.recvfrom(1024)
                 device_address = data[1][0]
+                print("a")
                 self.__IP_list[device_address] = self.__get_current_time()
 
         except socket.error as e:
@@ -52,7 +53,7 @@ class UDPConnection(threading.Thread):
         new_IP_list = {}
 
         for address, last_updated_time in self.__IP_list.items():
-            if now - last_updated_time <= float(self.__update_threshold):
+            if now - last_updated_time <= self.__update_threshold:
                 new_IP_list[address] = last_updated_time
 
         self.__IP_list = new_IP_list

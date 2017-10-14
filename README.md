@@ -44,6 +44,14 @@ From the root directory, run the following line in terminal.
 ```
 pip install -r requirements.txt
 ```
+cd into gui and run
+```
+npm install
+```
+to build the frontend files, cd into gui and run
+```
+npm run webpack
+```
 
 ### Dependencies on the Rapsberry Pi
 
