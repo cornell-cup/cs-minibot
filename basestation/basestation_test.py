@@ -1,9 +1,8 @@
 # currently not in the required format dictated by cs-minibot/test.py,
 # but will do
 
-from basestation.base_station import BaseStation as BaseStation
-from basestation.bot.connection.tcp_connection import TCPConnection as \
-    TCPConnection
+from basestation.base_station import BaseStation
+from basestation.bot.connection.tcp_connection import TCPConnection
 import time
 
 forward = ("50.0", "50.0", "50.0", "50.0")

@@ -2,7 +2,7 @@ from basestation.util.exception_handling import *
 
 import threading
 import time
-import socket, select
+import socket
 
 
 class UDPConnection(threading.Thread):
@@ -33,8 +33,6 @@ class UDPConnection(threading.Thread):
     def run(self):
         try:
             while True:
-                # todo: udp listener not working, blocking statement. When
-                # changed to non-blocking, gives an error
                 data = self.__listener_socket.recvfrom(512)
                 device_address = data[1][0]
                 self.__IP_list[device_address] = self.__get_current_time()

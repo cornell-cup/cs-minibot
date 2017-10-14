@@ -1,8 +1,6 @@
-from basestation.bot.connection.udp_connection import UDPConnection as \
-    UDPConnection
-from basestation.bot.virtualbot.virtual_bot import VirtualBot as VirtualBot
-from basestation.bot.connection.tcp_connection import TCPConnection as \
-    TCPConnection
+from basestation.bot.connection.udp_connection import UDPConnection
+from basestation.bot.virtualbot.virtual_bot import VirtualBot
+from basestation.bot.connection.tcp_connection import TCPConnection
 
 from typing import Optional
 
