@@ -8,5 +8,5 @@ if __name__ == "__main__":
     bot = BaseStation()
     while True:
         time.sleep(2)
-        print("a")
-        print(bot.get_bot_manager().get_all_discovered_bots())
+        print("discovered bots: ",
+              bot.get_bot_manager().get_all_discovered_bots())
