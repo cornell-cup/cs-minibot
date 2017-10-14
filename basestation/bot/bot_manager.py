@@ -22,14 +22,16 @@ class BotManager(object):
         self.__udp_connection.start()
         return
 
-    def add_bot(self, ip: str, port: int, vbot_name: str) -> Optional[str]:
+    def add_bot(self, vbot_name: str, ip: str, port: int = 10000) -> Optional[
+        str]:
         """
         Adds a virtual bot to the virtual bot manager list.
 
         Args:
-            ip (str): The IP of the MiniBot.
-            port (int): The port of the MiniBot.
             vbot_name (str): MiniBot's name.
+            ip (str): The IP of the MiniBot.
+            port (int, optional): The port of the MiniBot's TCP Connection.
+                Default = 10000
 
         Returns:
             Optional[str]: Name of the VirtualBot object created, emulating
@@ -39,7 +41,7 @@ class BotManager(object):
             Exception: Raised if the TCP connection was or went inactive
                 while creating the VirtualBot object.
         """
-        new_vbot = VirtualBot(ip, port, self.__safe_escape_name(vbot_name))
+        new_vbot = VirtualBot(self.__safe_escape_name(vbot_name), ip, port=port)
 
         if new_vbot.is_bot_connection_active():
             new_vbot_name = new_vbot.get_name()
@@ -52,8 +54,8 @@ class BotManager(object):
 
     def get_bot_by_name(self, name: str) -> Optional[VirtualBot]:
         """
-        Returns the VirtualBot, which has the name ``name``. If no VirtualBot
-        ``v`` exists such that ``v.get_name() == name`` then ``None`` is
+        Returns the VirtualBot, which has the name `name`. If no VirtualBot
+        `v` exists such that `v.get_name() == name` then `None` is
         returned.
 
         Args:
@@ -63,7 +65,7 @@ class BotManager(object):
 
     def remove_bot_by_name(self, name: str):
         """
-        Remove the VirtualBot ``v`` which has the ``v.get_name() == name``.
+        Remove the VirtualBot `v` which has the `v.get_name() == name`.
         If no such VirtualBot exists, then no operation is done.
 
         Args:
@@ -93,11 +95,18 @@ class BotManager(object):
         """
         return list(self.__vbot_map.keys())
 
+    def get_all_discovered_bots(self) -> list:
+        """
+        Returns a list of the names of VirtualBots, which are detectable
+        through UDP broadcast.
+        """
+        return list(self.__udp_connection.get_addresses())
+
     def __generate_bot_number(self) -> int:
         """
-        Returns the next available ``int`` to be added to the name of the
-        VirtualBot v, if there exists a Virtual Bot v' such that
-        ``v.get_name() == v'.get_name()``.
+        Returns the next available `int` to be added to the name of the
+        VirtualBot v, if there exists a Virtual Bot v2 such that
+        `v.get_name() == v2.get_name()`.
         """
         # todo: not sure if this works as intended
         # possible problem: Let's say these bots exist: bot, bot0, testbot,
@@ -105,13 +114,6 @@ class BotManager(object):
         # added as testbot1 instead of testbot0.
         self.__vbot_counter += 1
         return self.__vbot_counter
-
-    def get_all_discovered_bots(self) -> list:
-        """
-        Returns a list of the names of VirtualBots, which are detectable
-        through UDP broadcast.
-        """
-        return list(self.__udp_connection.get_addresses())
 
     def __safe_escape_name(self, name: str) -> str:
         """

@@ -7,14 +7,14 @@ from typing import Optional
 
 class TCPConnection(object):
 
-    def __init__(self, ip, port):
+    def __init__(self, ip: str, port: int = 10000):
         """
-        Initialize a TCP connection between this basestation and the the
-        device identified by IP on the local network at port
+        Initialize a TCP connection between this device and the the
+        device identified by IP on the local network at port.
 
         Args:
-            ip (str): The IP of the device to be connected with this device
-            port (int): The port of the connection
+            ip (str): The IP of the device to be connected with this device.
+            port (int, optional): The port of the connection. Default = 10000.
         """
         self.__IP = ip
         self.__port = port
@@ -35,7 +35,7 @@ class TCPConnection(object):
         """
         Returns:
             (bool): True if the TCP connection between this device and the
-                device with IP = getIP() is active
+                device with `IP == getIP()` is active
         """
         return not self.__connection_refused
 
@@ -43,7 +43,7 @@ class TCPConnection(object):
         """
         Returns:
             (str): IP of the device that is connected through TCP. Active
-                connection is not guaranteed - check is_connection_active().
+                connection is not guaranteed - check `is_connection_active()`.
         """
         return self.__IP
 
@@ -63,7 +63,7 @@ class TCPConnection(object):
     @synchronized
     def sendKV(self, key, value) -> bool:
         """
-        Sends a message to the device with IP = getIP() using the established
+        Sends a message to the device with `IP == getIP()` using the established
         TCP connection. The message is in the form of key, value that is
         identifiable by the device on the other end.
 
@@ -88,7 +88,7 @@ class TCPConnection(object):
 
     def receive(self) -> Optional[str]:
         """
-        Receives data from the device at IP = getIP().
+        Receives data from the device at `IP == getIP()`.
 
         Returns:
             (Optional[str]): Returns a string representing the data received.

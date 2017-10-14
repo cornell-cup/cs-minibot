@@ -14,10 +14,10 @@ def synchronized(f):
         (func): A synchronized function
 
     Examples:
-        @synchronized
+        `@synchronized
         def incr_cnt():
             global cnt
-            cnt += 1
+            cnt += 1`
     """
     f.__lock__ = threading.Lock()
 

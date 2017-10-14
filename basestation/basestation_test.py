@@ -19,8 +19,8 @@ if __name__ == "__main__":
     if discovered_bots:
         # list is not empty
         print("discovered bots: ", discovered_bots)
-        testbot = bs.get_bot_manager().add_bot(discovered_bots.pop(),
-                                               10000, "testbot")
+        testbot = bs.get_bot_manager().add_bot("testbot", discovered_bots.pop(),
+                                               port=10000)
 
         if testbot is not None:
             print("testbot added")
