@@ -186,6 +186,19 @@
 		</form>
 	</div>
 
+	<!-- loading file as text -->
+	<script> function loadFileAsText(){
+  	var fileToLoad = document.getElementById("fileToLoad").files[0];
+
+ 	 var fileReader = new FileReader();
+ 	 fileReader.onload = function(fileLoadedEvent){
+  	    var textFromFileLoaded = fileLoadedEvent.target.result;
+  	    document.getElementById("inputTextToSave").value = textFromFileLoaded;
+ 	 };
+
+ 	 fileReader.readAsText(fileToLoad, "UTF-8");
+	</script>
+
 	<!-- basic imports -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 	<script src="http://pixijs.download/release/pixi.min.js"></script>
