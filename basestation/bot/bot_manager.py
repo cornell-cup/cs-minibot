@@ -1,6 +1,5 @@
 from basestation.bot.connection.udp_connection import UDPConnection
 from basestation.bot.virtualbot.virtual_bot import VirtualBot
-import basestation.bot.bot_exchange as bot_exchange
 
 from typing import Optional
 
@@ -28,68 +27,91 @@ class BotManager(object):
         Adds a virtual bot to the virtual bot manager list.
 
         Args:
-            ip (str): The IP of the MiniBot
-            port (int): The port of the MiniBot
-            vbot_name (str): VirtualBot object to add.
+            ip (str): The IP of the MiniBot.
+            port (int): The port of the MiniBot.
+            vbot_name (str): MiniBot's name.
 
         Returns:
-            Optional[str]: Name of the VirtualBot or None
+            Optional[str]: Name of the VirtualBot object created, emulating
+                the MiniBot.
 
         Raises:
-            Exception: If the vbot connection is not active
+            Exception: Raised if the TCP connection was or went inactive
+                while creating the VirtualBot object.
         """
         new_vbot = VirtualBot(ip, port, self.__safe_escape_name(vbot_name))
+
         if new_vbot.is_bot_connection_active():
-            # vbot was successfully added; add it to the vbotmap and return
-            # the vbot's name
             new_vbot_name = new_vbot.get_name()
             self.__vbot_map[new_vbot_name] = new_vbot
             return new_vbot.get_name()
         else:
-            # bot was not added as the connection is not active; delete the
-            # instance
             del new_vbot
             raise Exception("The connection was not active. Not adding the "
                             + "bot.")
 
     def get_bot_by_name(self, name: str) -> Optional[VirtualBot]:
+        """
+        Returns the VirtualBot, which has the name ``name``. If no VirtualBot
+        ``v`` exists such that ``v.get_name() == name`` then ``None`` is
+        returned.
+
+        Args:
+            name (str): The name of the MiniBot.
+        """
         return self.__vbot_map.get(name, None)
 
     def remove_bot_by_name(self, name: str):
+        """
+        Remove the VirtualBot ``v`` which has the ``v.get_name() == name``.
+        If no such VirtualBot exists, then no operation is done.
+
+        Args:
+            name (str): The name of the MiniBot.
+        """
         vbot = self.__vbot_map.get(name, None)
-        del self.__vbot_map[name]
-        del vbot
+
+        try:
+            del self.__vbot_map[name]
+        except KeyError:
+            pass
+
+        if vbot is not None:
+            del vbot
+
         return
 
     def get_all_tracked_bots(self) -> list:
-        """Returns a view of the vbots currently tracked"""
+        """
+        Returns a list of VirtualBots currently tracked.
+        """
         return list(self.__vbot_map.values())
 
     def get_all_tracked_bots_names(self) -> list:
-        """Returns a view of the names of the vbots currently tracked"""
+        """
+        Returns a list of the names of VirtualBots currently tracked.
+        """
         return list(self.__vbot_map.keys())
 
-    def generate_bot_number(self) -> int:
-        """Returns the next available (int) for a vbot number. Should not be
-        used by anyone using the basestation. (?)"""
+    def __generate_bot_number(self) -> int:
+        """
+        Returns the next available ``int`` to be added to the name of the
+        VirtualBot v, if there exists a Virtual Bot v' such that
+        ``v.get_name() == v'.get_name()``.
+        """
+        # todo: not sure if this works as intended
+        # possible problem: Let's say these bots exist: bot, bot0, testbot,
+        # and we want to add testbot to the list. I have a hunch that it will be
+        # added as testbot1 instead of testbot0.
         self.__vbot_counter += 1
         return self.__vbot_counter
 
     def get_all_discovered_bots(self) -> list:
         """
-        Returns a list of vbots' names which are detectable through UDP
-        communication.
+        Returns a list of the names of VirtualBots, which are detectable
+        through UDP broadcast.
         """
         return list(self.__udp_connection.get_addresses())
-
-    # def get_bot_exchange(self, bot_id):
-    #     """Returns the IP associated with vbot IP mapping"""
-    #     return self.__vbot_exchange_map.get(bot_id, None)
-    #
-    # def set_bot_exchange(self, bot_id, bot_IP):
-    #     """Adds an internal mapping from bot_id to bot_IP"""
-    #     self.__vbot_exchange_map[bot_id] = bot_IP
-    #     return
 
     def __safe_escape_name(self, name: str) -> str:
         """
@@ -99,11 +121,11 @@ class BotManager(object):
         MiniBot, this means names should only used [a-zA-Z] characters.
 
         Args:
-            name (str): The name to be escaped
+            name (str): The name to be escaped.
 
         Returns:
-            (str) The safely escaped name
+            (str) The safely escaped name.
         """
         if self.get_bot_by_name(name) is not None:
-            name += str(self.generate_bot_number())
+            name += str(self.__generate_bot_number())
         return name
