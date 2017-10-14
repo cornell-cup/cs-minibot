@@ -8,14 +8,15 @@ import socket
 class UDPConnection(threading.Thread):
     """
     UDPConnection's instances can be used to track devices that are
-    broadcasting on a certain internally-set port. Can be used to discovering
+    broadcasting on a certain internally-set port. Can be used to discover
     MiniBots that are currently actively broadcasting signals through UDP.
     """
 
-    def __init__(self, group=None, target=None, name=None, args=(),
-                 kwargs=None):
-        super().__init__(group=group, target=target, name=name, args=args,
-                         kwargs=kwargs)
+    def __init__(self):
+        """
+        Initializes the UDP connection socket.
+        """
+        super().__init__()
         # the time (sec) before an address is removed from our list
         self.__update_threshold = 40
         self.__port = 5001
@@ -25,12 +26,21 @@ class UDPConnection(threading.Thread):
         self.__listener_socket.bind(("", self.__port))
         return
 
-    def get_addresses(self):
+    def get_addresses(self) -> list:
+        """
+        Returns:
+            (list): The list of IPs that have been discovered and are
+                currently active.
+        """
 
         self.__clean_addresses()
         return sorted(self.__IP_list.keys())
 
     def run(self):
+        """
+        Runs the UDP Listener, and adds the IPs of the devices that are
+        broadcasting.
+        """
         try:
             while True:
                 data = self.__listener_socket.recvfrom(512)
@@ -45,6 +55,10 @@ class UDPConnection(threading.Thread):
         return
 
     def __clean_addresses(self):
+        """
+        Filters the IPs in the internal map that have been inactive (not
+        broadcasting) for time = `self.__update_threshold`.
+        """
 
         now = self.__get_current_time()
         new_IP_list = {}
@@ -58,4 +72,8 @@ class UDPConnection(threading.Thread):
 
     @staticmethod
     def __get_current_time():
+        """
+        Returns:
+            (float): Current time in seconds, since the start of epoch.
+        """
         return time.time()
