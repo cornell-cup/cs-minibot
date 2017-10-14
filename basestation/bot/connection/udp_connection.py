@@ -44,7 +44,7 @@ class UDPConnection(threading.Thread):
         try:
             while True:
                 data = self.__listener_socket.recvfrom(512)
-                device_address = data[1][0].decode()
+                device_address = data[1][0]
                 self.__IP_list[device_address] = self.__get_current_time()
 
         except socket.error as e:
