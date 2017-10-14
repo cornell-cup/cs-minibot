@@ -4,7 +4,6 @@ GoBot Example
 
 from minibot.bot import Bot
 from minibot.hardware.rpi.gpio import DigitalOutput, PWM
-from minibot.interface.servo import Servo
 from minibot.peripherals.hbridge import HBridge
 
 class GoBot(Bot):
