@@ -25,7 +25,7 @@ class UDPConnection(threading.Thread):
         self.__listener_socket.bind(("", self.__port))
         return
 
-    def get_addresses(self):
+    def get_addresses(self) -> list:
 
         self.__clean_addresses()
         return sorted(self.__IP_list.keys())

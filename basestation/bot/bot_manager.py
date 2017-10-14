@@ -1,6 +1,5 @@
 from basestation.bot.connection.udp_connection import UDPConnection
 from basestation.bot.virtualbot.virtual_bot import VirtualBot
-from basestation.bot.connection.tcp_connection import TCPConnection
 
 from typing import Optional
 
@@ -24,61 +23,65 @@ class BotManager(object):
         self.__vbot_exchange_map = {}
         return
 
-    def add_bot(self, tcp_connection_obj: TCPConnection, vbot_name: str,
-                ) -> Optional[str]:
+    def add_bot(self, ip: str, port: int, vbot_name: str) -> Optional[str]:
         """
         Adds a virtual bot to the virtual bot manager list.
 
         Args:
-            tcp_connection_obj (TCPConnection): A TCP Connection that has
-                already been created
+            ip (str): The IP of the MiniBot
+            port (int): The port of the MiniBot
             vbot_name (str): VirtualBot object to add.
 
         Returns:
-            str: Name of the VirtualBot
+            Optional[str]: Name of the VirtualBot or None
 
         Raises:
             Exception: If the vbot connection is not active
         """
-        if tcp_connection_obj.is_connection_active():
-            new_vbot_name = self.__safe_escape_name(vbot_name)
-            new_vbot = VirtualBot(tcp_connection_obj, new_vbot_name)
+        new_vbot = VirtualBot(ip, port, self.__safe_escape_name(vbot_name))
 
+        if new_vbot.is_bot_connection_active():
+            # vbot was successfully added; add it to the vbotmap and return
+            # the vbot's name
+            new_vbot_name = new_vbot.get_name()
             self.__vbot_map[new_vbot_name] = new_vbot
-            return vbot_name
-
+            return new_vbot.get_name()
         else:
+            # bot was not added as the connection is not active; delete the
+            # instance
+            del new_vbot
             raise Exception("The connection was not active. Not adding the "
-                            "bot.")
+                            + "bot.")
 
     def get_bot_by_name(self, name: str) -> Optional[VirtualBot]:
         return self.__vbot_map.get(name, None)
 
-    def remove_bot_by_name(self, name: str) -> Optional[VirtualBot]:
-        vbot = self.__vbot_map[name]
+    def remove_bot_by_name(self, name: str):
+        vbot = self.__vbot_map.get(name, None)
         del self.__vbot_map[name]
-        return vbot
+        del vbot
+        return
 
-    def get_all_tracked_bots(self):
+    def get_all_tracked_bots(self) -> list:
         """Returns a view of the vbots currently tracked"""
-        return self.__vbot_map.values()
+        return list(self.__vbot_map.values())
 
-    def get_all_tracked_bots_names(self):
+    def get_all_tracked_bots_names(self) -> list:
         """Returns a view of the names of the vbots currently tracked"""
-        return self.__vbot_map.keys()
+        return list(self.__vbot_map.keys())
 
-    def generate_bot_number(self):
+    def generate_bot_number(self) -> int:
         """Returns the next available (int) for a vbot number. Should not be
         used by anyone using the basestation. (?)"""
         self.__vbot_counter += 1
         return self.__vbot_counter
 
-    def get_all_discovered_bots(self):
+    def get_all_discovered_bots(self) -> list:
         """
-        Returns a set of vbots which are detectable through UDP
+        Returns a list of vbots' names which are detectable through UDP
         communication.
         """
-        return self.__udp_connection.get_addresses()
+        return list(self.__udp_connection.get_addresses())
 
     def get_bot_exchange(self, bot_id):
         """Returns the IP associated with vbot IP mapping"""
@@ -89,7 +92,7 @@ class BotManager(object):
         self.__vbot_exchange_map[bot_id] = bot_IP
         return
 
-    def __safe_escape_name(self, name):
+    def __safe_escape_name(self, name: str) -> str:
         """
         Safely escapes the name of the vbot to ensure it is unique and
         returns that string. This has a simple implementation for now,

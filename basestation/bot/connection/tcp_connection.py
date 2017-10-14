@@ -31,7 +31,7 @@ class TCPConnection(object):
 
         return
 
-    def is_connection_active(self):
+    def is_connection_active(self) -> bool:
         """
         Returns:
             (bool): True if the TCP connection between this device and the
@@ -39,7 +39,7 @@ class TCPConnection(object):
         """
         return not self.__connection_refused
 
-    def getIP(self):
+    def getIP(self) -> str:
         """
         Returns:
             (str): IP of the device that is connected through TCP. Active
@@ -61,7 +61,7 @@ class TCPConnection(object):
         return
 
     @synchronized
-    def sendKV(self, key, value):
+    def sendKV(self, key, value) -> bool:
         """
         Sends a message to the device with IP = getIP() using the established
         TCP connection. The message is in the form of key, value that is

@@ -14,36 +14,41 @@ class VirtualBot(object):
     connection which is represented by Connection
     """
 
-    def __init__(self, tcp_connection_obj, vbot_name):
+    def __init__(self, ip: str, port: int, vbot_name: str):
         """
         Set up an instance of the VirtualBot using a TCP Connection
         Args:
             tcp_connection_obj (TCPConnection): A TCP Connection that has
             already been created
         """
-        self.__connection = tcp_connection_obj
+        self.__tcp_connection = TCPConnection(ip, port)
         self.__name = vbot_name
 
-        self.__command_center_obj = CommandCenter(tcp_connection_obj)
+        self.__command_center_obj = CommandCenter(self.__tcp_connection)
         self.__sensor_center_obj = SensorCenter()
 
         # start the tcp_listener_thread
-        self.__tcp_listener_obj = self.TCPListenerThread(tcp_connection_obj)
+        self.__tcp_listener_obj = self.TCPListenerThread(self.__tcp_connection)
         self.__tcp_listener_obj.start()
 
         return
 
-    def get_command_center(self):
+    def __del__(self):
+        self.__tcp_connection.destroy()
+        print(self.__name + " is dead.")
+        return
+
+    def get_command_center(self) -> CommandCenter:
         return self.__command_center_obj
 
-    def get_sensor_center(self):
+    def get_sensor_center(self) -> SensorCenter:
         return self.__sensor_center_obj
 
-    def get_name(self):
+    def get_name(self) -> str:
         return self.__name
 
-    def get_connection(self):
-        return self.__connection
+    def is_bot_connection_active(self) -> bool:
+        return self.__tcp_connection.is_connection_active()
 
     class TCPListenerThread(threading.Thread):
 
