@@ -2,8 +2,11 @@
 # but will do
 
 from basestation.base_station import BaseStation as BaseStation
+import time
 
 if __name__ == "__main__":
     bot = BaseStation()
     while True:
-        pass
+        time.sleep(2)
+        print("a")
+        print(bot.get_bot_manager().get_all_discovered_bots())
