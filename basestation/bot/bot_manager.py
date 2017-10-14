@@ -24,8 +24,7 @@ class BotManager(object):
         self.__vbot_exchange_map = {}
         return
 
-    def add_bot(self, tcp_connection_obj: TCPConnection, vbot_name: str,
-                ) -> Optional[str]:
+    def add_bot(self, tcp_connection_obj, vbot_name):
         """
         Adds a virtual bot to the virtual bot manager list.
 

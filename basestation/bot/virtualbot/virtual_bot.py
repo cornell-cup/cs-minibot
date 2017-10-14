@@ -31,8 +31,6 @@ class VirtualBot(object):
         self.__tcp_listener_obj = self.TCPListenerThread(tcp_connection_obj)
         self.__tcp_listener_obj.start()
 
-        return
-
     def get_command_center(self):
         return self.__command_center_obj
 
