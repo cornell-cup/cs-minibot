@@ -98,6 +98,7 @@ class VirtualBot(object):
                 key (str): An instruction to be executed
                 value (str): Should qualify the instruction
             """
+            # todo: cyclic import here - trying to access the bot-exchange map
             bot_manager_obj = BaseStation().get_bot_manager()
             if len(value) != 0:
                 # MiniBot requesting information

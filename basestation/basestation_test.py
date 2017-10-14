@@ -6,6 +6,9 @@ from basestation.bot.connection.tcp_connection import TCPConnection as \
     TCPConnection
 import time
 
+forward = ("50.0", "50.0", "50.0", "50.0")
+stop = ("0.0", "0.0", "0.0", "0.0")
+
 if __name__ == "__main__":
     bs = BaseStation()
 
@@ -23,5 +26,21 @@ if __name__ == "__main__":
 
         if testbot is not None:
             print("testbot added")
+            ttbot = bs.get_bot_manager().get_bot_by_name(testbot)
+            if ttbot is not None:
+                cc = ttbot.get_command_center()
+                print("sending forward")
+                cc.sendKV("WHEELS",
+                          forward[0] + "," + forward[1] + "," + forward[2] +
+                          "," + forward[3])
+                time.sleep(5)
+                print("sending stop")
+                cc.sendKV("WHEELS",
+                          stop[0] + "," + stop[1] + "," + stop[2] +
+                          "," + stop[3])
+                print("should stop")
+            else:
+                print("bot not accessible")
+
         else:
             print("error in adding testbot")

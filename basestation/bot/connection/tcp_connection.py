@@ -77,7 +77,7 @@ class TCPConnection(object):
         """
         payload = "<<<<" + key + "," + value + ">>>>"
         try:
-            self.__client_socket.send(payload)
+            self.__client_socket.send(payload.encode())
             return True
 
         except socket.error as e:
