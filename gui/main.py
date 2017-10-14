@@ -41,7 +41,7 @@ class BaseInterface:
 class BaseStationHandler(tornado.web.RequestHandler):
     def get(self):
         # self.write("Hi There")
-        self.render("../gui/index2.html", title="Title", items=[])
+        self.render("../gui/index.html", title="Title", items=[])
 
 if __name__ == "__main__":
     """
