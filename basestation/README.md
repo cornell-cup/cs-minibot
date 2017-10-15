@@ -1,16 +1,15 @@
-Intro to BaseStation v2.22e-16 Python
-=====================================
+# Intro to BaseStation v2.22e-16 Python
 
 ### Updated Oct 15 2017.
 ##### Aimed at giving devs insight of how to use a base station to control their MiniBots.
 
-# Links
+## Links
 
 * [The Java platform](https://github.com/cornell-cup/cs-minibot-platform)
 * [The Python platform](https://github.com/cornell-cup/cs-minibot)
 * [Java platform's BaseStation controller file](https://github.com/cornell-cup/cs-minibot-platform/blob/develop/cs-minibot-platform-src/src/main/java/minibot/BaseHTTPInterface.java)
 
-# Using the BaseStation module/class
+## Using the BaseStation module/class
 
 This Python version of the BaseStation is _almost_ equivalent to the Java version in cs-minibot-platform, and the usage is pretty similar.
 
