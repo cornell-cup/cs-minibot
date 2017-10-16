@@ -1,5 +1,5 @@
 var React = require('react');
-
+var ReactDOM = require('react-dom');
 
 export default class Python extends React.Component {
     //TODO DOWNLOAD
@@ -163,8 +163,7 @@ export default class Python extends React.Component {
 //
 // /* ======================= HELPER FUNCTIONS ======================== */
 // /* Returns a string of the entire blockly script. */
-// function getBlocklyScript() { return Blockly.Python.workspaceToCode(workspace); }
-// function setCode(code) { $("#data").val(code); }
+
 // function appendCode(code) {
 //     var content = $("#data").val();
 //     $("data").val(content + code);

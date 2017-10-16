@@ -1,39 +1,45 @@
 var React = require('react');
+var ReactDOM = require('react-dom');
 
 export default class Blockly extends React.Component {
-    //TODO THIS DOES NOT WORK ???
-    componentDidMount(){
-        /* Blockly Configurations */
-//        setUpBlockly();
+    //TODO getBlocklyScript does not work
+    constructor(props){
+        super(props);
+        this.getBlocklyScript = this.getBlocklyScript.bind(this);
     }
+
+    componentDidMount(){
+        var workspace = window.Blockly.inject('blocklyDiv',
+            {
+                toolbox: document.getElementById('toolbox'),
+                grid: {
+                    spacing:20,
+                    length:3,
+                    colour: '#ccc',
+                    snap: true
+                },
+                trashcan: true,
+                scroll: true
+            });
+
+        /* Realtime code generation
+
+          (Every drag/drop or change in visual code will be
+          reflected in actual code view) */
+        workspace.addChangeListener(function(event){
+            document.getElementById('data').value = this.getBlocklyScript();
+        });
+    }
+
+    getBlocklyScript() { return window.Blockly.Python.workspaceToCode(workspace); }
+
     render(){
+        var blocklyStyle = {margin:'0', height: '70vh', width: '55vw'};
         return (
-            <div id ="blocklyDiv" className = "box">Blockly</div>
+            <div id="blockly" className = "box">
+                <div id ="blocklyDiv" style={blocklyStyle}>Blockly</div>
+            </div>
         )
     }
 }
 
-// /* ======================= BASIC SETUP ======================== */
-// /* Blockly Configurations */
-// var workspace = Blockly.inject('blocklyDiv',
-//     {
-//         toolbox: document.getElementById('toolbox'),
-//         grid: {
-//             spacing:20,
-//             length:3,
-//             colour: '#ccc',
-//             snap: true
-//         },
-//         trashcan: true,
-//         scroll: true
-//     });
-//
-// /* Realtime code generation
-//
-//   (Every drag/drop or change in visual code will be
-//   reflected in actual code view) */
-// workspace.addChangeListener(function(event){
-//     setCode(getBlocklyScript());
-// });
-//
-//

@@ -68,11 +68,11 @@ class ControlTab extends React.Component {
         return (
             <div id ="tab_control">
                 <div className="row">
-                    <div className="col-md-6">
+                    <div className="col-md-7">
                         <Blockly/>
                         <GridView/>
                     </div>
-                    <div className="col-md-6">
+                    <div className="col-md-5">
                         <Python/>
                         <ControlPanel/>
                     </div>

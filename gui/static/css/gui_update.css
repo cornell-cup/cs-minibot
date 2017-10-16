@@ -1,13 +1,14 @@
 /* GlOBAL */
 .box{
-    margin: 2vh;
+    margin: 1vh;
     background:lightgrey;
-    padding: 2vh;
+    padding: 1vh;
 }
 
 .slightly_larger_text{
     size: 5em;
 }
+
 /* NAVBAR */
 .navbar {
 width: 100vw;
@@ -53,11 +54,11 @@ table{
 }
 
 #python{
-    min-height: 80vh;
+    height: 80vh;
 }
 
 #blockly{
-    min-height: 80vh;
+    height: 80vh;
 }
 
 .controlgrid{
@@ -73,7 +74,7 @@ table{
     padding:10px;
     font-size:12px;
     width:100%;
-    height:100%;
+    height:60vh;
 }
 
 /* REACT TABS */
