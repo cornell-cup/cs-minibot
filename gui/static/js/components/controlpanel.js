@@ -30,7 +30,7 @@ export default class ControlPanel extends React.Component {
 
     sendKV(event){
         //TODO
-        const pow = document.getElementById("power").value;
+        const pow = this.state.power;
         const target = event.target;
         console.log('sendKV listener');
         if(target.id=="fwd") {
@@ -171,7 +171,7 @@ export default class ControlPanel extends React.Component {
                 {/*<option value="0">(DEBUG) Sim Bot</option>*/}
                 {/*</select>*/}
                 {/*<button className="controls" id="removeBot">Remove Bot</button><br/>*/}
-                Power (0-100): <input id="power" type="range" name="power" min="0" max="100" value="50"/><br/>
+                Power ({this.state.power}): <input id="power" type="range" name="power" min="0" max="100" value={this.state.power} defaultValue="50" onChange={this.handleInputChange}/><br/>
                 <b>Directions:</b><br/>
                 <table>
                     <tbody>
@@ -218,3 +218,78 @@ export default class ControlPanel extends React.Component {
         )
     }
 }
+
+// $(document).ready(function() {
+//     /*
+//      * Event listener for key inputs. Sends to selected bot.
+//      */
+//     var lastKeyPressed;
+//     window.onkeydown = function (e) {
+//         let keyboardEnable = document.getElementById('keyboard-controls').checked;
+//         if (!keyboardEnable) return;
+//
+//         let pow = getPower();
+//         let code = e.keyCode ? e.keyCode : e.which;
+//
+//         if (code === lastKeyPressed) return;
+//
+//         if (code === 87) {
+//             // w=forward
+//             sendMotors(pow, pow, pow, pow);
+//
+//         } else if (code === 83) {
+//             // s=backward
+//             sendMotors(-pow, -pow, -pow, -pow);
+//
+//         } else if (code == 65) {
+//             // a=ccw
+//             sendMotors(-pow, pow, -pow, pow);
+//
+//         } else if (code == 68) {
+//             // d=cw
+//             sendMotors(pow, -pow, pow, -pow);
+//
+//         } else if (code == 81) {
+//             // q=left
+//             sendMotors(-pow, pow, pow, -pow);
+//
+//         } else if (code == 69) {
+//             // e=right
+//             sendMotors(pow, -pow, -pow, pow);
+//         } else {
+//             return;
+//         }
+//         lastKeyPressed = code;
+//     };
+//
+//     window.onkeyup = function (e) {
+//         let keyboardEnable = document.getElementById('keyboard-controls').checked;
+//         if (!keyboardEnable) return;
+//
+//         let code = e.keyCode ? e.keyCode : e.which;
+//
+//         if (code === lastKeyPressed) {
+//             // Stop
+//             sendMotors(0,0,0,0);
+//             lastKeyPressed = -1;
+//         }
+//     };
+// });
+//
+// /*
+// *   Send KV -- allows users to manually send key and value to bot (for debugging/testing
+//     purposes)
+// */
+// function sendKV(){
+//     $.ajax({
+//         method:'POST',
+//         url:'/sendKV',
+//         dataType: 'json',
+//         data: JSON.stringify({
+//             key:$("#kv_key").val(),
+//             value:$("#kv_value").val(),
+//             name:getBotID()
+//         }),
+//         contentType: 'application/json'
+//     });
+// }
