@@ -1,5 +1,9 @@
 var React = require('react');
 
+/**
+ * Component for displaying each discovered bot
+ *
+ */
 class DiscoveredBot extends React.Component {
     render() {
         var styles = {
@@ -18,8 +22,11 @@ class DiscoveredBot extends React.Component {
     }
 }
 
+/**
+ * Component for the add bot interface
+ *
+ */
 export default class AddBot extends React.Component {
-    //TODO
     constructor(props) {
         super(props);
         this.state = {
@@ -35,6 +42,7 @@ export default class AddBot extends React.Component {
         this.updateDiscoveredBots = this.updateDiscoveredBots.bind(this);
     }
 
+    /* handles input change for input fields */
     handleInputChange(event) {
         const target = event.target;
         const value = target.value;
@@ -45,6 +53,8 @@ export default class AddBot extends React.Component {
         });
     }
 
+    /* Attempts to add a bot with the specified params
+    * */
     addbot(e){
         //TODO
         console.log('addbot button clicked');

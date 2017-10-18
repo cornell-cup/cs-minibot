@@ -1,5 +1,11 @@
 var React = require('react');
 
+/**
+ * Component for the new scenarios system
+ * Will contain:
+ * Loading, saving, editing, adding scenarios to simulator
+ *
+ */
 export default class Scenarios extends React.Component {
     //TODO
     render() {
