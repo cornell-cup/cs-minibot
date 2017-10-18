@@ -11,6 +11,7 @@ import json
 from basestation.base_station import BaseStation
 from basestation.bot.commands.command_center import CommandCenter
 
+
 class BaseInterface:
     """
     Class which contains the base station and necessary functions for running the
@@ -47,10 +48,12 @@ class BaseInterface:
         """
         return tornado.web.Application(self.handlers, **self.settings)
 
+
 class BaseStationHandler(tornado.web.RequestHandler):
     def get(self):
         # self.write("Hi There")
         self.render("../gui/index.html", title="Title", items=[])
+
 
 class AddBotHandler(tornado.web.RequestHandler):
     """
@@ -73,6 +76,7 @@ class AddBotHandler(tornado.web.RequestHandler):
         print(bot_name)
         self.write(bot_name)
 
+
 class CommandBotHandler(tornado.web.RequestHandler):
     """
     Used to send movement commands to minibots.
@@ -80,17 +84,17 @@ class CommandBotHandler(tornado.web.RequestHandler):
     def post(self):
         info = json.loads(self.request.body)
         name = info['name']
-        front_left = info['fl']
-        front_right = info['fr']
-        back_left = info['bl']
-        back_right = info['br']
+        fl = info['fl']
+        fr = info['fr']
+        bl = info['bl']
+        br = info['br']
 
         # Gets virtual bot.
-        bot = BaseStation().get_bot_manager().get_bot_by_name(name)
-        # Gets command center.
-        cc = bot.get_command_center()
-        self.write(cc.sendKV("WHEELS", front_left + "," + front_right + "," + back_left +
-                             "," + back_right))
+        bot_cc = BaseStation().get_bot_manager().\
+            get_bot_by_name(name).get_command_center()
+
+        self.write(bot_cc.set_wheel_power(fl, fr, bl, br))
+
 
 class DiscoverBotsHandler(tornado.web.RequestHandler):
     def post(self):
