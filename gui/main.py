@@ -9,7 +9,6 @@ import json
 
 # Minibot imports.
 from basestation.base_station import BaseStation
-from basestation.bot.connection.tcp_connection import TCPConnection
 from basestation.bot.commands.command_center import CommandCenter
 
 class BaseInterface:
@@ -26,6 +25,7 @@ class BaseInterface:
         self.handlers = [
             ("/gui", BaseStationHandler),
             ("/addBot", AddBotHandler),
+            ("/commandBot", CommandBotHandler),
             ("/discoverBot", DiscoverBotsHandler)
         ]
         self.settings = {
@@ -67,12 +67,11 @@ class AddBotHandler(tornado.web.RequestHandler):
         name = info['name']
         ip = info['ip']
         port = info['port']
-        tcp_connection_obj = TCPConnection(ip, port)
 
-        thing = BaseStation().get_bot_manager().add_bot(tcp_connection_obj, name)
+        bot_name = BaseStation().get_bot_manager().add_bot(name, ip, port)
         print('THING')
-        print(thing)
-        self.write(thing)
+        print(bot_name)
+        self.write(bot_name)
 
 class CommandBotHandler(tornado.web.RequestHandler):
     """
@@ -88,10 +87,10 @@ class CommandBotHandler(tornado.web.RequestHandler):
 
         # Gets virtual bot.
         bot = BaseStation().get_bot_manager().get_bot_by_name(name)
-        # asdf
+        # Gets command center.
         cc = bot.get_command_center()
         self.write(cc.sendKV("WHEELS", front_left + "," + front_right + "," + back_left +
-                         "," + back_right))
+                             "," + back_right))
 
 class DiscoverBotsHandler(tornado.web.RequestHandler):
     def post(self):

@@ -178,10 +178,14 @@ $('#addBot').click(function() {
                 type: $('#bot-type').val()
             }),
         contentType: 'application/json',
-        success: function addSuccess(data) {
+        success: function(data) {
             console.log("Adding is a success!");
             console.log(data);
             updateDropdown(true, data, data);
+        },
+        error: function(error) {
+            console.warn(error);
+            updateDropdown(true, error.responseText, error.responseText);
         }
     });
     console.log("hello pls work");
