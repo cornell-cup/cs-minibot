@@ -84,73 +84,6 @@ $("#send").click(function(event) {
     sendScript();
 });
 
-/* When .dir is clicked, send motors to act based on button clicked. */
-$(".dir").click(function(event) {
-	var pow = getPower();
-	var target = $(event.target); //$target
-	if(target.is("#fwd")) {
-		sendMotors(pow, pow, pow, pow);
-	}
-	else if(target.is("#bck")) {
-		sendMotors(-pow, -pow, -pow, -pow);
-	}
-	else if(target.is("#lft")) {
-		sendMotors(-pow, pow, -pow, pow);
-	}
-	else if(target.is("#rt")) {
-		sendMotors(pow, -pow, pow, -pow);
-	}
-	else if(target.is("#cw")){
-		sendMotors(pow, -pow, pow, -pow);
-	}
-	else if(target.is("#ccw")){
-		sendMotors(-pow, pow, -pow, pow);
-	}
-	else if(target.is("#stop")){
-	    console.log("stop");
-		sendMotors(0,0,0,0);
-	}
-	else if(target.is("#log")) {
-	    startLogging();
-	}
-	else {
-		console.error("Clicked on a direction button but nothing has been executed.");
-	}
-});
-
-// when removing a bot
-$('#removeBot').click(function() {
-	// ajax post to backend to remove a bot from list.
-	$.ajax({
-		method: "POST",
-		url: '/removeBot',
-		dataType: 'json',
-		data: JSON.stringify({
-			name: getBotID()
-		}),
-		contentType: 'application/json',
-		success: function properlyRemoved(data) {
-		    console.log("TODO");
-		}
-	});
-});
-
-$('#xbox-on').click(function() {
-	// ajax post to backend to remove a bot from list.
-	$.ajax({
-		method: "POST",
-		url: '/runXbox',
-		dataType: 'json',
-		data: JSON.stringify({
-			name: getBotID()
-		}),
-		contentType: 'application/json',
-		success: function properlyRemoved(data) {
-		    console.log("TODO");
-		}
-	});
-});
-
 $('#xbox-off').click(function() {
 	// ajax post to backend to remove a bot from list.
 	$.ajax({
@@ -190,68 +123,6 @@ $('#addBot').click(function() {
     });
     console.log("hello pls work");
 });
-
-//adding a scenario from the value in the scenario viewer
-$('#addScenario').click(function() {
-    console.log("add scenario from interface.js")
-    var scenario = $("#scenario").val();
-
-    $.ajax({
-        method: "POST",
-        url: '/addScenario',
-        dataType: 'text',
-        data: JSON.stringify({
-            scenario: scenario.toString()
-        }),
-        contentType: 'application/json; charset=utf-8',
-        success: function (data){
-            console.log("successfully added scenario: "+data);
-        }
-    });
- });
-
- //saving a scenario to a txt file with the specified filename
- $('#saveScenario').click(function() {
-     console.log("saving a scenario")
-     var scenario = $("#scenario").val();
-     var filename = $("#scenarioname").val();
-
-     $.ajax({
-         method: "POST",
-         url: '/saveScenario',
-         dataType: 'text',
-         data: JSON.stringify({scenario: scenario.toString(),
-         name: filename.toString()}),
-         contentType: 'application/json; charset=utf-8',
-         success: function (data){
-             console.log("successfully saved scenario: "+data);
-         }
-     });
-  });
-
-  /**loading a scenario - just type in a name, no need for directory or file
-  extension*/
-  $('#loadScenario').click(function() {
-      active_bots = [];
-      discovered_bots = [];
-
-      var filename = $("#scenarioname").val();
-      console.log("loading scenario: "+filename.toString());
-      $.ajax({
-          method: "POST",
-          url: '/loadScenario',
-          dataType: 'text',
-          data: JSON.stringify({'name':filename.toString()}),
-          contentType: 'application/json; charset=utf-8',
-          success: function (data){
-              $("#scenario").val(data);
-              console.log("successfully loaded scenario: "+data);
-          },
-          error: function(data){
-              console.log("error: please enter the name of an existing scenario")
-          }
-      });
-   });
 
 /*
 	For any update to the list of active bots, the dropdown menu
@@ -339,10 +210,6 @@ function updateDiscoveredBots(){
     });
 }
 
-
-
-
-
 /*
     Recreates the display of discovered minibots
 */
@@ -413,84 +280,4 @@ function redoDiscoverList(data){
     });
 }
 
-
-function listBots(){
-	// lists all the bots
-}
-
 updateDiscoveredBots();
-
-$(document).ready(function() {
-/*
- * Event listener for key inputs. Sends to selected bot.
- */
-var lastKeyPressed;
-window.onkeydown = function (e) {
-    let keyboardEnable = document.getElementById('keyboard-controls').checked;
-    if (!keyboardEnable) return;
-
-    let pow = getPower();
-    let code = e.keyCode ? e.keyCode : e.which;
-
-    if (code === lastKeyPressed) return;
-
-    if (code === 87) {
-       // w=forward
-       sendMotors(pow, pow, pow, pow);
-
-    } else if (code === 83) {
-       // s=backward
-       sendMotors(-pow, -pow, -pow, -pow);
-
-    } else if (code == 65) {
-    	// a=ccw
-        sendMotors(-pow, pow, -pow, pow);
-
-    } else if (code == 68) {
-    	// d=cw
-        sendMotors(pow, -pow, pow, -pow);
-
-    } else if (code == 81) {
-    	// q=left
-        sendMotors(-pow, pow, pow, -pow);
-
-    } else if (code == 69) {
-    	// e=right
-        sendMotors(pow, -pow, -pow, pow);
-    } else {
-        return;
-    }
-    lastKeyPressed = code;
-};
-
-window.onkeyup = function (e) {
-    let keyboardEnable = document.getElementById('keyboard-controls').checked;
-    if (!keyboardEnable) return;
-
-    let code = e.keyCode ? e.keyCode : e.which;
-
-    if (code === lastKeyPressed) {
-        // Stop
-       sendMotors(0,0,0,0);
-       lastKeyPressed = -1;
-    }
-};
-});
-
-/*
-*   Send KV -- allows users to manually send key and value to bot (for debugging/testing
-    purposes)
-*/
-function sendKV(){
-    $.ajax({
-        method:'POST',
-        url:'/sendKV',
-        dataType: 'json',
-        data: JSON.stringify({
-            key:$("#kv_key").val(),
-            value:$("#kv_value").val(),
-            name:getBotID()
-        }),
-        contentType: 'application/json'
-    });
-}
