@@ -47,13 +47,13 @@ class CommandCenter(object):
         """
         Sets the wheel power for all four wheels. Wheel power should be a number
         from -100 to 100. Negative number implies that the wheel is moving
-        backwards
+        backwards.
 
         Args:
-            fl (float): power to set the front left wheel
-            fr (float): power to set the front right wheel
-            bl (float): power to set the back left wheel
-            br (float): power to set the back right wheel
+            fl (float): power to set the front left wheel.
+            fr (float): power to set the front right wheel.
+            bl (float): power to set the back left wheel.
+            br (float): power to set the back right wheel.
 
         Returns:
             (bool): true if the command was successful sent to the MiniBot.

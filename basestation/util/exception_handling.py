@@ -7,9 +7,9 @@ def log_exn_info(e, msg=""):
 
     Args:
         e (exn): The exception thrown. Its traceback will be logged
-        msg (str): Message to log, default is "" (empty string)
+        msg (str): Message to log, default is `""` (empty string)
     """
     print(msg)  # currently printing instead of logging
-    print("\033[91m" + "[ ERROR ]: " + e.strerror + "\033[0m")
+    print("" + "[ ERROR ]: " + e.strerror + "")
     traceback.print_tb(e.__traceback__)
     return
