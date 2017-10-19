@@ -73,8 +73,7 @@ class AddBotHandler(tornado.web.RequestHandler):
         port = info['port']
 
         bot_name = BaseStation().get_bot_manager().add_bot(name, ip, port)
-        print('THING')
-        print(bot_name)
+        print("Bot name: " + bot_name)
         self.write(bot_name.encode())
 
 

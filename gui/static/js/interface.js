@@ -113,7 +113,6 @@ $('#addBot').click(function() {
         contentType: 'application/json',
         success: function(data) {
             console.log("Adding is a success!");
-            console.log(data);
             updateDropdown(true, data, data);
         },
         error: function(error) {
