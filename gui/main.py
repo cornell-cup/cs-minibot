@@ -27,7 +27,8 @@ class BaseInterface:
             ("/gui", BaseStationHandler),
             ("/addBot", AddBotHandler),
             ("/commandBot", CommandBotHandler),
-            ("/discoverBot", DiscoverBotsHandler)
+            ("/discoverBot", DiscoverBotsHandler),
+            ("/sendKV", SendKVHandler)
         ]
         self.settings = {
             "static_path": os.path.join(os.path.dirname(__file__), "static")
@@ -107,7 +108,15 @@ class DiscoverBotsHandler(tornado.web.RequestHandler):
 
 class SendKVHandler(tornado.web.RequestHandler):
     def post(self):
-        pass
+        info = json.loads(self.request.body.decode())
+        key = info['key']
+        val = info['value']
+        name = info['name']
+        print("Sending key (" + key + ") and value (" + val + ") to " + name)
+
+        # Sends KV through command center.
+        bot_cc = BaseStation().get_bot_manager.get_bot_by_name(name).get_command_center()
+        return bot_cc.sendKV(key, val)
 
 if __name__ == "__main__":
     """
