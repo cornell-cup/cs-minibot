@@ -95,7 +95,11 @@ class CommandBotHandler(tornado.web.RequestHandler):
 class DiscoverBotsHandler(tornado.web.RequestHandler):
     def post(self):
         discovered = BaseStation().get_bot_manager().get_all_discovered_bots()
-        return discovered
+        self.write(discovered)
+
+class SendKVHandler(tornado.web.RequestHandler):
+    def post(self):
+        pass
 
 if __name__ == "__main__":
     """
