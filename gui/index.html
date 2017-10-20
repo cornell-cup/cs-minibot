@@ -147,21 +147,32 @@
 		<!-- BLOCKLY TOOLBOX -->
 		<!--<div id="blocklyDiv" style="margin:0; height: 60vh; width: 80vw;"></div>-->
 		<xml id="toolbox" style="display:none;">
-			<block type="controls_if"></block>
-            <block type="variables_set"></block>
-            <block type="variables_get"></block>
-			<block type="logic_compare"></block>
-			<block type="controls_repeat_ext"></block>
-			<block type="math_number"></block>
-			<block type="math_arithmetic"></block>
-			<block type="text"></block>
-			<block type="text_print"></block>
-
+			<category name = "Control" colour = "220">
+				<block type="controls_repeat_ext"></block>
+				<block type="controls_if"></block>
+			</category>
+			<category name = "Logic" colour = "30">
+				<block type="logic_compare"></block>
+			</category>
+			<category name = "Variables" colour = "200" custom = "VARIABLE">
+				<block type="variables_set"></block>
+				<block type="variables_get"></block>
+			</category>
+			<category name = "Math" colour = "300">
+				<block type="math_number"></block>
+				<block type="math_arithmetic"></block>
+			</category>
+			<category name = "Text" colour = "0">
+				<block type="text"></block>
+				<block type="text_print"></block>
+			</category>
+			<category name = "Move" colour = "175">
+				<block type="move"></block>
+				<block type="turn"></block>
+				<block type="setwheelpower"></block>
+				<block type="wait"></block>
+			</category>
 			<!-- ADDING CUSTOM BLOCKS -->
-			<block type="move"></block>
-			<block type="turn"></block>
-			<block type="setwheelpower"></block>
-			<block type="wait"></block>
 		</xml>
 
 		<!-- SUBMIT/DOWNLOAD/UPLOAD FUNCTIONALITIES -->
