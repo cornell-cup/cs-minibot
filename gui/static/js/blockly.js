@@ -111,4 +111,3 @@ function appendCode(code) {
   var content = $("#data").val();
   $("data").val(content + code);
 }
-
