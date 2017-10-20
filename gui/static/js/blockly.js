@@ -112,3 +112,9 @@ function appendCode(code) {
   $("data").val(content + code);
 }
 
+//function createVariable(button){return Blockly.Variables.createVariable(button.getTargetWorkspace());}
+//workspace.registerButtonCallback("makeVariable", createVariable($("#newVariable")));
+
+workspace.registerButtonCallback("makeVariable", function createVariable(button){
+    return Blockly.Variables.createVariable(button.getTargetWorkspace());
+});
