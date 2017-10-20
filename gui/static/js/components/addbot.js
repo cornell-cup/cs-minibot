@@ -1,4 +1,5 @@
 var React = require('react');
+var axios = require('axios');
 
 /**
  * Component for displaying each discovered bot
@@ -8,7 +9,8 @@ class DiscoveredBot extends React.Component {
     render() {
         var styles = {
             ipAddress: {
-                float: "left"
+                float: "left",
+                marginRight: 5
             }
         }
         return (
@@ -79,31 +81,17 @@ export default class AddBot extends React.Component {
         Get set of discoverable minibots
     */
     updateDiscoveredBots(){
-//        $.ajax({
-        //            method: "POST",
-        //            url: '/discoverBots',
-        //            dataType: 'json',
-        //            data: '',
-        //            contentType: 'application/json',
-        //            success: function (data) {
-        //                 //Check if discovered_bots and data are the same (check length and then contents)
-        //                if(data.length != discovered_bots.length){
-        //                    //If not then clear list and re-make displayed elements
-        //                    redoDiscoverList(data);
-        //                }
-        //                else{
-        //                    //Check value to ensure both structures contain the same data
-        //                    for(let x=0;x<data.length;x++){
-        //                        if(data[x]!=discovered_bots[x]){
-        //                            redoDiscoverList(data);
-        //                            //Prevent the list from being remade constantly
-        //                            break;
-        //                        }
-        //                    }
-        //                }
-        //                setTimeout(updateDiscoveredBots,3000); // Try again in 3 sec
-        //            }
-        //        });
+        var _this = this;
+        axios({
+            method:'POST',
+            url:'/discoverBots',
+        })
+            .then(function(response) {
+                _this.redoDiscoverList(response.data);
+        })
+            .catch(function (error) {
+                console.log(error);
+        });
     }
 
     redoDiscoverList(data){
@@ -124,7 +112,8 @@ export default class AddBot extends React.Component {
                 height: '25%'
             },
             ActiveBotTitle: {
-                float: "left"
+                float: "left",
+                marginRight: 5
             }
         }
         return (

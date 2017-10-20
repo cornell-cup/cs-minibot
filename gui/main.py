@@ -27,7 +27,7 @@ class BaseInterface:
             ("/gui", BaseStationHandler),
             ("/addBot", AddBotHandler),
             ("/commandBot", CommandBotHandler),
-            ("/discoverBot", DiscoverBotsHandler),
+            ("/discoverBots", DiscoverBotsHandler),
             ("/sendKV", SendKVHandler)
         ]
         self.settings = {
@@ -53,7 +53,7 @@ class BaseInterface:
 class BaseStationHandler(tornado.web.RequestHandler):
     def get(self):
         # self.write("Hi There")
-        self.render("../gui/index.html", title="Title", items=[])
+        self.render("../gui/index2.html", title="Title", items=[])
 
 
 class AddBotHandler(tornado.web.RequestHandler):
@@ -103,7 +103,7 @@ class CommandBotHandler(tornado.web.RequestHandler):
 class DiscoverBotsHandler(tornado.web.RequestHandler):
     def post(self):
         discovered = BaseStation().get_bot_manager().get_all_discovered_bots()
-        self.write(discovered)
+        self.write(json.dumps(discovered))
 
 class SendKVHandler(tornado.web.RequestHandler):
     def post(self):
