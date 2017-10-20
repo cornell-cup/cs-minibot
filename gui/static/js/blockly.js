@@ -111,3 +111,14 @@ function appendCode(code) {
   var content = $("#data").val();
   $("data").val(content + code);
 }
+
+//function createVariable(button){return Blockly.Variables.createVariable(button.getTargetWorkspace());}
+//workspace.registerButtonCallback("makeVariable", createVariable($("#newVariable")));
+
+//workspace.registerButtonCallback("makeVariable", function createVariable(button){
+//    return Blockly.Variables.createVariable(button.getTargetWorkspace());
+//});
+
+workspace.registerButtonCallback("createMinibot", function(button){
+    return Blockly.Variables.createVariable(button.getTargetWorkspace(), null, "minibot");
+});
