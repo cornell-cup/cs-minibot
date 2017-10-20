@@ -149,18 +149,46 @@
 		<xml id="toolbox" style="display:none;">
 			<category name = "Control" colour = "220">
 				<block type="controls_repeat_ext"></block>
-				<block type="controls_if"></block>
+				<block type="controls_repeat"></block>
+				<block type="controls_for"></block>
+				<block type="controls_forEach"></block>
+				<block type="controls_flow_statements"></block>
+				<block type="controls_whileUntil"></block>
 			</category>
 			<category name = "Logic" colour = "30">
 				<block type="logic_compare"></block>
+				<block type="logic_negate"></block>
+				<block type="logic_boolean"></block>
+				<block type="logic_operation"></block>
+				<block type="logic_ternary"></block>
+				<block type="logic_null"></block>
+				<block type="controls_if"></block>
+				<block type="controls_ifelse"></block>
 			</category>
 			<category name = "Math" colour = "300">
 				<block type="math_number"></block>
 				<block type="math_arithmetic"></block>
+				<block type="math_single"></block>
+				<block type="math_trig"></block>
+				<block type="math_constant"></block>
+				<block type="math_number_property"></block>
+				<block type="math_change"></block>
+				<block type="math_round"></block>
+				<block type="math_on_list"></block>
+				<block type="math_modulo"></block>
+				<block type="math_constrain"></block>
 			</category>
 			<category name = "Text" colour = "0">
 				<block type="text"></block>
+				<block type="text_join"></block>
+				<block type="text_create_join_container"></block>
+				<block type="text_create_join_item"></block>
 				<block type="text_print"></block>
+				<block type="text_append"></block>
+				<block type="text_isEmpty"></block>
+				<block type="text_indexOf"></block>
+				<block type="text_charAt"></block>
+				<block type="text_length"></block>
 			</category>
 			<category name = "Move" colour = "175">
 				<block type="move"></block>
@@ -168,7 +196,19 @@
 				<block type="setwheelpower"></block>
 				<block type="wait"></block>
 			</category>
-				<category name = "Variables" colour = "200" custom = "VARIABLE">
+			<category name = "Lists" colour = "250">
+				<block type="lists_create_empty"></block>
+				<block type="lists_repeat"></block>
+				<block type="lists_isEmpty"></block>
+				<block type="lists_length"></block>
+			</category>
+			<category name = "Color" colour = "75">
+				<block type="colour_picker"></block>
+				<block type="colour_random"></block>
+				<block type="colour_rgb"></block>
+				<block type="colour_blend"></block>
+			</category>
+			<category name = "Variables" colour = "200" custom = "VARIABLE">
 				<block type="variables_set"></block>
 				<block type="variables_get"></block>
 			</category>
