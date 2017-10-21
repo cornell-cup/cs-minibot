@@ -92,7 +92,7 @@ export default class Python extends React.Component {
             method:'POST',
             url:'/uploadScript',
             data: JSON.stringify({
-                name: $("#id").val(),
+                name: document.getElementById("id").value,
                 script: getBlocklyScript()
             }),
             dataType: 'json',
