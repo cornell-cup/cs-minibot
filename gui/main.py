@@ -113,7 +113,7 @@ class DiscoverBotsHandler(tornado.web.RequestHandler):
     """
     def post(self):
         discovered = BaseStation().get_bot_manager().get_all_discovered_bots()
-        print("Discovered bot: " + discovered)
+        print("Discovered bot: " + str(discovered))
         self.write(json.dumps(discovered))
 
 

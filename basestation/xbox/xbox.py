@@ -20,6 +20,7 @@ class Xbox(object):
 
     def __init__(self, xbox_id, vbot_name):
         self.__joystick = pygame.joystick.Joystick(xbox_id)
+        self.__joystick.init()
         self.__assoc_vbot = BaseStation().get_bot_manager().\
             get_bot_by_name(vbot_name)
 
@@ -28,6 +29,7 @@ class Xbox(object):
             raise RuntimeError(vbot_name + " does not exist")
 
         self.__xbox_listener = threading.Thread(target=self.__listen)
+        self.__xbox_listener.start()
         return
 
     def __del__(self):
@@ -53,9 +55,12 @@ class Xbox(object):
     def __listen(self):
         try:
             while True:
+                pygame.event.get()
                 dpad_val = self.__joystick.get_hat(0)
+                print("a",)
                 if dpad_val != (0, 0):
                     # dpad is pressed
+                    print(dpad_val)
                     self.__dpad_parse(dpad_val)
 
                 # take y values of the thumbs
@@ -63,7 +68,9 @@ class Xbox(object):
                 # negative values
                 left_thumb_val = -self.__joystick.get_axis(1)
                 right_thumb_val = -self.__joystick.get_axis(3)
-                self.__thumbs_parse(left_thumb_val, right_thumb_val)
+                if left_thumb_val > .2 or right_thumb_val > .2:
+                    print(left_thumb_val, right_thumb_val)
+                    self.__thumbs_parse(left_thumb_val, right_thumb_val)
 
         except RuntimeError as e:
             msg = "Unable to get input from Xbox with ID = "\

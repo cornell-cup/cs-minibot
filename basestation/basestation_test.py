@@ -2,6 +2,7 @@
 # but will do
 
 from basestation.base_station import BaseStation
+from basestation.xbox.xbox_manager import XboxManager
 import time
 
 forward = ("50.0", "50.0", "50.0", "50.0")
@@ -37,6 +38,23 @@ if __name__ == "__main__":
                           stop[0] + "," + stop[1] + "," + stop[2] +
                           "," + stop[3])
                 print("should stop")
+
+                default_xbox_id = 0
+                xbox_res = XboxManager().run_xbox(testbot, default_xbox_id)
+
+                msg = ""
+                if xbox_res is None:
+                    msg = "Xbox with ID = " + str(
+                        default_xbox_id) + "not detected."
+                elif xbox_res < 0:
+                    msg = "No MiniBot with name " + testbot + " exists."
+                else:
+                    msg = "MiniBot " + testbot + " associated with Xbox with " \
+                                                "ID = " + \
+                          str(default_xbox_id) + "."
+                print(msg)
+                while True:
+                    pass
             else:
                 print("bot not accessible")
 
