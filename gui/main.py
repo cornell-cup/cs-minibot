@@ -105,6 +105,7 @@ class DiscoverBotsHandler(tornado.web.RequestHandler):
         discovered = BaseStation().get_bot_manager().get_all_discovered_bots()
         self.write(json.dumps(discovered))
 
+
 class SendKVHandler(tornado.web.RequestHandler):
     def post(self):
         info = json.loads(self.request.body.decode())

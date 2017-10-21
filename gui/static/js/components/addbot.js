@@ -44,6 +44,10 @@ export default class AddBot extends React.Component {
         this.updateDiscoveredBots = this.updateDiscoveredBots.bind(this);
     }
 
+    componentWillMount() {
+        this.updateDiscoveredBots()
+    }
+
     /* handles input change for input fields */
     handleInputChange(event) {
         const target = event.target;
