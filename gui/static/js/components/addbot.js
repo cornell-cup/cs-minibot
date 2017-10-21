@@ -44,6 +44,7 @@ export default class AddBot extends React.Component {
         this.updateDiscoveredBots = this.updateDiscoveredBots.bind(this);
     }
 
+    /* Searches for bots on page load */
     componentWillMount() {
         this.updateDiscoveredBots()
     }
