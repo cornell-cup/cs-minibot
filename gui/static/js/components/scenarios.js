@@ -113,23 +113,6 @@ export default class ScenariosItem extends React.Component {
         li.splice(event.idx, 1);
         this.setState({items: li});
     }
-
-/**
- * Component for the new scenarios system
- * Will contain:
- * Loading, saving, editing, adding scenarios to simulator
- *
- */
-export default class Scenarios extends React.Component {
-    //TODO WIP
-    constructor(props) {
-        super(props);
-        this.state = {
-            scenario: {}, //a scenario JSON, initially empty
-            filename: ""
-        };
-
-    }
     
     render() {
         var styles = {
