@@ -9,8 +9,6 @@ import json
 
 # Minibot imports.
 from basestation.base_station import BaseStation
-from basestation.bot.commands.command_center import CommandCenter
-
 
 class BaseInterface:
     """
@@ -144,6 +142,12 @@ class ScriptHandler(tornado.web.RequestHandler):
         else:
             print("[ERROR] Bot not detected when trying to send script.")
 
+class XboxHandler(tornado.web.RequestHandler):
+    """
+    Handles XBOX.
+    """
+    def post(self):
+        pass
 
 if __name__ == "__main__":
     """
