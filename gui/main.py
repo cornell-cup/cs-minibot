@@ -10,6 +10,7 @@ import json
 # Minibot imports.
 from basestation.base_station import BaseStation
 from basestation.bot.commands.command_center import CommandCenter
+from basestation.xbox.xbox_manager import XboxManager
 
 
 class BaseInterface:
@@ -30,7 +31,9 @@ class BaseInterface:
             ("/commandBot", CommandBotHandler),
             ("/discoverBots", DiscoverBotsHandler),
             ("/removeBot", RemoveBotHandler),
-            ("/sendKV", SendKVHandler)
+            ("/sendKV", SendKVHandler),
+            ("/xboxStart", XboxStartHandler),
+            ("/xboxStop", XboxStopHandler)
         ]
         self.settings = {
             "static_path": os.path.join(os.path.dirname(__file__), "static")
@@ -164,6 +167,43 @@ class ScriptHandler(tornado.web.RequestHandler):
             self.write(bot.get_command_center().sendKV("SCRIPT", script))
         else:
             print("[ERROR] Bot not detected when trying to send script.")
+
+
+class XboxStartHandler(tornado.web.RequestHandler):
+    """
+    Associates a Xbox Controller with a MiniBot.
+    """
+    def post(self):
+        info = json.loads(self.request.body.decode())
+        name = info["name"]
+        default_xbox_id = 0
+        xbox_res = XboxManager().run_xbox(name, default_xbox_id)
+
+        msg = ""
+        if xbox_res is None:
+            msg = "Xbox with ID = " + str(default_xbox_id) + "not detected."
+        elif xbox_res < 0:
+            msg = "No MiniBot with name " + name + " exists."
+        else:
+            msg = "MiniBot " + name + " associated with Xbox with ID = " + \
+                  str(default_xbox_id) + "."
+        print(msg)
+        self.write(msg.encode())
+
+
+class XboxStopHandler(tornado.web.RequestHandler):
+    """
+    Terminates the Xbox Controller functioning on a MiniBot. Can be activated
+    again.
+    """
+    def post(self):
+        default_xbox_id = 0
+
+        if XboxManager().stop_xbox(default_xbox_id):
+            msg = "Xbox with ID = " + str(default_xbox_id) + " stopped."
+        else:
+            msg = "Stopping Xbox with ID = " + str(default_xbox_id) + " failed."
+        self.write(msg.encode())
 
 
 if __name__ == "__main__":

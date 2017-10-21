@@ -1,5 +1,6 @@
 from basestation.bot.bot_manager import BotManager
 from basestation.vision.vision_manager import VisionManager
+from basestation.util.class_util import Singleton
 
 # We define a metaclass for BaseStation - the BaseStation will be an instance
 #  of the metaclass Singleton. This is very powerful as it reflects how the
@@ -7,17 +8,6 @@ from basestation.vision.vision_manager import VisionManager
 # the BaseStation will behave like a singleton.
 # References:
 # - https://stackoverflow.com/questions/6760685/creating-a-singleton-in-python
-
-
-class Singleton(type):
-    """ A metaclass for describing a singleton class. """
-
-    __instances = None
-
-    def __call__(cls, *args, **kwargs):
-        if cls.__instances is None:
-            cls.__instances = super(Singleton, cls).__call__(*args, **kwargs)
-        return cls.__instances
 
 
 class BaseStation(object, metaclass=Singleton):

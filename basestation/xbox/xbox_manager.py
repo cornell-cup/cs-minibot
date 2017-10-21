@@ -1,12 +1,13 @@
 from basestation.base_station import BaseStation
 from basestation.xbox.xbox import Xbox
 from basestation.util.exception_handling import *
+from basestation.util.class_util import Singleton
 
 import pygame
 from typing import Optional
 
 
-class XboxManager(object):
+class XboxManager(object, metaclass=Singleton):
     def __init__(self):
         pygame.joystick.init()
         self.__xboxs = {}

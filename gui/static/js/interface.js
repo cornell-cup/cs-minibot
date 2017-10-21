@@ -88,7 +88,7 @@ $('#xbox-off').click(function() {
 	// ajax post to backend to remove a bot from list.
 	$.ajax({
 		method: "POST",
-		url: '/stopXbox',
+		url: '/xboxStop',
 		dataType: 'json',
 		contentType: 'application/json',
 		success: function properlyRemoved(data) {
