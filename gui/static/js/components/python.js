@@ -1,6 +1,7 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 
+
 /**
  * Component for the Python text box
  * Contains:
@@ -34,12 +35,12 @@ export default class Python extends React.Component {
         if (name=="data") {document.getElementById("data").value = this.state.data;}
     }
 
+
     /* DOWNLOAD FUNCTION
        Allows users to download raw code as a file. Users must
        manually input file name and file ext.
     */
     download(event){
-
         console.log("download listener");
         event.preventDefault();
         var element = document.createElement('a');
@@ -50,26 +51,23 @@ export default class Python extends React.Component {
         element.click();
         document.body.removeChild(element);
     }
+
     /* UPLOAD FUNCTION
         Allows users to upload previously written code as a file
         so that they may run Python scripts that have been written
         externally without Blockly.
-
-        TODO: possibly make it so that uploaded scripts can be also
-        represented as blocks in the blockly view???
-
     */
+
     upload(event){
         console.log("upload listener");
-        var files = event.target.files;
+        var _this = this;
+        var file = event.target.files[0];
         var reader = new FileReader();
-        var f = files[0];
-        // reader.onload = (function(this.state.file) {
-        //     return function(e) {
-        //         this.state.code = e.target.result;
-        //     }
-        // })(f);
-        // reader.readAsText(f);
+        reader.onload = function(event) {
+            _this.state.data = event.target.result;
+            document.getElementById("data").value = event.target.result;
+        };
+        reader.readAsText(file);
     }
 
     /* Handler for key input; allows for tabs (4 spaces!!) in text box */
@@ -92,17 +90,24 @@ export default class Python extends React.Component {
     */
     send(){
         console.log("send listener");
-        // $.ajax({
-        //     method: "POST",
-        //     url: '/uploadScript',
-        //     dataType: 'json',
-        //     data: JSON.stringify({
-        //         name: $("#id").val(),
-        //         script: getBlocklyScript()
-        //     }),
-        //     contentType: 'application/json'
-        // });
+        axios({
+            method:'POST',
+            url:'/uploadScript',
+            data: JSON.stringify({
+                name: document.getElementById("id").value,
+                script: getBlocklyScript()
+            }),
+            dataType: 'json',
+            contentType: 'application/json'
+        })
+        .then(function(response) {
+            console.log('sent script successfully');
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
     }
+
 
     render(){
         return (
@@ -118,6 +123,7 @@ export default class Python extends React.Component {
                         id="upload"
                         multiplesize="1"
                         accept=".py"
+                        onChange = {this.upload}
                     />
                 </form>
             </div>

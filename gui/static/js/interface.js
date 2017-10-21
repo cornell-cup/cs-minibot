@@ -84,6 +84,14 @@ $("#send").click(function(event) {
     sendScript();
 });
 
+<<<<<<< HEAD
+
+
+
+
+
+
+=======
 $('#xbox-off').click(function() {
 	// ajax post to backend to remove a bot from list.
 	$.ajax({
@@ -123,6 +131,7 @@ $('#addBot').click(function() {
     console.log("hello pls work");
 });
 
+>>>>>>> develop
 /*
 	For any update to the list of active bots, the dropdown menu
 	of active bots will update accordingly (depending on the addition

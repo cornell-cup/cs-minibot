@@ -1,4 +1,5 @@
 var React = require('react');
+
 var axios = require('axios');
 
 /**
@@ -24,9 +25,9 @@ class DiscoveredBot extends React.Component {
     }
 }
 
+
 /**
  * Component for the add bot interface
- *
  */
 export default class AddBot extends React.Component {
     constructor(props) {
