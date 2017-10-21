@@ -39,7 +39,6 @@ export default class Python extends React.Component {
        manually input file name and file ext.
     */
     download(event){
-
         console.log("download listener");
         event.preventDefault();
         var element = document.createElement('a');
@@ -55,22 +54,18 @@ export default class Python extends React.Component {
         Allows users to upload previously written code as a file
         so that they may run Python scripts that have been written
         externally without Blockly.
-
-        TODO: possibly make it so that uploaded scripts can be also
-        represented as blocks in the blockly view???
-
     */
+
     upload(event){
         console.log("upload listener");
-        var files = event.target.files;
+        var _this = this;
+        var file = event.target.files[0];
         var reader = new FileReader();
-        var f = files[0];
-        // reader.onload = (function(this.state.file) {
-        //     return function(e) {
-        //         this.state.code = e.target.result;
-        //     }
-        // })(f);
-        // reader.readAsText(f);
+        reader.onload = function(event) {
+            _this.state.data = event.target.result;
+            document.getElementById("data").value = event.target.result;
+        };
+        reader.readAsText(file);
     }
 
     /* Handler for key input; allows for tabs (4 spaces!!) in text box */
@@ -126,6 +121,7 @@ export default class Python extends React.Component {
                         id="upload"
                         multiplesize="1"
                         accept=".py"
+                        onChange = {this.upload}
                     />
                 </form>
             </div>

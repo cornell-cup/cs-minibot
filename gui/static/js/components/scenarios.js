@@ -23,8 +23,19 @@ export default class Scenarios extends React.Component {
     }
 
     editScenario(event){
-        //TODO
+        /* TODO handles when any scenario object is edited
+        This does NOT change anything, it constructs a scenario JSON from the scenarioObject JSONs
+        in the child components, and then passes it to changeScenario
+        */
         console.log('the current scenario has been edited');
+        var scenario = {};
+        this.changeScenario(scenario);
+    }
+
+    /* changes the scenario in state and on the display, takes JSON as input*/
+    changeScenario(scenario){
+        //TODO
+        console.log("change scenario listener");
     }
 
     /* handler for add scenario (load currently displayed scenario into simulator) */
@@ -79,7 +90,16 @@ export default class Scenarios extends React.Component {
     /* handler for load scenario (load scenario from file) */
     loadScenario(event){
         console.log("loading scenario listener");
-        //needs to be reimplemented the same way as the python script load from file
+        //implement the same way as python script upload button in interface
+        var _this = this;
+        var file = event.target.files[0];
+        var reader = new FileReader();
+        reader.onload = function(event) {
+            var scenario = JSON.parse(event.target.result);
+            _this.state.scenario = scenario;
+            _this.changeScenario(scenario);
+        };
+        reader.readAsText(file);
     }
 
     render() {
