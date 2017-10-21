@@ -11,17 +11,21 @@
 
 /* NAVBAR */
 .navbar {
-width: 100vw;
-height: 8vh;
-size: 5em;
-background: #323232;
-color: white;
+    width: 100vw;
+    height: 8vh;
+    size: 5em;
+    background: #323232;
+    color: white;
 }
 
 .logo {
-height: 7vh;
-width: 7vh;
-padding:0.5vh;
+    height: 7vh;
+    width: 7vh;
+    padding:0.5vh;
+}
+
+table{
+    text-align:center;
 }
 
 table{

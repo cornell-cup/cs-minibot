@@ -1,10 +1,24 @@
 var React = require('react');
+<<<<<<< HEAD
 
+=======
+var axios = require('axios');
+
+/**
+ * Component for displaying each discovered bot
+ *
+ */
+>>>>>>> develop
 class DiscoveredBot extends React.Component {
     render() {
         var styles = {
             ipAddress: {
+<<<<<<< HEAD
                 float: "left"
+=======
+                float: "left",
+                marginRight: 5
+>>>>>>> develop
             }
         }
         return (
@@ -18,8 +32,16 @@ class DiscoveredBot extends React.Component {
     }
 }
 
+<<<<<<< HEAD
 export default class AddBot extends React.Component {
     //TODO
+=======
+/**
+ * Component for the add bot interface
+ *
+ */
+export default class AddBot extends React.Component {
+>>>>>>> develop
     constructor(props) {
         super(props);
         this.state = {
@@ -35,6 +57,15 @@ export default class AddBot extends React.Component {
         this.updateDiscoveredBots = this.updateDiscoveredBots.bind(this);
     }
 
+<<<<<<< HEAD
+=======
+    /* Searches for bots on page load */
+    componentWillMount() {
+        this.updateDiscoveredBots()
+    }
+
+    /* handles input change for input fields */
+>>>>>>> develop
     handleInputChange(event) {
         const target = event.target;
         const value = target.value;
@@ -45,6 +76,11 @@ export default class AddBot extends React.Component {
         });
     }
 
+<<<<<<< HEAD
+=======
+    /* Attempts to add a bot with the specified params
+    * */
+>>>>>>> develop
     addbot(e){
         //TODO
         console.log('addbot button clicked');
@@ -69,6 +105,7 @@ export default class AddBot extends React.Component {
         Get set of discoverable minibots
     */
     updateDiscoveredBots(){
+<<<<<<< HEAD
 //        $.ajax({
         //            method: "POST",
         //            url: '/discoverBots',
@@ -94,6 +131,19 @@ export default class AddBot extends React.Component {
         //                setTimeout(updateDiscoveredBots,3000); // Try again in 3 sec
         //            }
         //        });
+=======
+        var _this = this;
+        axios({
+            method:'POST',
+            url:'/discoverBots',
+        })
+            .then(function(response) {
+                _this.redoDiscoverList(response.data);
+        })
+            .catch(function (error) {
+                console.log(error);
+        });
+>>>>>>> develop
     }
 
     redoDiscoverList(data){
@@ -114,7 +164,12 @@ export default class AddBot extends React.Component {
                 height: '25%'
             },
             ActiveBotTitle: {
+<<<<<<< HEAD
                 float: "left"
+=======
+                float: "left",
+                marginRight: 5
+>>>>>>> develop
             }
         }
         return (

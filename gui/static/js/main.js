@@ -8,8 +8,15 @@ import Scenarios from './components/scenarios.js';
 import AddBot from './components/addbot.js';
 import GridView from './components/gridview.js';
 
+<<<<<<< HEAD
 //var Python = require('./components/python.js');
 
+=======
+/**
+ * Component for the Navbar on top
+ * Currently this does nothing except display some text and an image
+ */
+>>>>>>> develop
 class Navbar extends React.Component {
     render () {
         return (
@@ -20,6 +27,9 @@ class Navbar extends React.Component {
     }
 }
 
+/**
+ * Top Level component for the GUI, includes two tabs
+ */
 class Platform extends React.Component {
     render() {
         return (
@@ -42,7 +52,12 @@ class Platform extends React.Component {
         )
     }
 }
-//Setup Tab
+
+/**
+ * Component for the setup tab
+ * Contains:
+ * addBot, gridView, and Scenarios
+ */
 class SetupTab extends React.Component {
     render() {
         return (
@@ -62,7 +77,15 @@ class SetupTab extends React.Component {
 }
 
 
+<<<<<<< HEAD
 //Control Tab
+=======
+/**
+ * Component for the coding/control tab
+ * Contains:
+ * python, blockly, gridView, controlpanel
+ */
+>>>>>>> develop
 class ControlTab extends React.Component {
     render(){
         return (

@@ -1,5 +1,6 @@
 var React = require('react');
 
+<<<<<<< HEAD
 export default class ScenariosItem extends React.Component {
     constructor() {
         super();
@@ -120,6 +121,20 @@ export default class ScenariosItem extends React.Component {
                 }
             </div>
         );
+=======
+/**
+ * Component for the new scenarios system
+ * Will contain:
+ * Loading, saving, editing, adding scenarios to simulator
+ *
+ */
+export default class Scenarios extends React.Component {
+    //TODO
+    render() {
+        return(
+            <div id ="component_scenarios" className = "box">Scenarios</div>
+        )
+>>>>>>> develop
     }
 }
 //
