@@ -1,6 +1,7 @@
 import pygame
 from basestation.base_station import BaseStation
 
+
 class XboxManager(object):
     def __init__(self):
         pygame.joystick.init()
