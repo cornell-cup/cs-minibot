@@ -9,7 +9,6 @@ import json
 
 # Minibot imports.
 from basestation.base_station import BaseStation
-from basestation.bot.commands.command_center import CommandCenter
 from basestation.xbox.xbox_manager import XboxManager
 
 
@@ -114,7 +113,7 @@ class DiscoverBotsHandler(tornado.web.RequestHandler):
     """
     def post(self):
         discovered = BaseStation().get_bot_manager().get_all_discovered_bots()
-        print(discovered)
+        print("Discovered bot: " + discovered)
         self.write(json.dumps(discovered))
 
 
