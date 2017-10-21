@@ -28,7 +28,8 @@ class BaseInterface:
             ("/gui", BaseStationHandler),
             ("/addBot", AddBotHandler),
             ("/commandBot", CommandBotHandler),
-            ("/discoverBot", DiscoverBotsHandler),
+            ("/discoverBots", DiscoverBotsHandler),
+            ("/removeBot", RemoveBotHandler),
             ("/sendKV", SendKVHandler)
         ]
         self.settings = {
@@ -110,7 +111,25 @@ class DiscoverBotsHandler(tornado.web.RequestHandler):
     """
     def post(self):
         discovered = BaseStation().get_bot_manager().get_all_discovered_bots()
-        self.write(discovered)
+        print(discovered)
+        self.write(json.dumps(discovered))
+
+
+class RemoveBotHandler(tornado.web.RequestHandler):
+    """
+    Used to remove a MiniBot.
+    """
+
+    def post(self):
+        info = json.loads(self.request.body.decode())
+        name = info["name"]
+        op_successful = BaseStation().get_bot_manager().remove_bot_by_name(name)
+
+        if op_successful:
+            self.write(("MiniBot " + name + " successfully removed").encode())
+        else:
+            self.write(("Could not remove " + name).encode())
+
 
 class SendKVHandler(tornado.web.RequestHandler):
     """
@@ -125,8 +144,10 @@ class SendKVHandler(tornado.web.RequestHandler):
         print("Sending key (" + key + ") and value (" + val + ") to " + name)
 
         # Sends KV through command center.
-        bot_cc = BaseStation().get_bot_manager().get_bot_by_name(name).get_command_center()
+        bot_cc = BaseStation().get_bot_manager().\
+            get_bot_by_name(name).get_command_center()
         self.write(bot_cc.sendKV(key, val))
+
 
 class ScriptHandler(tornado.web.RequestHandler):
     """
@@ -138,7 +159,7 @@ class ScriptHandler(tornado.web.RequestHandler):
         script = info['script']
 
         bot = BaseStation().get_bot_manager().get_bot_by_name(name)
-        if (bot != None):
+        if bot is not None:
             print("Script sent to " + name + "!")
             self.write(bot.get_command_center().sendKV("SCRIPT", script))
         else:

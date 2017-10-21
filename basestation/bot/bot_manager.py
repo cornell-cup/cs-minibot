@@ -70,18 +70,23 @@ class BotManager(object):
 
         Args:
             name (str): The name of the MiniBot.
+
+        Returns:
+            (bool): True if VirtualBot successfully removed, False if
+                operation failed.
         """
         vbot = self.__vbot_map.get(name, None)
 
         try:
             del self.__vbot_map[name]
         except KeyError:
-            pass
+            return False
 
         if vbot is not None:
             del vbot
-
-        return
+            return True
+        else:
+            return False
 
     def get_all_tracked_bots(self) -> list:
         """
