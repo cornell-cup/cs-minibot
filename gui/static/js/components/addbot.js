@@ -94,7 +94,7 @@ export default class AddBot extends React.Component {
 
         for (let i = 0; i < data.length; i++) {
             //Trim the forward-slash
-            var ip_address = data[i].substring(1);
+            var ip_address = data[i];
             new_bots.push(ip_address);
         }
 

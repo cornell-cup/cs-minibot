@@ -77,7 +77,8 @@ class AddBotHandler(tornado.web.RequestHandler):
 
         bot_name = BaseStation().get_bot_manager().add_bot(name, ip, port)
         print("Bot name: " + bot_name)
-        self.write(bot_name.encode())
+        res = {"botName": bot_name, "ip": ip}
+        self.write(json.dumps(res).encode())
 
 
 class CommandBotHandler(tornado.web.RequestHandler):
@@ -109,7 +110,7 @@ class DiscoverBotsHandler(tornado.web.RequestHandler):
     """
     def post(self):
         discovered = BaseStation().get_bot_manager().get_all_discovered_bots()
-        print("Discovered bot: " + discovered)
+        print("Discovered bot: " + str(discovered))
         self.write(json.dumps(discovered))
 
 
