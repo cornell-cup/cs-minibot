@@ -127,7 +127,7 @@ class RemoveBotHandler(tornado.web.RequestHandler):
             self.write(("MiniBot " + name + " successfully removed").encode())
         else:
             self.write(("Could not remove " + name).encode())
-
+        self.write(json.dumps(discovered))
 
 class SendKVHandler(tornado.web.RequestHandler):
     """
