@@ -53,7 +53,7 @@ class BaseInterface:
 class BaseStationHandler(tornado.web.RequestHandler):
     def get(self):
         # self.write("Hi There")
-        self.render("../gui/index2.html", title="Title", items=[])
+        self.render("../gui/index.html", title="Title", items=[])
 
 
 class AddBotHandler(tornado.web.RequestHandler):
