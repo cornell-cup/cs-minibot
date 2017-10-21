@@ -1,12 +1,9 @@
 var React = require('react');
 
-<<<<<<< HEAD
-=======
 /**
  * Component for the grid view of the simulated bots
  *
  */
->>>>>>> develop
 export default class GridView extends React.Component {
     //TODO
     componentDidMount(){

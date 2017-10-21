@@ -1,10 +1,7 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 
-<<<<<<< HEAD
-export default class Python extends React.Component {
-    //TODO DOWNLOAD
-=======
+
 /**
  * Component for the Python text box
  * Contains:
@@ -12,7 +9,6 @@ export default class Python extends React.Component {
  */
 export default class Python extends React.Component {
     //TODO UPLOAD, CAPTURE TAB KEY AND PREVENT DEFAULT ACTION, SEND SCRIPT
->>>>>>> develop
     constructor(props) {
         super(props);
         this.state = {
@@ -24,15 +20,10 @@ export default class Python extends React.Component {
         this.download = this.download.bind(this);
         this.upload = this.upload.bind(this);
         this.send = this.send.bind(this);
-<<<<<<< HEAD
-    }
-
-=======
         this.handleKeyInput = this.handleKeyInput.bind(this);
     }
 
     /* handles input change for file name and coding textboxes */
->>>>>>> develop
     handleInputChange(event) {
         const target = event.target;
         const value = target.value;
@@ -44,19 +35,12 @@ export default class Python extends React.Component {
         if (name=="data") {document.getElementById("data").value = this.state.data;}
     }
 
-<<<<<<< HEAD
-    download(event){
-        /* DOWNLOAD FUNCTION
-          Allows users to download raw code as a file. Users must
-          manually input file name and file ext. */
-=======
+
     /* DOWNLOAD FUNCTION
        Allows users to download raw code as a file. Users must
        manually input file name and file ext.
     */
     download(event){
-
->>>>>>> develop
         console.log("download listener");
         event.preventDefault();
         var element = document.createElement('a');
@@ -67,20 +51,12 @@ export default class Python extends React.Component {
         element.click();
         document.body.removeChild(element);
     }
-<<<<<<< HEAD
 
-    //TODO
-=======
     /* UPLOAD FUNCTION
         Allows users to upload previously written code as a file
         so that they may run Python scripts that have been written
         externally without Blockly.
-
-        TODO: possibly make it so that uploaded scripts can be also
-        represented as blocks in the blockly view???
-
     */
->>>>>>> develop
     upload(event){
         console.log("upload listener");
         var files = event.target.files;
@@ -94,8 +70,6 @@ export default class Python extends React.Component {
         // reader.readAsText(f);
     }
 
-<<<<<<< HEAD
-=======
     /* Handler for key input; allows for tabs (4 spaces!!) in text box */
     handleKeyInput(event){
         if(event.keyCode===9){
@@ -114,7 +88,6 @@ export default class Python extends React.Component {
       Clicking "run" will send Blockly scripts to the base station for
       the actual MiniBot.
     */
->>>>>>> develop
     send(){
         console.log("send listener");
         // $.ajax({
@@ -134,13 +107,8 @@ export default class Python extends React.Component {
             <div id ="python" className ="box">
                 Python
                 File Name: <input type="text" name="filename" value={this.state.filename} onChange={this.handleInputChange}/><br/>
-<<<<<<< HEAD
-                <textarea name="data" id="data" value={this.state.data} onChange={this.handleInputChange}></textarea><br/>
-                <button id="submit" onClick={this.download}>Download</button>
-=======
                 <textarea name="data" id="data" value={this.state.data} onChange={this.handleInputChange} onKeyDown={this.handleKeyInput} ></textarea><br/>
                     <button id="submit" onClick={this.download}>Download</button>
->>>>>>> develop
                 <button id="send" onClick={this.send}>Run Code</button>
                 <form>
                     <input

@@ -1,24 +1,17 @@
 var React = require('react');
-<<<<<<< HEAD
 
-=======
 var axios = require('axios');
 
 /**
  * Component for displaying each discovered bot
  *
  */
->>>>>>> develop
 class DiscoveredBot extends React.Component {
     render() {
         var styles = {
             ipAddress: {
-<<<<<<< HEAD
-                float: "left"
-=======
                 float: "left",
                 marginRight: 5
->>>>>>> develop
             }
         }
         return (
@@ -32,16 +25,11 @@ class DiscoveredBot extends React.Component {
     }
 }
 
-<<<<<<< HEAD
-export default class AddBot extends React.Component {
-    //TODO
-=======
+
 /**
  * Component for the add bot interface
- *
  */
 export default class AddBot extends React.Component {
->>>>>>> develop
     constructor(props) {
         super(props);
         this.state = {
@@ -57,15 +45,12 @@ export default class AddBot extends React.Component {
         this.updateDiscoveredBots = this.updateDiscoveredBots.bind(this);
     }
 
-<<<<<<< HEAD
-=======
     /* Searches for bots on page load */
     componentWillMount() {
         this.updateDiscoveredBots()
     }
 
     /* handles input change for input fields */
->>>>>>> develop
     handleInputChange(event) {
         const target = event.target;
         const value = target.value;
@@ -76,11 +61,8 @@ export default class AddBot extends React.Component {
         });
     }
 
-<<<<<<< HEAD
-=======
     /* Attempts to add a bot with the specified params
     * */
->>>>>>> develop
     addbot(e){
         //TODO
         console.log('addbot button clicked');
@@ -105,33 +87,6 @@ export default class AddBot extends React.Component {
         Get set of discoverable minibots
     */
     updateDiscoveredBots(){
-<<<<<<< HEAD
-//        $.ajax({
-        //            method: "POST",
-        //            url: '/discoverBots',
-        //            dataType: 'json',
-        //            data: '',
-        //            contentType: 'application/json',
-        //            success: function (data) {
-        //                 //Check if discovered_bots and data are the same (check length and then contents)
-        //                if(data.length != discovered_bots.length){
-        //                    //If not then clear list and re-make displayed elements
-        //                    redoDiscoverList(data);
-        //                }
-        //                else{
-        //                    //Check value to ensure both structures contain the same data
-        //                    for(let x=0;x<data.length;x++){
-        //                        if(data[x]!=discovered_bots[x]){
-        //                            redoDiscoverList(data);
-        //                            //Prevent the list from being remade constantly
-        //                            break;
-        //                        }
-        //                    }
-        //                }
-        //                setTimeout(updateDiscoveredBots,3000); // Try again in 3 sec
-        //            }
-        //        });
-=======
         var _this = this;
         axios({
             method:'POST',
@@ -143,7 +98,6 @@ export default class AddBot extends React.Component {
             .catch(function (error) {
                 console.log(error);
         });
->>>>>>> develop
     }
 
     redoDiscoverList(data){
@@ -164,12 +118,8 @@ export default class AddBot extends React.Component {
                 height: '25%'
             },
             ActiveBotTitle: {
-<<<<<<< HEAD
-                float: "left"
-=======
                 float: "left",
                 marginRight: 5
->>>>>>> develop
             }
         }
         return (
