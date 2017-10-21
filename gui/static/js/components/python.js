@@ -50,6 +50,7 @@ export default class Python extends React.Component {
         element.click();
         document.body.removeChild(element);
     }
+
     /* UPLOAD FUNCTION
         Allows users to upload previously written code as a file
         so that they may run Python scripts that have been written
@@ -92,17 +93,24 @@ export default class Python extends React.Component {
     */
     send(){
         console.log("send listener");
-        // $.ajax({
-        //     method: "POST",
-        //     url: '/uploadScript',
-        //     dataType: 'json',
-        //     data: JSON.stringify({
-        //         name: $("#id").val(),
-        //         script: getBlocklyScript()
-        //     }),
-        //     contentType: 'application/json'
-        // });
+        axios({
+            method:'POST',
+            url:'/uploadScript',
+            data: JSON.stringify({
+                name: $("#id").val(),
+                script: getBlocklyScript()
+            }),
+            dataType: 'json',
+            contentType: 'application/json'
+        })
+        .then(function(response) {
+            console.log('sent script successfully');
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
     }
+
 
     render(){
         return (
