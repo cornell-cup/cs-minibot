@@ -9,20 +9,82 @@ export default class ScenariosItem extends React.Component {
             size: '0',
             posx: '0',
             posy: '0',
-            items: [{type: "bot", angle: "90", size: "2", posx: "3", posy: "4"}]
+            items: [{type: "bot", angle: "90", size: "2", posx: "3", posy: "4"}],
+
         };
 
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleRemove = this.handleRemove.bind(this);
+
+        this.addScenario = this.addScenario.bind(this);
+        this.saveScenario = this.saveScenario.bind(this);
+        this.loadScenario = this.loadScenario.bind(this);
     }
 
+    /* handler for add scenario (load currently displayed scenario into simulator) */
+    addScenario(event){
+        console.log("add scenario listener");
+        axios({
+            method:'POST',
+            url:'/addScenario',
+            data: JSON.stringify({items: this.state.items}),
+            dataType: 'text',
+            contentType: 'application/json; charset=utf-8'
+        })
+        .then(function(response) {
+            console.log('added scenario successfully');
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+    }
 
-//    handleAdd() {
-//        var li = this.state.items;
-//        li.push({type: "bot", angle: "30", size: "3", posx:"3", posy:"3"});
-//        this.setState({items: li});
-//    }
+    /* saves currently loaded scenario to file */
+    saveScenario(event){
+        console.log("save scenario listener");
+
+        var scenario = {items: this.state.items};
+        var filename = this.state.filename;
+
+        //Implemented the same way as Python script saving. This might not work so use axios code if it doesn't
+        event.preventDefault();
+        var element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(JSON.stringify(this.state.items)));
+        element.setAttribute('download', this.state.filename);
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+
+        // axios({
+        //     method:'POST',
+        //     url:'/saveScenario',
+        //     data: {scenario: scenario, name: filename},
+        //     dataType: 'text',
+        //     contentType: 'application/json; charset=utf-8'
+        // })
+        // .then(function(response) {
+        //     console.log('saved scenario successfully');
+        // })
+        // .catch(function (error) {
+        //     console.log(error);
+        // });
+    }
+
+    /* handler for load scenario (load scenario from file) */
+    loadScenario(event){
+        console.log("loading scenario listener");
+        //implement the same way as python script upload button in interface
+        var _this = this;
+        var file = event.target.files[0];
+        var reader = new FileReader();
+        reader.onload = function(event) {
+            var scenario = JSON.parse(event.target.result).items;
+            _this.setState({items: scenario});
+        };
+        reader.readAsText(file);
+    }
 
     handleInputChange(event) {
         console.log("handle input change");
@@ -52,6 +114,23 @@ export default class ScenariosItem extends React.Component {
         this.setState({items: li});
     }
 
+/**
+ * Component for the new scenarios system
+ * Will contain:
+ * Loading, saving, editing, adding scenarios to simulator
+ *
+ */
+export default class Scenarios extends React.Component {
+    //TODO WIP
+    constructor(props) {
+        super(props);
+        this.state = {
+            scenario: {}, //a scenario JSON, initially empty
+            filename: ""
+        };
+
+    }
+    
     render() {
         var styles = {
             ScenariosItem: {
@@ -122,45 +201,7 @@ export default class ScenariosItem extends React.Component {
         );
     }
 }
-//
-// //adding a scenario from the value in the scenario viewer
-// $('#addScenario').click(function() {
-//     console.log("add scenario from interface.js")
-//     var scenario = $("#scenario").val();
-//
-//     $.ajax({
-//         method: "POST",
-//         url: '/addScenario',
-//         dataType: 'text',
-//         data: JSON.stringify({
-//             scenario: scenario.toString()
-//         }),
-//         contentType: 'application/json; charset=utf-8',
-//         success: function (data){
-//             console.log("successfully added scenario: "+data);
-//         }
-//     });
-// });
-//
-// //saving a scenario to a txt file with the specified filename
-// $('#saveScenario').click(function() {
-//     console.log("saving a scenario")
-//     var scenario = $("#scenario").val();
-//     var filename = $("#scenarioname").val();
-//
-//     $.ajax({
-//         method: "POST",
-//         url: '/saveScenario',
-//         dataType: 'text',
-//         data: JSON.stringify({scenario: scenario.toString(),
-//             name: filename.toString()}),
-//         contentType: 'application/json; charset=utf-8',
-//         success: function (data){
-//             console.log("successfully saved scenario: "+data);
-//         }
-//     });
-// });
-//
+
 // /**loading a scenario - just type in a name, no need for directory or file
 //  extension*/
 // $('#loadScenario').click(function() {

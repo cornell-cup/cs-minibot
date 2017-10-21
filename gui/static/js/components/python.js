@@ -57,17 +57,17 @@ export default class Python extends React.Component {
         so that they may run Python scripts that have been written
         externally without Blockly.
     */
+
     upload(event){
         console.log("upload listener");
-        var files = event.target.files;
+        var _this = this;
+        var file = event.target.files[0];
         var reader = new FileReader();
-        var f = files[0];
-        // reader.onload = (function(this.state.file) {
-        //     return function(e) {
-        //         this.state.code = e.target.result;
-        //     }
-        // })(f);
-        // reader.readAsText(f);
+        reader.onload = function(event) {
+            _this.state.data = event.target.result;
+            document.getElementById("data").value = event.target.result;
+        };
+        reader.readAsText(file);
     }
 
     /* Handler for key input; allows for tabs (4 spaces!!) in text box */
@@ -90,17 +90,24 @@ export default class Python extends React.Component {
     */
     send(){
         console.log("send listener");
-        // $.ajax({
-        //     method: "POST",
-        //     url: '/uploadScript',
-        //     dataType: 'json',
-        //     data: JSON.stringify({
-        //         name: $("#id").val(),
-        //         script: getBlocklyScript()
-        //     }),
-        //     contentType: 'application/json'
-        // });
+        axios({
+            method:'POST',
+            url:'/uploadScript',
+            data: JSON.stringify({
+                name: document.getElementById("id").value,
+                script: getBlocklyScript()
+            }),
+            dataType: 'json',
+            contentType: 'application/json'
+        })
+        .then(function(response) {
+            console.log('sent script successfully');
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
     }
+
 
     render(){
         return (
@@ -116,6 +123,7 @@ export default class Python extends React.Component {
                         id="upload"
                         multiplesize="1"
                         accept=".py"
+                        onChange = {this.upload}
                     />
                 </form>
             </div>

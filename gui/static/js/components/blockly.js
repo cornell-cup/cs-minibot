@@ -6,7 +6,7 @@ var ReactDOM = require('react-dom');
  *
  */
 export default class Blockly extends React.Component {
-    //TODO getBlocklyScript does not workw
+    //TODO getBlocklyScript does not work
     constructor(props){
         super(props);
         this.getBlocklyScript = this.getBlocklyScript.bind(this);
