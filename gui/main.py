@@ -27,6 +27,7 @@ class BaseInterface:
             ("/addBot", AddBotHandler),
             ("/commandBot", CommandBotHandler),
             ("/discoverBots", DiscoverBotsHandler),
+            ("/getTrackedBots", GetTrackedBotHandler),
             ("/removeBot", RemoveBotHandler),
             ("/sendKV", SendKVHandler)
         ]
@@ -114,6 +115,17 @@ class DiscoverBotsHandler(tornado.web.RequestHandler):
         self.write(json.dumps(discovered))
 
 
+class GetTrackedBotHandler(tornado.web.RequestHandler):
+    """
+    Gets bot tracked by BotManager.
+    """
+    def post(self):
+        tracked_bots = BaseStation().bot_manager. get_all_tracked_bots_names()
+        print('Bots Tracked: ' + str(tracked_bots))
+
+        self.write(json.dumps(tracked_bots).encode())
+
+
 class RemoveBotHandler(tornado.web.RequestHandler):
     """
     Used to remove a MiniBot.
@@ -126,9 +138,8 @@ class RemoveBotHandler(tornado.web.RequestHandler):
 
         if op_successful:
             self.write(("MiniBot " + name + " successfully removed").encode())
-        else:
-            self.write(("Could not remove " + name).encode())
-        self.write(json.dumps(discovered))
+        self.write(("Could not remove " + name).encode())
+
 
 class SendKVHandler(tornado.web.RequestHandler):
     """
@@ -164,12 +175,14 @@ class ScriptHandler(tornado.web.RequestHandler):
         else:
             print("[ERROR] Bot not detected when trying to send script.")
 
+
 class XboxHandler(tornado.web.RequestHandler):
     """
     Handles XBOX.
     """
     def post(self):
         pass
+
 
 if __name__ == "__main__":
     """
