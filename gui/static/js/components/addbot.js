@@ -44,18 +44,21 @@ export default class AddBot extends React.Component {
             port: "10000",
             name: "Bot0",
             type: "minibot",
-            discoveredBots: []
+            discoveredBots: [],
+            trackedBots: []
         };
 
         this.handleInputChange = this.handleInputChange.bind(this);
         this.updateDiscoveredBots = this.updateDiscoveredBots.bind(this);
         this.changeIPAddress = this.changeIPAddress.bind(this);
         this.addBot = this.addBot.bind(this);
+        this.getTrackedBots = this.getTrackedBots.bind(this);
     }
 
     /* Searches for bots on page load */
     componentWillMount() {
         this.updateDiscoveredBots()
+        this.getTrackedBots()
     }
 
     /* handles input change for input fields */
@@ -113,6 +116,7 @@ export default class AddBot extends React.Component {
         Adds bot to basestation
     */
     addBot() {
+        var _this = this;
         axios({
             method:'POST',
             url:'/addBot',
@@ -124,7 +128,26 @@ export default class AddBot extends React.Component {
             })
             })
                 .then(function(response) {
-                    console.log(response);
+                    console.log('Succesfully Added');
+                    _this.getTrackedBots()
+            })
+                .catch(function (error) {
+                    console.log(error);
+        });
+    }
+
+    /*
+        Get Bots currently tracked
+    */
+    getTrackedBots() {
+    var _this = this;
+        axios({
+            method:'POST',
+            url:'/getTrackedBots',
+            })
+                .then(function(response) {
+                    _this.setState({trackedBots: response.data})
+
             })
                 .catch(function (error) {
                     console.log(error);
@@ -140,8 +163,12 @@ export default class AddBot extends React.Component {
             ActiveBotTitle: {
                 float: "left",
                 marginRight: 5
+            },
+            addedBots: {
+                marginBottom: 0,
             }
         }
+
         return (
             <div id ="component_addbot" className = "box">
                 <div className = "row">
@@ -173,6 +200,14 @@ export default class AddBot extends React.Component {
                             </tbody>
                         </table>
                         <button id="addBot" onClick={this.addBot}>Add Bot</button>
+
+                        <div className="trackedBots">
+                        {
+                            this.state.trackedBots.map(function(name, key){
+                                return <p key={key} style={styles.addedBots}>{name}</p>
+                            })
+                        }
+                        </div>
                     </div>
                     <div className = "col-md-6">
                         <div className="activeBotHeader" style={styles.ActiveBotHeader}>
