@@ -2,7 +2,7 @@
 Color Sensor for the MiniBot.
 """
 
-import Adafruit_TCS34725 as CSensor
+from minibot.peripherals.TCS34725 import TC34725 as CSensor
 import logging
 import math
 

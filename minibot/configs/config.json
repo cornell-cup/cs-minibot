@@ -1,0 +1,25 @@
+{
+  "name": "replacename",
+  "startupScript": "",
+  "keepStartupRunning": true,
+  "discoverable": true,
+  "acceptTcp": true,
+  "acceptXbox": true,
+  "actuators": [
+    {
+       "name" : "leftMotor",
+        "pinPWM": 13,
+        "pinHighLow" :10
+
+    },
+    {
+      "name" :"rightMotor",
+        "pinPWM": 18,
+        "pinHighLow": 24
+
+    }
+  ],
+  "sensors": [
+
+  ]
+}
