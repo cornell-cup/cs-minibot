@@ -52,7 +52,7 @@ class PWM():
     """
     PWM used on a minibot.
     """
-    def __init__(self, pin, frequency, duty_cycle=0):
+    def __init__(self, pin, frequency=1, duty_cycle=0):
         """
         Constructor.
         Args:
