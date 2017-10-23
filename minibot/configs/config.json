@@ -9,13 +9,13 @@
     {
        "name" : "leftMotor",
         "pinPWM": 13,
-        "pinHighLow" :10
+        "pinHighLow" :20
 
     },
     {
       "name" :"rightMotor",
-        "pinPWM": 18,
-        "pinHighLow": 24
+        "pinPWM": 19,
+        "pinHighLow": 18
 
     }
   ],

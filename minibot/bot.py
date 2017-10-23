@@ -34,10 +34,10 @@ class Bot():
         """
         self.actuators["left"] = config["actuators"][0]
         self.actuators["right"] = config["actuators"][1]
-        self.motors = HBridge(DigitalOutput(10),
-                      PWM(13),
-                      DigitalOutput(24),
-                      PWM(18))
+        self.motors = HBridge(DigitalOutput(self.actuators["left"]["pinHighLow"]),
+                      PWM(self.actuators["left"]["pinPWM"]),
+                      DigitalOutput(self.actuators["right"]["pinHighLow"]),
+                      PWM(self.actuators["right"]["pinPWM"]))
 
     def get_state(self):
         """
@@ -51,4 +51,4 @@ class Bot():
         """
         Runs the minibot.
         """
-        raise NotImplementedError("Bot.run not implemented")
+        self.motors.set_speed(0, 0)

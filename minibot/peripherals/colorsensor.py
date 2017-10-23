@@ -2,7 +2,7 @@
 Color Sensor for the MiniBot.
 """
 
-from minibot.peripherals.TCS34725 import TC34725 as CSensor
+from minibot.peripherals.TCS34725 import TCS34725 as CSensor
 import logging
 import math
 
