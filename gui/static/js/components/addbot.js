@@ -76,7 +76,7 @@ export default class AddBot extends React.Component {
         Get set of discoverable minibots
     */
     updateDiscoveredBots(){
-        var _this = this;
+        const _this = this;
         axios({
             method:'POST',
             url:'/discoverBots',
@@ -90,14 +90,14 @@ export default class AddBot extends React.Component {
     }
 
 
-    /*
-        Updates list of discoverable bots
-    */
+    /**
+     * Updates list of discoverable bots.
+     * @param {Object.<string>} data Array of data which contains IPs of discovered bots.
+     */
     redoDiscoverList(data){
         let new_bots = [];
 
         for (let i = 0; i < data.length; i++) {
-            //Trim the forward-slash
             var ip_address = data[i];
             new_bots.push(ip_address);
         }
@@ -116,7 +116,7 @@ export default class AddBot extends React.Component {
         Adds bot to basestation
     */
     addBot() {
-        var _this = this;
+        const _this = this;
         axios({
             method:'POST',
             url:'/addBot',
@@ -140,7 +140,7 @@ export default class AddBot extends React.Component {
         Get Bots currently tracked
     */
     getTrackedBots() {
-    var _this = this;
+        const _this = this;
         axios({
             method:'POST',
             url:'/getTrackedBots',
@@ -155,7 +155,7 @@ export default class AddBot extends React.Component {
     }
 
     render(){
-        var _this = this;
+        const _this = this;
         var styles = {
             ActiveBotHeader: {
                 height: '25%'

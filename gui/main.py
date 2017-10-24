@@ -6,6 +6,7 @@ import tornado
 import tornado.web
 import os.path
 import json
+import logging
 
 # Minibot imports.
 from basestation.base_station import BaseStation
@@ -173,7 +174,7 @@ class ScriptHandler(tornado.web.RequestHandler):
             print("Script sent to " + name + "!")
             self.write(bot.get_command_center().sendKV("SCRIPT", script))
         else:
-            print("[ERROR] Bot not detected when trying to send script.")
+            logging.warning("[ERROR] Bot not detected when trying to send script.")
 
 
 class XboxHandler(tornado.web.RequestHandler):
