@@ -177,6 +177,7 @@ class ScriptHandler(tornado.web.RequestHandler):
             logging.warning("[ERROR] Bot not detected when trying to send script.")
 
 
+
 class XboxHandler(tornado.web.RequestHandler):
     """
     Handles XBOX.

@@ -93,7 +93,6 @@ export default class AddBot extends React.Component {
         });
     }
 
-
     /**
      * Updates list of discoverable bots.
      * @param {Object.<string>} data Array of data which contains IPs of discovered bots.
