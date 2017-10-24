@@ -103,7 +103,7 @@ export default class Python extends React.Component {
             console.log('sent script successfully');
         })
         .catch(function (error) {
-            console.log(error);
+            console.warn(error);
         });
     }
 

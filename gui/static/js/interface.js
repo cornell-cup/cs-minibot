@@ -14,7 +14,7 @@ Pages and functions:
 	- ...
 */
 
-//TODO COMMENT THESE OUT AS THEY ARE IMPLEMENTED
+//Anything left here is unimplemented in the new GUI, delete functions as they get implemented/converted
 $("#ip").value = document.URL;
 active_bots = [];
 discovered_bots = [];
@@ -31,98 +31,6 @@ function getPort(){
 function getPower(){
 	return $("#power").val();
 }
-
-// function getBotID() {
-//     return $("#botlist").val();
-// }
-//
-// function getScript() {
-//     return $("#data").val();
-// }
-//
-// function sendMotors(fl, fr, bl, br) {
-// 	$.ajax({
-// 		method: "POST",
-// 		url: "/commandBot",
-// 		data: JSON.stringify({
-// 			name: getBotID(),
-// 			fl: fl,
-// 			fr: fr,
-// 			bl: bl,
-// 			br: br
-// 		}),
-// 		processData: false,
-// 		contentType: 'application/json'
-// 	});
-// }
-//
-// function startLogging() {
-// 	$.ajax({
-// 		method: "POST",
-// 		url: "/logdata",
-// 		data: JSON.stringify({
-// 			name: getBotID()
-// 		}),
-// 		processData: false,
-// 		contentType: 'application/json'
-// 	});
-// }
-//
-// function sendScript() {
-//     $.ajax({
-//     		method: "POST",
-//     		url: "/sendScript",
-//     		data: JSON.stringify({
-//     			name: getBotID(),
-//     			script: getScript()
-//     		}),
-//     		processData: false,
-//     		contentType: 'application/json'
-//     	});
-// }
-//
-// $("#send").click(function(event) {
-//     sendScript();
-// });
-//
-// $('#xbox-off').click(function() {
-// 	// ajax post to backend to remove a bot from list.
-// 	$.ajax({
-// 		method: "POST",
-// 		url: '/stopXbox',
-// 		dataType: 'json',
-// 		contentType: 'application/json',
-// 		success: function properlyRemoved(data) {
-// 		    console.log("TODO");
-// 		}
-// 	});
-// });
-
-// when adding a bot
-$('#addBot').click(function() {
-    console.log("addbot from interface.js");
-    $.ajax({
-        method: "POST",
-        url: '/addBot',
-        dataType: 'json',
-        data: JSON.stringify({
-                ip: getIP(),
-                port: (getPort() || 10000),
-                name: $("#name").val(),
-                type: $('#bot-type').val()
-            }),
-        contentType: 'application/json',
-        success: function(data) {
-            console.log("Adding is a success!");
-            updateDropdown(true, data, data);
-        },
-        error: function(error) {
-            console.warn(error);
-            updateDropdown(true, error.responseText, error.responseText);
-        }
-    });
-    console.log("hello pls work");
-});
 
 /*
 	For any update to the list of active bots, the dropdown menu
@@ -279,5 +187,3 @@ function redoDiscoverList(data){
         redoDiscoverList(discovered_bots);
     });
 }
-
-updateDiscoveredBots();

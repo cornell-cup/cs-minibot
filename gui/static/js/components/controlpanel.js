@@ -2,7 +2,7 @@ var React = require('react');
 var axios = require('axios');
 
 export default class ControlPanel extends React.Component {
-    //TODO: add listeners for Keyboard controls
+    //TODO (#31): add listeners for Keyboard controls
     constructor(props) {
         super(props);
         this.state = {
@@ -22,6 +22,7 @@ export default class ControlPanel extends React.Component {
         this.getBotID = this.getBotID.bind(this);
     }
 
+    /* handler for input changes to modify the state */
     handleInputChange(event) {
         const target = event.target;
         const value = target.value;
@@ -80,7 +81,7 @@ export default class ControlPanel extends React.Component {
                 data: JSON.stringify({
                     key: document.getElementById('kv_key').value,
                     value: document.getElementById('kv_value').value,
-                    name: this.getBotID() //TODO
+                    name: this.getBotID()
                 }),
                 dataType: 'json',
                 contentType: 'application/json'
@@ -89,23 +90,25 @@ export default class ControlPanel extends React.Component {
                 console.log('sent kv');
             })
             .catch(function (error) {
-                console.log(error);
+                console.warn(error);
             });
         }
     }
 
-    /* sends a motor command to bot */
-    sendMotors(a,b,c,d){
+    /* sends a motor command to bot
+    * input: front left, front right, back left, back right (all ints)
+    * */
+    sendMotors(fl,fr,bl,br){
         console.log("send motors listener");
         axios({
             method:'POST',
             url:'/commandBot',
             data: JSON.stringify({
-                name: this.getBotID(), //TODO
-                fl: a,
-                fr: b,
-                bl: c,
-                br: d
+                name: this.getBotID(),
+                fl: fl,
+                fr: fr,
+                bl: bl,
+                br: br
             }),
             dataType: 'json',
             processData: false,
@@ -115,7 +118,7 @@ export default class ControlPanel extends React.Component {
             console.log('sent motor command: '+a.toString()+", "+b.toString()+", "+c.toString()+", "+d.toString());
         })
         .catch(function (error) {
-            console.log(error);
+            console.warn(error);
         });
     }
 
@@ -125,7 +128,7 @@ export default class ControlPanel extends React.Component {
         axios({
             method:'POST',
             url:'/logdata',
-            data: JSON.stringify({name: this.getBotId()}), //TODO
+            data: JSON.stringify({name: this.getBotId()}),
             dataType: 'json',
             processData: false,
             contentType: 'application/json'
@@ -134,7 +137,7 @@ export default class ControlPanel extends React.Component {
             console.log('started logging data');
         })
         .catch(function (error) {
-            console.log(error);
+            console.warn(error);
         });
     }
 
@@ -144,7 +147,7 @@ export default class ControlPanel extends React.Component {
         axios({
             method:'POST',
             url:'/removeBot',
-            data: JSON.stringify({name: this.getBotId()}), //TODO
+            data: JSON.stringify({name: this.getBotId()}),
             dataType: 'json',
             contentType: 'application/json'
         })
@@ -152,7 +155,7 @@ export default class ControlPanel extends React.Component {
             console.log('removed bot successfully');
         })
         .catch(function (error) {
-            console.log(error);
+            console.warn(error);
         });
     }
 
@@ -163,7 +166,7 @@ export default class ControlPanel extends React.Component {
             axios({
                 method:'POST',
                 url:'/runXbox',
-                data: JSON.stringify({name: this.getBotId()}), //TODO
+                data: JSON.stringify({name: this.getBotId()}),
                 dataType: 'json',
                 contentType: 'application/json'
             })
@@ -171,13 +174,13 @@ export default class ControlPanel extends React.Component {
                 console.log('successfully toggled Xbox ON');
             })
             .catch(function (error) {
-                console.log(error);
+                console.warn(error);
             });
         } else {
             axios({
                 method:'POST',
                 url:'/stopXbox',
-                data: JSON.stringify({name: this.getBotId()}), //TODO
+                data: JSON.stringify({name: this.getBotId()}),
                 dataType: 'json',
                 contentType: 'application/json'
             })
@@ -185,13 +188,13 @@ export default class ControlPanel extends React.Component {
                 console.log('successfully toggled Xbox OFF');
             })
             .catch(function (error) {
-                console.log(error);
+                console.warn(error);
             });
         }
     }
 
     updateDiscoveredBots(){
-        //TODO
+        //TODO (#32) - change below request to axios
         //        $.ajax({
         //            method: "POST",
         //            url: '/discoverBots',
