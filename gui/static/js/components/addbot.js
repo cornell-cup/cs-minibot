@@ -55,13 +55,17 @@ export default class AddBot extends React.Component {
         this.getTrackedBots = this.getTrackedBots.bind(this);
     }
 
-    /* Searches for bots on page load */
+    /**
+     * Updates discovered bots and tracked bots before page load.
+     */
     componentWillMount() {
         this.updateDiscoveredBots()
         this.getTrackedBots()
     }
 
-    /* handles input change for input fields */
+    /**
+     * Handles input change for input fields.
+     */
     handleInputChange(event) {
         const target = event.target;
         const value = target.value;
@@ -72,9 +76,9 @@ export default class AddBot extends React.Component {
         });
     }
 
-    /*
-        Get set of discoverable minibots
-    */
+    /**
+     * Gets discovered bots.
+     */
     updateDiscoveredBots(){
         const _this = this;
         axios({
@@ -105,16 +109,16 @@ export default class AddBot extends React.Component {
         this.setState({discoveredBots: new_bots});
     }
 
-    /*
-        Changes ip address in input box
-    */
+    /**
+     * Changes IP address in input box.
+     */
     changeIPAddress(ip) {
         this.setState({ip: ip});
     }
 
-    /*
-        Adds bot to basestation
-    */
+    /**
+     * Adds bot to basestation.
+     */
     addBot() {
         const _this = this;
         axios({
@@ -136,9 +140,9 @@ export default class AddBot extends React.Component {
         });
     }
 
-    /*
-        Get Bots currently tracked
-    */
+    /**
+     * Gets bots currently tracked
+     */
     getTrackedBots() {
         const _this = this;
         axios({
