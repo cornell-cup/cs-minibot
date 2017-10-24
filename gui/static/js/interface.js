@@ -14,6 +14,7 @@ Pages and functions:
 	- ...
 */
 
+//TODO COMMENT THESE OUT AS THEY ARE IMPLEMENTED
 $("#ip").value = document.URL;
 active_bots = [];
 discovered_bots = [];
@@ -31,79 +32,71 @@ function getPower(){
 	return $("#power").val();
 }
 
-function getBotID() {
-    return $("#botlist").val();
-}
-
-function getScript() {
-    return $("#data").val();
-}
-
-function sendMotors(fl, fr, bl, br) {
-	$.ajax({
-		method: "POST",
-		url: "/commandBot",
-		data: JSON.stringify({
-			name: getBotID(),
-			fl: fl,
-			fr: fr,
-			bl: bl,
-			br: br
-		}),
-		processData: false,
-		contentType: 'application/json'
-	});
-}
-
-function startLogging() {
-	$.ajax({
-		method: "POST",
-		url: "/logdata",
-		data: JSON.stringify({
-			name: getBotID()
-		}),
-		processData: false,
-		contentType: 'application/json'
-	});
-}
-
-function sendScript() {
-    $.ajax({
-    		method: "POST",
-    		url: "/sendScript",
-    		data: JSON.stringify({
-    			name: getBotID(),
-    			script: getScript()
-    		}),
-    		processData: false,
-    		contentType: 'application/json'
-    	});
-}
-
-$("#send").click(function(event) {
-    sendScript();
-});
-
-<<<<<<< HEAD
-
-
-
-
-
-
-=======
-$('#xbox-off').click(function() {
-	// ajax post to backend to remove a bot from list.
-	$.ajax({
-		method: "POST",
-		url: '/stopXbox',
-		dataType: 'json',
-		contentType: 'application/json',
-		success: function properlyRemoved(data) {
-		    console.log("TODO");
-		}
-	});
-});
+// function getBotID() {
+//     return $("#botlist").val();
+// }
+//
+// function getScript() {
+//     return $("#data").val();
+// }
+//
+// function sendMotors(fl, fr, bl, br) {
+// 	$.ajax({
+// 		method: "POST",
+// 		url: "/commandBot",
+// 		data: JSON.stringify({
+// 			name: getBotID(),
+// 			fl: fl,
+// 			fr: fr,
+// 			bl: bl,
+// 			br: br
+// 		}),
+// 		processData: false,
+// 		contentType: 'application/json'
+// 	});
+// }
+//
+// function startLogging() {
+// 	$.ajax({
+// 		method: "POST",
+// 		url: "/logdata",
+// 		data: JSON.stringify({
+// 			name: getBotID()
+// 		}),
+// 		processData: false,
+// 		contentType: 'application/json'
+// 	});
+// }
+//
+// function sendScript() {
+//     $.ajax({
+//     		method: "POST",
+//     		url: "/sendScript",
+//     		data: JSON.stringify({
+//     			name: getBotID(),
+//     			script: getScript()
+//     		}),
+//     		processData: false,
+//     		contentType: 'application/json'
+//     	});
+// }
+//
+// $("#send").click(function(event) {
+//     sendScript();
+// });
+//
+// $('#xbox-off').click(function() {
+// 	// ajax post to backend to remove a bot from list.
+// 	$.ajax({
+// 		method: "POST",
+// 		url: '/stopXbox',
+// 		dataType: 'json',
+// 		contentType: 'application/json',
+// 		success: function properlyRemoved(data) {
+// 		    console.log("TODO");
+// 		}
+// 	});
+// });
 
 // when adding a bot
 $('#addBot').click(function() {
@@ -131,7 +124,6 @@ $('#addBot').click(function() {
     console.log("hello pls work");
 });
 
->>>>>>> develop
 /*
 	For any update to the list of active bots, the dropdown menu
 	of active bots will update accordingly (depending on the addition

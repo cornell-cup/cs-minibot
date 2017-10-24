@@ -6,15 +6,15 @@ var ReactDOM = require('react-dom');
  *
  */
 export default class Blockly extends React.Component {
-    //TODO getBlocklyScript does not work
     constructor(props){
         super(props);
-        this.getBlocklyScript = this.getBlocklyScript.bind(this);
+        this.scriptToCode = this.scriptToCode.bind(this);
     }
 
     /* Runs after component loads - this generates the blockly stuff */
     componentDidMount(){
-        var workspace = window.Blockly.inject('blocklyDiv',
+        var _this = this;
+        _this.workspace = window.Blockly.inject('blocklyDiv',
             {
                 toolbox: document.getElementById('toolbox'),
                 grid: {
@@ -30,14 +30,17 @@ export default class Blockly extends React.Component {
         /* Realtime code generation
           (Every drag/drop or change in visual code will be
           reflected in actual code view) */
-        workspace.addChangeListener(function(event){
-            document.getElementById('data').value = this.getBlocklyScript();
+        _this.workspace.addChangeListener(function(event){
+            console.log('workspace change listener');
+            _this.scriptToCode();
         });
     }
 
-    /* Translates Blockly code to Python,
-     * CURRENTLY BROKEN */
-    getBlocklyScript() { return window.Blockly.Python.workspaceToCode(workspace); }
+    /* Helper for realtime code generation (Blockly => Python) */
+    scriptToCode() {
+        console.log("scriptToCode");
+        document.getElementById('data').value = window.Blockly.Python.workspaceToCode(this.workspace);
+    }
 
     render(){
         var blocklyStyle = {margin:'0', height: '70vh', width: '55vw'};

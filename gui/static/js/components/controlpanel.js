@@ -1,12 +1,15 @@
 var React = require('react');
+var axios = require('axios');
 
 export default class ControlPanel extends React.Component {
-    //TODO: add listeners for Keyboard/Xbox controls, removing bot
+    //TODO: add listeners for Keyboard controls
     constructor(props) {
         super(props);
         this.state = {
             power: 50,
             discoveredBots: [],
+            keyboard: false,
+            xbox: false,
         };
 
         this.handleInputChange = this.handleInputChange.bind(this);
@@ -16,20 +19,33 @@ export default class ControlPanel extends React.Component {
         this.sendMotors = this.sendMotors.bind(this);
         this.removeBot = this.removeBot.bind(this);
         this.xboxToggle = this.xboxToggle.bind(this);
+        this.getBotID = this.getBotID.bind(this);
     }
 
     handleInputChange(event) {
         const target = event.target;
         const value = target.value;
         const name = target.name;
-
-        this.setState({
-            [name]: value
-        });
+        if (name=="xbox"){
+            this.setState({
+                [name]: target.checked
+            });
+            this.xboxToggle(target.checked);
+        } else {
+            this.setState({
+                [name]: value
+            });
+        }
     }
 
+    /* helper function for getting id of selected bot */
+    getBotID(){
+        console.log('bot id '+document.getElementById('botlist').value);
+        return document.getElementById('botlist').value;
+    }
+
+    /* sends a key-value command to bot */
     sendKV(event){
-        //TODO
         const pow = this.state.power;
         const target = event.target;
         console.log('sendKV listener');
@@ -58,67 +74,121 @@ export default class ControlPanel extends React.Component {
             this.startLogging();
         }
         else {
-            console.log("Clicked on a direction button but nothing has been executed.");
+            axios({
+                method:'POST',
+                url:'/sendKV',
+                data: JSON.stringify({
+                    key: document.getElementById('kv_key').value,
+                    value: document.getElementById('kv_value').value,
+                    name: this.getBotID() //TODO
+                }),
+                dataType: 'json',
+                contentType: 'application/json'
+            })
+            .then(function(response) {
+                console.log('sent kv');
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
         }
     }
 
+    /* sends a motor command to bot */
     sendMotors(a,b,c,d){
-        //TODO
-        console.log(a.toString()+b.toString()+c.toString()+d.toString());
+        console.log("send motors listener");
+        axios({
+            method:'POST',
+            url:'/commandBot',
+            data: JSON.stringify({
+                name: this.getBotID(), //TODO
+                fl: a,
+                fr: b,
+                bl: c,
+                br: d
+            }),
+            dataType: 'json',
+            processData: false,
+            contentType: 'application/json'
+        })
+        .then(function(response) {
+            console.log('sent motor command: '+a.toString()+", "+b.toString()+", "+c.toString()+", "+d.toString());
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
     }
 
+    /* starts data logging */
     startLogging(){
-        //TODO
         console.log("logging data listener");
+        axios({
+            method:'POST',
+            url:'/logdata',
+            data: JSON.stringify({name: this.getBotId()}), //TODO
+            dataType: 'json',
+            processData: false,
+            contentType: 'application/json'
+        })
+        .then(function(response) {
+            console.log('started logging data');
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
     }
 
+    /* removes selected bot from list */
     removeBot(){
-        //     // ajax post to backend to remove a bot from list.
-        //     $.ajax({
-        //         method: "POST",
-        //         url: '/removeBot',
-        //         dataType: 'json',
-        //         data: JSON.stringify({
-        //             name: getBotID()
-        //         }),
-        //         contentType: 'application/json',
-        //         success: function properlyRemoved(data) {
-        //             console.log("removed bot");
-        //         }
-        //     });
+        console.log("remove bot listener");
+        axios({
+            method:'POST',
+            url:'/removeBot',
+            data: JSON.stringify({name: this.getBotId()}), //TODO
+            dataType: 'json',
+            contentType: 'application/json'
+        })
+        .then(function(response) {
+            console.log('removed bot successfully');
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
     }
 
-    xboxToggle(){
-        // $('#xbox-on').click(function() {
-        //     // ajax post to backend to remove a bot from list.
-        //     $.ajax({
-        //         method: "POST",
-        //         url: '/runXbox',
-        //         dataType: 'json',
-        //         data: JSON.stringify({
-        //             name: getBotID()
-        //         }),
-        //         contentType: 'application/json',
-        //         success: function properlyRemoved(data) {
-        //             console.log("TODO");
-        //         }
-        //     });
-        // });
-        //
-        // $('#xbox-off').click(function() {
-        //     // ajax post to backend to remove a bot from list.
-        //     $.ajax({
-        //         method: "POST",
-        //         url: '/stopXbox',
-        //         dataType: 'json',
-        //         contentType: 'application/json',
-        //         success: function properlyRemoved(data) {
-        //             console.log("TODO");
-        //         }
-        //     });
-        // });
+    /* toggles xbox controls on or off */
+    xboxToggle(checked){
+        console.log('xboxToggle '+checked);
+        if (checked){
+            axios({
+                method:'POST',
+                url:'/runXbox',
+                data: JSON.stringify({name: this.getBotId()}), //TODO
+                dataType: 'json',
+                contentType: 'application/json'
+            })
+            .then(function(response) {
+                console.log('successfully toggled Xbox ON');
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        } else {
+            axios({
+                method:'POST',
+                url:'/stopXbox',
+                data: JSON.stringify({name: this.getBotId()}), //TODO
+                dataType: 'json',
+                contentType: 'application/json'
+            })
+            .then(function(response) {
+                console.log('successfully toggled Xbox OFF');
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        }
     }
-
 
     updateDiscoveredBots(){
         //TODO
@@ -165,16 +235,24 @@ export default class ControlPanel extends React.Component {
             <div id ="component_controlpanel" className = "box">
                 Control Panel<br/>
                 <h4>Movement controls:</h4>
-                {/*Choose bot:<br/>*/}
-                {/*<select id="botlist" name="bots">*/}
-                {/*<option value="">-- Choose a bot --</option>*/}
-                {/*<option value="0">(DEBUG) Sim Bot</option>*/}
-                {/*</select>*/}
-                {/*<button className="controls" id="removeBot">Remove Bot</button><br/>*/}
-                Power ({this.state.power}): <input id="power" type="range" name="power" min="0" max="100" value={this.state.power} defaultValue="50" onChange={this.handleInputChange}/><br/>
-                <b>Directions:</b><br/>
+                Choose bot:<br/>
                 <table>
                     <tbody>
+                    <tr>
+                        <td>
+                            <select id="botlist" name="bots">
+                                <option value="">-- Choose a bot --</option>
+                                <option value="0">(DEBUG) Sim Bot</option>
+                            </select>
+                        </td>
+                        <td><button className="btn btn-danger" id="removeBot" onClick={this.removeBot}>Remove Bot</button></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Power ({this.state.power}):</td>
+                        <td><input id="power" type="range" name="power" min="0" max="100" value={this.state.power} defaultValue="50" onChange={this.handleInputChange}/></td>
+                        <td></td>
+                    </tr>
                     <tr>
                         <td className="controlgrid"><button className="btn" id="ccw" onClick={this.sendKV}>turn CCW</button></td>
                         <td className="controlgrid"><button className="btn" id="fwd" onClick={this.sendKV}>forward</button></td>
@@ -194,7 +272,7 @@ export default class ControlPanel extends React.Component {
                         <td>
                             Keyboard Controls <br/>
                             <label className="switch">
-                                <input type="checkbox" id="keyboard-controls"/>
+                                <input name="keyboard" type="checkbox" id="keyboard-controls"/>
                                 <span className="slider"></span>
                             </label>
                         </td>
@@ -202,16 +280,16 @@ export default class ControlPanel extends React.Component {
                         <td>
                             Xbox Controls <br/>
                             <label className="switch">
-                                <input type="checkbox" id="xbox-controls"/>
+                                <input name="xbox" type="checkbox" id="xbox-controls" onChange={this.handleInputChange}/>
                                 <span className="slider"></span>
                             </label>
                         </td>
                     </tr>
-                    {/*<tr>*/}
-                        {/*<td><input type="text" id="kv_key" placeholder="Key (e.g. WHEELS)"/></td>*/}
-                        {/*<td><input type="text" id="kv_value" placeholder="Value (e.g. 10,10)"/></td>*/}
-                        {/*<td><button id="sendkv" onClick={this.sendKV} className="btn btn-success">Send KV</button></td>*/}
-                    {/*</tr>*/}
+                    <tr>
+                        <td><input type="text" id="kv_key" placeholder="Key (e.g. WHEELS)"/></td>
+                        <td><input type="text" id="kv_value" placeholder="Value (e.g. 10,10)"/></td>
+                        <td><button id="sendkv" onClick={this.sendKV} className="btn btn-success">Send KV</button></td>
+                    </tr>
                     </tbody>
                 </table>
             </div>
