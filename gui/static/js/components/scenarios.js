@@ -157,7 +157,7 @@ export default class ScenariosItem extends React.Component {
                 </table>
                 {this.state.items.map(function (item, idx) {
                     return(
-                        <div>
+                        <div key={idx}>
                             <table>
                                 <tbody>
                                     <tr>

@@ -49,7 +49,6 @@ export default class ControlPanel extends React.Component {
     sendKV(event){
         const pow = this.state.power;
         const target = event.target;
-        console.log('sendKV listener');
         if(target.id=="fwd") {
             this.sendMotors(pow, pow, pow, pow);
         }
@@ -98,8 +97,7 @@ export default class ControlPanel extends React.Component {
     /* sends a motor command to bot
     * input: front left, front right, back left, back right (all ints)
     * */
-    sendMotors(fl,fr,bl,br){
-        console.log("send motors listener");
+    sendMotors(a,b,c,d){
         axios({
             method:'POST',
             url:'/commandBot',
