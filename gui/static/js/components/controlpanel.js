@@ -1,4 +1,5 @@
 var React = require('react');
+var axios = require('axios');
 
 export default class ControlPanel extends React.Component {
     //TODO: add listeners for Keyboard/Xbox controls, removing bot
@@ -62,9 +63,28 @@ export default class ControlPanel extends React.Component {
         }
     }
 
+    /**
+     * Sends motor commands to Basestation
+     * @param {Object.<integer>} motor values
+     */
     sendMotors(a,b,c,d){
-        //TODO
-        console.log(a.toString()+b.toString()+c.toString()+d.toString());
+        axios({
+            method:'POST',
+            url:'/commandBot',
+            data: JSON.stringify({
+                fl: a,
+                fr: b,
+                bl: c,
+                br: d,
+                name: "Bot0" //placeholder for now
+            })
+        })
+            .then(function(response) {
+                console.log(response.data);
+        })
+            .catch(function (error) {
+                console.log(error);
+        });
     }
 
     startLogging(){
