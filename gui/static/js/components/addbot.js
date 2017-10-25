@@ -7,6 +7,10 @@ var axios = require('axios');
  *
  */
 class DiscoveredBot extends React.Component {
+    constructor(props) {
+        super(props)
+    }
+
     render() {
         var styles = {
             ipAddress: {
@@ -17,8 +21,11 @@ class DiscoveredBot extends React.Component {
         return (
             <div className="discoveredbot">
                 <p style={styles.ipAddress}>{this.props.ip_address}</p>
-                <button id={'discoverBot' + this.props.idx} value={this.props.ip_address} className="addBot">
-                    add bot
+                <button
+                    id={'discoverBot' + this.props.idx}
+                    value={this.props.ip_address}
+                    onClick={() => this.props.changeIPAddress(this.props.ip_address)} className="addBot">
+                    Add
                 </button>
             </div>
         )
@@ -37,20 +44,28 @@ export default class AddBot extends React.Component {
             port: "10000",
             name: "Bot0",
             type: "minibot",
-            discoveredBots: []
+            discoveredBots: [],
+            trackedBots: []
         };
 
         this.handleInputChange = this.handleInputChange.bind(this);
-        this.addbot = this.addbot.bind(this);
         this.updateDiscoveredBots = this.updateDiscoveredBots.bind(this);
+        this.changeIPAddress = this.changeIPAddress.bind(this);
+        this.addBot = this.addBot.bind(this);
+        this.getTrackedBots = this.getTrackedBots.bind(this);
     }
 
-    /* Searches for bots on page load */
+    /**
+     * Updates discovered bots and tracked bots before page load.
+     */
     componentWillMount() {
         this.updateDiscoveredBots()
+        this.getTrackedBots()
     }
 
-    /* handles input change for input fields */
+    /**
+     * Handles input change for input fields.
+     */
     handleInputChange(event) {
         const target = event.target;
         const value = target.value;
@@ -61,33 +76,11 @@ export default class AddBot extends React.Component {
         });
     }
 
-    /* Attempts to add a bot with the specified params
-    * */
-    addbot(e){
-        //TODO
-        console.log('addbot button clicked');
-        // $.ajax({
-        //     method: "POST",
-        //     url: '/addBot',
-        //     dataType: 'json',
-        //     data: JSON.stringify({
-        //         ip: getIP(),
-        //         port: (getPort() || 10000),
-        //         name: $("#name").val(),
-        //         type: $('#bot-type').val()
-        //     }),
-        //     contentType: 'application/json',
-        //     success: function addSuccess(data) {
-        //         updateDropdown(true, data, data);
-        //     }
-        // });
-    }
-
-    /*
-        Get set of discoverable minibots
-    */
+    /**
+     * Gets discovered bots.
+     */
     updateDiscoveredBots(){
-        var _this = this;
+        const _this = this;
         axios({
             method:'POST',
             url:'/discoverBots',
@@ -100,19 +93,72 @@ export default class AddBot extends React.Component {
         });
     }
 
+    /**
+     * Updates list of discoverable bots.
+     * @param {Object.<string>} data Array of data which contains IPs of discovered bots.
+     */
     redoDiscoverList(data){
         let new_bots = [];
 
         for (let i = 0; i < data.length; i++) {
-            //Trim the forward-slash
-            var ip_address = data[i].substring(1);
-            new_bots.push(ip_address)
+            var ip_address = data[i];
+            new_bots.push(ip_address);
         }
 
-        this.setState({discoveredBots: new_bots})
+        this.setState({discoveredBots: new_bots});
+    }
+
+    /**
+     * Changes IP address in input box.
+     */
+    changeIPAddress(ip) {
+        this.setState({ip: ip});
+    }
+
+    /**
+     * Adds bot to basestation.
+     */
+    addBot() {
+        const _this = this;
+        axios({
+            method:'POST',
+            url:'/addBot',
+            data: JSON.stringify({
+                ip: this.state.ip,
+                port: this.state.port,
+                name: this.state.name,
+                type: "minibot"
+            })
+            })
+                .then(function(response) {
+                    console.log('Succesfully Added');
+                    _this.getTrackedBots()
+            })
+                .catch(function (error) {
+                    console.log(error);
+        });
+    }
+
+    /**
+     * Gets bots currently tracked
+     */
+    getTrackedBots() {
+        const _this = this;
+        axios({
+            method:'POST',
+            url:'/getTrackedBots',
+            })
+                .then(function(response) {
+                    _this.setState({trackedBots: response.data})
+
+            })
+                .catch(function (error) {
+                    console.log(error);
+        });
     }
 
     render(){
+        const _this = this;
         var styles = {
             ActiveBotHeader: {
                 height: '25%'
@@ -120,8 +166,12 @@ export default class AddBot extends React.Component {
             ActiveBotTitle: {
                 float: "left",
                 marginRight: 5
+            },
+            addedBots: {
+                marginBottom: 0,
             }
         }
+
         return (
             <div id ="component_addbot" className = "box">
                 <div className = "row">
@@ -152,7 +202,15 @@ export default class AddBot extends React.Component {
                             </tr>
                             </tbody>
                         </table>
-                        <button id="addBot" onClick={this.addbot}>Add Bot</button>
+                        <button id="addBot" onClick={this.addBot}>Add Bot</button>
+
+                        <div className="trackedBots">
+                        {
+                            this.state.trackedBots.map(function(name, key){
+                                return <p key={key} style={styles.addedBots}>{name}</p>
+                            })
+                        }
+                        </div>
                     </div>
                     <div className = "col-md-6">
                         <div className="activeBotHeader" style={styles.ActiveBotHeader}>
@@ -164,7 +222,11 @@ export default class AddBot extends React.Component {
                         <div className="discovered-bot" id="discovered">
                             {
                                 this.state.discoveredBots.map(function(ip, idx){
-                                    return <DiscoveredBot key={idx} idx={idx} ip_address={ip} />;
+                                    return <DiscoveredBot
+                                                key={idx}
+                                                idx={idx}
+                                                ip_address={ip}
+                                                changeIPAddress={_this.changeIPAddress} />;
                                 })
                             }
                         </div>
