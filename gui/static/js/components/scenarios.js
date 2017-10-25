@@ -47,6 +47,7 @@ export default class ScenariosItem extends React.Component {
         console.log("save scenario listener");
 
         var scenario = {items: this.state.items};
+        console.log("numBots:" + this.state.numBots);
         if (this.state.numBots != 1) alert("There must be exactly one bot!");
         else {
             var filename = this.state.filename;
@@ -115,9 +116,12 @@ export default class ScenariosItem extends React.Component {
         else {
             var li = this.state.items;
             var string = "[" + this.state.posx + "," + this.state.posy + "]";
-            console.log(string);
-            if (this.state.type == 'simulator.bot') {
+            console.log(this.state.type);
+
+            if (this.state.type == "simulator.simbot") {
+                console.log("add bot");
                 this.state.numBots++;
+                console.log("numBot:" + this.state.numBots);
                 li.push({type: this.state.type, angle: this.state.angle, position: string});
             } else {
                 li.push({type: this.state.type, angle: this.state.angle, size: this.state.size, position: string});
