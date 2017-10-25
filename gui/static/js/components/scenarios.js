@@ -4,12 +4,15 @@ export default class ScenariosItem extends React.Component {
     constructor() {
         super();
         this.state = {
-            type: 'Scenario Object',
-            angle: '0',
-            size: '0',
-            posx: '0',
-            posy: '0',
-            items: []
+            type: 'scenario_object',
+            angle: '',
+            size: '1',
+            posx: '',
+            posy: '',
+            items: [],
+            numBots: 0,
+            filename: "testscenario.txt",
+            position: ''
         };
 
         this.handleInputChange = this.handleInputChange.bind(this);
@@ -40,35 +43,38 @@ export default class ScenariosItem extends React.Component {
     }
 
     /* saves currently loaded scenario to file */
-    saveScenario(event){
+    saveScenario(){
         console.log("save scenario listener");
 
         var scenario = {items: this.state.items};
-        var filename = this.state.filename;
+        if (this.state.numBots != 1) alert("There must be exactly one bot!");
+        else {
+            var filename = this.state.filename;
 
-        //Implemented the same way as Python script saving. This might not work so use axios code if it doesn't
-        event.preventDefault();
-        var element = document.createElement('a');
-        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(JSON.stringify(this.state.items)));
-        element.setAttribute('download', this.state.filename);
-        element.style.display = 'none';
-        document.body.appendChild(element);
-        element.click();
-        document.body.removeChild(element);
+            //Implemented the same way as Python script saving. This might not work so use axios code if it doesn't
+            //event . preventDefault ()
+            var element = document.createElement('a');
+            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(JSON.stringify(this.state.items)));
+            element.setAttribute('download', this.state.filename);
+            element.style.display = 'none';
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
 
-        // axios({
-        //     method:'POST',
-        //     url:'/saveScenario',
-        //     data: {scenario: scenario, name: filename},
-        //     dataType: 'text',
-        //     contentType: 'application/json; charset=utf-8'
-        // })
-        // .then(function(response) {
-        //     console.log('saved scenario successfully');
-        // })
-        // .catch(function (error) {
-        //     console.log(error);
-        // });
+            // axios({
+            //     method:'POST',
+            //     url:'/saveScenario',
+            //     data: {scenario: scenario, name: filename},
+            //     dataType: 'text',
+            //     contentType: 'application/json; charset=utf-8'
+            // })
+            // .then(function(response) {
+            //     console.log('saved scenario successfully');
+            // })
+            // .catch(function (error) {
+            //     console.log(error);
+            // });
+        }
     }
 
     /* handler for load scenario (load scenario from file) */
@@ -83,8 +89,10 @@ export default class ScenariosItem extends React.Component {
             _this.setState({items: scenario});
         };
         reader.readAsText(file);
+        console.log("done");
     }
 
+    /* handles input change for input fields */
     handleInputChange(event) {
         console.log("handle input change");
         console.log(this.state);
@@ -96,18 +104,35 @@ export default class ScenariosItem extends React.Component {
         });
     }
 
+    /* checks that object contains correct info and adds object to list*/
     handleSubmit() {
         console.log("handle submit");
         console.log(this.state);
-        var li = this.state.items;
-        li.push({type: this.state.type, angle: this.state.angle, size: this.state.size, posx: this.state.posx, posy: this.state.posy});
-        this.setState({items: li});
+
+        //check that inputs are valid
+        if (this.state.angle > 360) alert("The angle is too large!");
+        else if (this.state.angle == '' || this.state.posx == '' || this.state.posy == '') alert("Fields cannot be empty!");
+        else {
+            var li = this.state.items;
+            var string = "[" + this.state.posx + "," + this.state.posy + "]";
+            console.log(string);
+            if (this.state.type == 'simulator.bot') {
+                this.state.numBots++;
+                li.push({type: this.state.type, angle: this.state.angle, position: string});
+            } else {
+                li.push({type: this.state.type, angle: this.state.angle, size: this.state.size, position: string});
+            }
+
+            this.setState({items: li});
+        }
     }
 
+    /* removes selected object from list*/
     handleRemove(event) {
         console.log("handle remove");
         console.log(this.state);
         console.log(event.idx);
+        this.state.numBots--;
         var li = this.state.items;
         li.splice(event.idx, 1);
         this.setState({items: li});
@@ -116,10 +141,8 @@ export default class ScenariosItem extends React.Component {
     render() {
         var styles = {
             ScenariosItem: {
-                padding: '5px',
+                padding: '10px',
                 marginTop: '10px',
-                background: '#f7f6ff',
-                borderRadius: '3px',
                 marginRight: '10px'
             },
 
@@ -131,24 +154,24 @@ export default class ScenariosItem extends React.Component {
             },
 
             Button: {
-                marginLeft: '5px',
-                marginRight: '5px'
+                marginLeft: '10px',
+                marginRight: '15px'
             }
         }
         var _this = this;
         return(
-            <div id = "scenariobox" style={styles.ScenariosItem}>
-                <button style={styles.Button}>Save</button>
+            <div id = "scenariobox" className = "box">
+                <button onClick={this.saveScenario} style={styles.Button}>Save</button>
                 <button style={styles.Button}>Load</button>
-                <button style={styles.Button}>Add Scenario</button>
-                <table>
+                <button style={styles.Button}>Add to Simulator</button>
+                <table style={styles.ScenariosItem}>
                     <tbody>
                         <tr>
                             <th>Type: </th>
                             <th>
-                                <select name="type" onChange={this.handleInputChange} style={styles.Form}>
-                                    <option value ="Scenario Object">Scenario Object</option>
-                                    <option value = "Simbot">Simulated Minibot</option>
+                                <select name="type" value={this.state.value} onChange={this.handleInputChange} style={styles.Form}>
+                                    <option value ="scenario_object">Scenario Object</option>
+                                    <option value = "simulator.simbot">Simulated Minibot</option>
                                 </select>
                             </th>
                             <td><button style={styles.Button} onClick={this.handleSubmit}>Add</button></td>
@@ -156,21 +179,21 @@ export default class ScenariosItem extends React.Component {
                         </tr>
                         <tr>
                             <th>Angle: </th>
-                            <td><input type="text" name="angle" onChange={this.handleInputChange} style={styles.Form}/></td>
+                            <td><input type="number" name="angle" onChange={this.handleInputChange} style={styles.Form}/></td>
                             <th>Size: </th>
-                            <td><input type="text" name="size" onChange={this.handleInputChange} style={styles.Form}/></td>
+                            <td><input type="number" name="size"  disabled={this.state.type == "simulator.simbot"} onChange={this.handleInputChange} style={styles.Form}/></td>
                         </tr>
                         <tr>
                             <th>Position X: </th>
-                            <td><input type="text" name="posx" onChange={this.handleInputChange} style={styles.Form}/></td>
+                            <td><input type="number" name="posx" onChange={this.handleInputChange} style={styles.Form}/></td>
                             <th>Position Y: </th>
-                            <td><input type="text" name="posy" onChange={this.handleInputChange} style={styles.Form}/></td>
+                            <td><input type="number" name="posy" onChange={this.handleInputChange} style={styles.Form}/></td>
                         </tr>
                     </tbody>
                 </table>
                 {this.state.items.map(function (item, idx) {
                     return(
-                        <div>
+                        <div style={styles.ScenariosItem}>
                             <table>
                                 <tbody>
                                     <tr>
@@ -184,13 +207,11 @@ export default class ScenariosItem extends React.Component {
                                         <td>{item.angle}</td>
                                         <th>Size: </th>
                                         <td>{item.size}</td>
-                                        <td><button style={styles.Button} onClick = {() => _this.handleRemove({idx})}>Remove</button></td>
                                     </tr>
                                     <tr>
-                                        <th>Postion X: </th>
-                                        <td>{item.posx}</td>
-                                        <th>Position Y: </th>
-                                        <td>{item.posy}</td>
+                                        <th>Position: </th>
+                                        <td>{item.position}</td>
+                                        <td><button style={styles.Button} onClick = {() => _this.handleRemove({idx})}>Remove</button></td>
                                         <td></td>
                                     </tr>
                                 </tbody>
