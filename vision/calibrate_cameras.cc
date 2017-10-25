@@ -25,6 +25,8 @@ int main(int argc, char** argv) {
         VideoCapture device(id);
         if (device.isOpened()) {
             devices.push_back(device);
+            device.set(CV_CAP_PROP_FRAME_WIDTH, 1280);
+            device.set(CV_CAP_PROP_FRAME_HEIGHT, 720);
         }
         else {
             std::cerr << "Failed to open video capture device " << id << std::endl;
