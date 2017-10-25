@@ -4,14 +4,12 @@
   "description": "The shared software for the MiniBot platform. Includes a web server running over the base station and python scripts to run on the minibot.",
   "main": "index.js",
   "dependencies": {
+    "axios": "^0.16.2",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
-    "reac": "^0.0.0",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
-    "react-tabs": "^2.0.0",
-    "t": "^0.5.1",
-    "axios": "^0.16.2"
+    "react-tabs": "^2.0.0"
   },
   "babel": {
     "presets": [
@@ -48,7 +46,7 @@
     "url": "https://github.com/cornell-cup/cs-minibot-platform/issues"
   },
   "homepage": "https://github.com/cornell-cup/cs-minibot-platform#readme",
-  "eslintConfig":{
+  "eslintConfig": {
     "extends": "google",
     "rules": {}
   }
