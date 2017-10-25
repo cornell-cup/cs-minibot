@@ -4,13 +4,12 @@ export default class ScenariosItem extends React.Component {
     constructor() {
         super();
         this.state = {
-            type: 'Type',
+            type: 'Scenario Object',
             angle: '0',
             size: '0',
             posx: '0',
             posy: '0',
-            items: [{type: "bot", angle: "90", size: "2", posx: "3", posy: "4"}],
-
+            items: []
         };
 
         this.handleInputChange = this.handleInputChange.bind(this);
@@ -120,7 +119,8 @@ export default class ScenariosItem extends React.Component {
                 padding: '5px',
                 marginTop: '10px',
                 background: '#f7f6ff',
-                borderRadius: '3px'
+                borderRadius: '3px',
+                marginRight: '10px'
             },
 
             Form: {
@@ -128,28 +128,42 @@ export default class ScenariosItem extends React.Component {
                 marginRight: '15px',
                 marginTop: '5px',
                 marginBottom: '5px'
+            },
+
+            Button: {
+                marginLeft: '5px',
+                marginRight: '5px'
             }
         }
         var _this = this;
         return(
             <div id = "scenariobox" style={styles.ScenariosItem}>
-                <button>Save</button>
-                <button>Load</button>
-                <button onClick={this.handleSubmit}>Add</button>
+                <button style={styles.Button}>Save</button>
+                <button style={styles.Button}>Load</button>
+                <button style={styles.Button}>Add Scenario</button>
                 <table>
                     <tbody>
                         <tr>
-                            <td>
-                                <input type="text" name="type" onChange={this.handleInputChange} style={styles.Form}/>
-                            </td>
+                            <th>Type: </th>
+                            <th>
+                                <select name="type" onChange={this.handleInputChange} style={styles.Form}>
+                                    <option value ="Scenario Object">Scenario Object</option>
+                                    <option value = "Simbot">Simulated Minibot</option>
+                                </select>
+                            </th>
+                            <td><button style={styles.Button} onClick={this.handleSubmit}>Add</button></td>
                             <td></td>
                         </tr>
                         <tr>
+                            <th>Angle: </th>
                             <td><input type="text" name="angle" onChange={this.handleInputChange} style={styles.Form}/></td>
+                            <th>Size: </th>
                             <td><input type="text" name="size" onChange={this.handleInputChange} style={styles.Form}/></td>
                         </tr>
                         <tr>
+                            <th>Position X: </th>
                             <td><input type="text" name="posx" onChange={this.handleInputChange} style={styles.Form}/></td>
+                            <th>Position Y: </th>
                             <td><input type="text" name="posy" onChange={this.handleInputChange} style={styles.Form}/></td>
                         </tr>
                     </tbody>
@@ -160,17 +174,22 @@ export default class ScenariosItem extends React.Component {
                             <table>
                                 <tbody>
                                     <tr>
+                                        <th>Type: </th>
                                         <td>{item.type}</td>
                                         <td></td>
                                         <td></td>
                                     </tr>
                                     <tr>
+                                        <th>Angle: </th>
                                         <td>{item.angle}</td>
+                                        <th>Size: </th>
                                         <td>{item.size}</td>
-                                        <td><button onClick = {() => _this.handleRemove({idx})}>Remove</button></td>
+                                        <td><button style={styles.Button} onClick = {() => _this.handleRemove({idx})}>Remove</button></td>
                                     </tr>
                                     <tr>
+                                        <th>Postion X: </th>
                                         <td>{item.posx}</td>
+                                        <th>Position Y: </th>
                                         <td>{item.posy}</td>
                                         <td></td>
                                     </tr>
