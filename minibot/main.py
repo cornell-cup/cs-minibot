@@ -3,7 +3,6 @@ Script which is automatically run on the MiniBot's Pi upon startup.
 Must be configured in /etc/init.d/minibotinit.sh on the RPi.
 """
 
-import minibot
 from minibot.bot import Bot
 from minibot.hardware.communication.TCP import TCP
 import minibot.hardware.communication.UDP

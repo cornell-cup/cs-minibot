@@ -109,7 +109,6 @@ class DiscoverBotsHandler(tornado.web.RequestHandler):
     """
     def post(self):
         discovered = BaseStation().get_bot_manager().get_all_discovered_bots()
-        print("Discovered bot: " + discovered)
         self.write(json.dumps(discovered))
 
 
@@ -127,7 +126,6 @@ class RemoveBotHandler(tornado.web.RequestHandler):
             self.write(("MiniBot " + name + " successfully removed").encode())
         else:
             self.write(("Could not remove " + name).encode())
-        self.write(json.dumps(discovered))
 
 class SendKVHandler(tornado.web.RequestHandler):
     """
