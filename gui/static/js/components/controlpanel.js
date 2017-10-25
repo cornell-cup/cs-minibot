@@ -29,11 +29,13 @@ export default class ControlPanel extends React.Component {
         });
     }
 
+    /**
+     * Maps kv values to motor command
+     * @param {Object.<event>} click event object
+     */
     sendKV(event){
-        //TODO
         const pow = this.state.power;
         const target = event.target;
-        console.log('sendKV listener');
         if(target.id=="fwd") {
             this.sendMotors(pow, pow, pow, pow);
         }
