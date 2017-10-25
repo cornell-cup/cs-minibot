@@ -20,6 +20,7 @@ int main(int argc, char** argv) {
 
     // Open video capture devices
     vector<VideoCapture> devices;
+    vector<vector<Point2f>> img_points;
     for (int i = 4; i < argc; i++) {
         int id = atoi(argv[i]);
         VideoCapture device(id);
@@ -27,22 +28,44 @@ int main(int argc, char** argv) {
             devices.push_back(device);
             device.set(CV_CAP_PROP_FRAME_WIDTH, 1280);
             device.set(CV_CAP_PROP_FRAME_HEIGHT, 720);
+            device.set(CV_CAP_PROP_FPS, 30);
+            img_points.push_back(vector<Point2f>());
         }
         else {
             std::cerr << "Failed to open video capture device " << id << std::endl;
         }
     }
 
+    // Calibration variables
+    Size checkerboard_size(cols, rows);
+
+    int key = 0;
     Mat frame, gray;
-    while (true) {
+    vector<Point2f> corners;
+    while (key != 27) { // Quit on escape keypress
         for (size_t i = 0; i < devices.size(); i++) {
             devices[i] >> frame;
+
+            // Detect checkerboards on spacebar
+            if (waitKey(1) == 32) {
+                cvtColor(frame, gray, COLOR_BGR2GRAY);
+                bool found = findChessboardCorners(gray, checkerboard_size, corners);
+                if (found) {
+                    std::cout << "Found checkerboard on " << i << std::endl;
+                    img_points[i].insert(
+                            std::end(img_points[i]), std::begin(corners), std::end(corners));
+                    cornerSubPix(gray, corners, Size(11, 11), Size(-1, -1),
+                            TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
+                }
+                drawChessboardCorners(frame, checkerboard_size, Mat(corners), found);
+            }
+
             imshow(std::to_string(i), frame);
         }
 
-        // Quit on escape keypress
-        if (waitKey(16) >= 27) {
-            break;
+        key = waitKey(16);
+        if (key == 'W') { // Write calibration to text files
+            std::cout << "TODO Write to output" << std:: endl;
         }
     }
 }
