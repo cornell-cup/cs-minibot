@@ -1,6 +1,6 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
-
+var axios = require('axios');
 
 /**
  * Component for the Python text box
@@ -8,12 +8,11 @@ var ReactDOM = require('react-dom');
  * upload, download, send script
  */
 export default class Python extends React.Component {
-    //TODO UPLOAD, CAPTURE TAB KEY AND PREVENT DEFAULT ACTION, SEND SCRIPT
     constructor(props) {
         super(props);
         this.state = {
             filename:"myBlocklyCode.py",
-            data:""
+            data: ""
         };
 
         this.handleInputChange = this.handleInputChange.bind(this);
@@ -74,7 +73,7 @@ export default class Python extends React.Component {
     handleKeyInput(event){
         if(event.keyCode===9){
             event.preventDefault();
-            var data = document.getElementById("data");
+            var data = this.state.data;
             var v=data.value;
             var s=data.selectionStart;
             var e=data.selectionEnd;
@@ -104,10 +103,9 @@ export default class Python extends React.Component {
             console.log('sent script successfully');
         })
         .catch(function (error) {
-            console.log(error);
+            console.warn(error);
         });
     }
-
 
     render(){
         return (

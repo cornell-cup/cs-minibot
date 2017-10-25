@@ -1,4 +1,5 @@
 var React = require('react');
+var axios = require('axios');
 
 export default class ScenariosItem extends React.Component {
     constructor() {
@@ -197,7 +198,7 @@ export default class ScenariosItem extends React.Component {
                 </table>
                 {this.state.items.map(function (item, idx) {
                     return(
-                        <div style={styles.ScenariosItem}>
+                        <div style={styles.ScenariosItem} key={idx}>
                             <table>
                                 <tbody>
                                     <tr>
