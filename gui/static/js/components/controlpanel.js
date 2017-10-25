@@ -49,7 +49,6 @@ export default class ControlPanel extends React.Component {
     sendKV(event){
         const pow = this.state.power;
         const target = event.target;
-        console.log('sendKV listener');
         if(target.id=="fwd") {
             this.sendMotors(pow, pow, pow, pow);
         }
