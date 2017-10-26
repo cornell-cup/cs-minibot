@@ -97,23 +97,20 @@ export default class ControlPanel extends React.Component {
     /* sends a motor command to bot
     * input: front left, front right, back left, back right (all ints)
     * */
-    sendMotors(a,b,c,d){
+    sendMotors(fl,fr,bl,br){
         axios({
             method:'POST',
             url:'/commandBot',
             data: JSON.stringify({
-                name: this.getBotID(),
+                name: "Bot0", //placeholder for now
                 fl: fl,
                 fr: fr,
                 bl: bl,
                 br: br
             }),
-            dataType: 'json',
-            processData: false,
-            contentType: 'application/json'
         })
         .then(function(response) {
-            console.log('sent motor command: '+a.toString()+", "+b.toString()+", "+c.toString()+", "+d.toString());
+            console.log('Sent motor command: ' + response)
         })
         .catch(function (error) {
             console.warn(error);
