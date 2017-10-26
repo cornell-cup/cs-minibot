@@ -33,14 +33,17 @@ class HBridge():
         left = max(min(left, 1.0), -1.0)
         right = max(min(right, 1.0), -1.0)
 
+        print(left, right)
         if left < 0:
             self.left_pin.set_high()
+            self.left_pwm.set_duty_cycle(abs(left))
         else:
             self.left_pin.set_low()
-        self.left_pwm.set_duty_cycle(1-abs(left))
+            self.left_pwm.set_duty_cycle(1-abs(left))
 
         if right < 0:
             self.right_pin.set_high()
+            self.right_pwm.set_duty_cycle(abs(right))
         else:
             self.right_pin.set_low()
-        self.right_pwm.set_duty_cycle(1-abs(right))
+            self.right_pwm.set_duty_cycle(1-abs(right))
