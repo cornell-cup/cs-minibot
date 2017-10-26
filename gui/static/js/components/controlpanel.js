@@ -110,7 +110,7 @@ export default class ControlPanel extends React.Component {
             }),
         })
         .then(function(response) {
-            console.log(response)
+            console.log('Sent motor command: ' + response)
         })
         .catch(function (error) {
             console.warn(error);
