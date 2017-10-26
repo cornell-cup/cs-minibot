@@ -51,8 +51,6 @@ export default class ScenariosItem extends React.Component {
         console.log("numBots:" + this.state.numBots);
         if (this.state.numBots != 1) alert("There must be exactly one bot!");
         else {
-            var filename = this.state.filename;
-
             //Implemented the same way as Python script saving. This might not work so use axios code if it doesn't
             //event . preventDefault ()
             var element = document.createElement('a');
