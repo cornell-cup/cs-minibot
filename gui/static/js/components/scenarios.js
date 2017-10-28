@@ -75,6 +75,7 @@ export default class ScenariosItem extends React.Component {
             //     console.log(error);
             // });
         }
+
     }
 
     /* handler for load scenario (load scenario from file) */
@@ -134,9 +135,12 @@ export default class ScenariosItem extends React.Component {
     handleRemove(event) {
         console.log("handle remove");
         console.log(this.state);
-        console.log(event.idx);
-        this.state.numBots--;
         var li = this.state.items;
+        if (li[event.idx].type == "simulator.simbot") {
+            this.state.numBots--;
+        }
+        console.log("type1: " + li[event.idx].type);
+        console.log("numBot: " + this.state.numBots);
         li.splice(event.idx, 1);
         this.setState({items: li});
     }
