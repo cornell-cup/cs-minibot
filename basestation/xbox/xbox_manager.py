@@ -1,3 +1,8 @@
+"""
+Contains XboxManager class, which manages the connection, addition,
+and removal of Xbox controllers to the device running the BaseStation.
+"""
+
 from basestation.base_station import BaseStation
 from basestation.xbox.xbox import Xbox
 from basestation.util.exception_handling import *
@@ -8,7 +13,21 @@ from typing import Optional
 
 
 class XboxManager(object, metaclass=Singleton):
+    """
+    XboxManager is a Singleton class, meaning that only instance of the
+    XboxManager class can exist in a single run. The instance is an interface to
+    adding, removing, and connecting Xbox Controllers to the device running the
+    BaseStation.
+
+    This class is closely coupled with the BaseStation, and has no relation with
+    the code on the MiniBot side.
+    """
     def __init__(self):
+        """
+        Initializes the XboxManager class for the first time. Since
+        XboxManager is a Singleton class, repeated attempts to initialization do
+        not invoke this function.
+        """
         pygame.init()
         pygame.joystick.init()
         self.__xboxs = {}
@@ -57,24 +76,33 @@ class XboxManager(object, metaclass=Singleton):
                 msg = "Xbox with " + str(xbox_id)\
                       + " could not be associated with " + vbot_name
                 log_exn_info(e, msg=msg)
-                return None
 
     def get_initialized_xbox_ids(self):
         """
-        Returns a list of IDs of Xboxs that have been successfully associated
-        with a MiniBot.
+        Returns a sorted (ascending) list of IDs of Xboxs that have been
+        successfully associated with a MiniBot.
         """
         return sorted(self.__xboxs.keys())
 
     def get_detected_xbox_ids(self):
         """
-        Returns a list of IDs of Xboxs that can be discovered on the device.
-        Some Xboxs might not be associated with a MiniBot.
+        Returns a sorted (ascending) list of IDs of Xboxs that can be
+        discovered on the device. Some Xboxs might not be associated with a
+        MiniBot.
         """
         self.__refresh_xboxs()
         return [i for i in range(pygame.joystick.get_count())]
 
-    def stop_xbox(self, xbox_id):
+    def stop_xbox(self, xbox_id: int) -> bool:
+        """
+        Returns True if the Xbox x with `x.get_id() == xbox_id` is
+        successfully removed from the XboxManager instance. Returns False if
+        the operation failed, or if there does not exist an Xbox x with
+        `x.get_id() == xbox_id` for all x.
+
+        Args:
+            xbox_id (int): The ID of the Xbox Controller to be removed.
+        """
         xbox = self.__xboxs[xbox_id]
         try:
             del self.__xboxs[xbox_id]
@@ -89,5 +117,8 @@ class XboxManager(object, metaclass=Singleton):
 
     @staticmethod
     def __refresh_xboxs():
+        """
+        Refreshes the collection of Xbox Controllers with the currently
+        connected Xbox Controllers.
+        """
         pygame.joystick.init()
-
