@@ -4,6 +4,7 @@ from basestation.util.exception_handling import *
 import pygame
 import threading
 import enum
+import time
 
 
 class Direction(enum.Enum):
@@ -57,20 +58,24 @@ class Xbox(object):
             while True:
                 pygame.event.get()
                 dpad_val = self.__joystick.get_hat(0)
-                print("a",)
-                if dpad_val != (0, 0):
-                    # dpad is pressed
-                    print(dpad_val)
-                    self.__dpad_parse(dpad_val)
 
                 # take y values of the thumbs
-                # for some weird reason, pushing up the thumbs produces
+                # for some weird reason, pushing up the thumbs on Xbox produces
                 # negative values
                 left_thumb_val = -self.__joystick.get_axis(1)
                 right_thumb_val = -self.__joystick.get_axis(3)
-                if left_thumb_val > .2 or right_thumb_val > .2:
-                    print(left_thumb_val, right_thumb_val)
+                if dpad_val != (0, 0):
+                    # dpad is pressed
+                    self.__dpad_parse(dpad_val)
+
+                elif abs(left_thumb_val) > .1 or abs(right_thumb_val) > .1:
+                    # thumbs are triggered
                     self.__thumbs_parse(left_thumb_val, right_thumb_val)
+
+                else:
+                    # very slight disturbance in joystick saw as dead zone
+                    self.__thumbs_parse(0., 0.)
+                time.sleep(0.1)     # minimum reaction time of humans is 100ms
 
         except RuntimeError as e:
             msg = "Unable to get input from Xbox with ID = "\

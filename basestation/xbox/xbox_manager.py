@@ -9,6 +9,7 @@ from typing import Optional
 
 class XboxManager(object, metaclass=Singleton):
     def __init__(self):
+        pygame.init()
         pygame.joystick.init()
         self.__xboxs = {}
 
