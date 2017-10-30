@@ -10,6 +10,8 @@ export default class ControlPanel extends React.Component {
             discoveredBots: [],
             keyboard: false,
             xbox: false,
+            trackedBots: [],
+            currentBot: ''
         };
 
         this.handleInputChange = this.handleInputChange.bind(this);
@@ -20,6 +22,8 @@ export default class ControlPanel extends React.Component {
         this.removeBot = this.removeBot.bind(this);
         this.xboxToggle = this.xboxToggle.bind(this);
         this.getBotID = this.getBotID.bind(this);
+        this.getTrackedBots = this.getTrackedBots.bind(this);
+        this.selectBot = this.selectBot.bind(this);
     }
 
     /* handler for input changes to modify the state */
@@ -37,6 +41,13 @@ export default class ControlPanel extends React.Component {
                 [name]: value
             });
         }
+    }
+
+    /**
+     * Updates tracked bots before page load.
+     */
+    componentWillMount() {
+        this.getTrackedBots()
     }
 
     /* helper function for getting id of selected bot */
@@ -98,11 +109,12 @@ export default class ControlPanel extends React.Component {
     * input: front left, front right, back left, back right (all ints)
     * */
     sendMotors(fl,fr,bl,br){
+        const _this = this;
         axios({
             method:'POST',
             url:'/commandBot',
             data: JSON.stringify({
-                name: "Bot0", //placeholder for now
+                name: this.state.currentBot,
                 fl: fl,
                 fr: fr,
                 bl: bl,
@@ -115,6 +127,30 @@ export default class ControlPanel extends React.Component {
         .catch(function (error) {
             console.warn(error);
         });
+    }
+
+    /**
+     * Gets bots currently tracked
+     */
+    getTrackedBots() {
+        const _this = this;
+        axios({
+            method:'POST',
+            url:'/getTrackedBots',
+            })
+                .then(function(response) {
+                    _this.setState({trackedBots: response.data});
+            })
+                .catch(function (error) {
+                    console.log(error);
+        });
+    }
+
+    /**
+     * Handles onChange for bot dropdown. Changes currently selected bot.
+     */
+    selectBot(event) {
+        this.setState({currentBot: event.target.value})
     }
 
     /* starts data logging */
@@ -229,19 +265,31 @@ export default class ControlPanel extends React.Component {
     }
 
     render(){
+        console.log(this.state.currentBot);
         return (
             <div id ="component_controlpanel" className = "box">
                 Control Panel<br/>
                 <h4>Movement controls:</h4>
-                Choose bot:<br/>
+                <br/>
                 <table>
                     <tbody>
                     <tr>
                         <td>
-                            <select id="botlist" name="bots">
-                                <option value="">-- Choose a bot --</option>
-                                <option value="0">(DEBUG) Sim Bot</option>
-                            </select>
+                            <label>
+                                 Choose bot:
+                                <select value={this.state.currentBot} onChange={this.selectBot}> id="botlist" name="bots">
+                                    <option value="(DEBUG) Sim Bot">(DEBUG) Sim Bot</option>
+                                    {
+                                        this.state.trackedBots.map(function(botname, idx){
+                                            return <option
+                                                        key={idx}
+                                                        value={botname}>
+                                                   {botname}
+                                                   </option>
+                                        })
+                                    }
+                                </select>
+                            </label>
                         </td>
                         <td><button className="btn btn-danger" id="removeBot" onClick={this.removeBot}>Remove Bot</button></td>
                         <td></td>
