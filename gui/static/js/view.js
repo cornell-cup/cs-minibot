@@ -10,7 +10,7 @@ the current vision).
 
 Bots have four fields: x coordinate, y coordinate, angle, and id.
 */
-
+//TODO COMMENT THESE OUT AS THEY ARE IMPLEMENTED
 const MILLIS_PER_VISION_UPDATE = 33; // modbot update interval in ms
 var bots = [];           // hard-coded bots for testing];
 
