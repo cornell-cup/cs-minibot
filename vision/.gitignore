@@ -31,3 +31,9 @@
 *.out
 *.app
 *.x
+
+# swp
+*.swp
+
+# Calibration outputs
+*.calib
