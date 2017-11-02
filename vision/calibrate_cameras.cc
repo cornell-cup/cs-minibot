@@ -22,6 +22,7 @@ int main(int argc, char** argv) {
 
     // Open video capture devices
     vector<VideoCapture> devices;
+    vector<int> device_ids;
     vector<vector<vector<Point2f>>> img_points;
     vector<vector<vector<Point3f>>> obj_points;
     for (int i = 4; i < argc; i++) {
@@ -33,11 +34,12 @@ int main(int argc, char** argv) {
             device.set(CV_CAP_PROP_FPS, 30);
             img_points.push_back(vector<vector<Point2f>>());
             obj_points.push_back(vector<vector<Point3f>>());
+            devices.push_back(device);
+            device_ids.push_back(id);
         }
         else {
             std::cerr << "Failed to open video capture device " << id << std::endl;
         }
-        devices.push_back(device);
     }
 
     // Calibration variables
@@ -63,7 +65,8 @@ int main(int argc, char** argv) {
             // Detect checkerboards on spacebar
             if (waitKey(1) == 32) {
                 cvtColor(frame, gray, COLOR_BGR2GRAY);
-                bool found = findChessboardCorners(gray, checkerboard_size, corners);
+                bool found = findChessboardCorners(gray, checkerboard_size, corners,
+                        CALIB_CB_ADAPTIVE_THRESH + CALIB_CB_NORMALIZE_IMAGE + CALIB_CB_FAST_CHECK);
                 if (found) {
                     std::cout << "Found checkerboard on " << i << std::endl;
                     img_points[i].push_back(corners);
@@ -88,26 +91,36 @@ int main(int argc, char** argv) {
                     continue;
                 }
                 if (obj_points[i].size() == 0) {
-                    std::cout << "No checkerboards detected on camera " << i << std::endl;
+                    std::cout << "No checkerboards detected on camera " << device_ids[i] << std::endl;
                     continue;
                 }
 
-                std::cout << "Calibrate camera " << i << std::endl;
+                // TODO Check if calibration already exists first
+
+                std::cout << "Calibrate camera " << device_ids[i] << std::endl;
                 calibrateCamera(obj_points[i], img_points[i], frame.size(), camera_matrix,
                         dist_coeffs, rvecs, tvecs);
 
                 std::cout << "Write calibration" << std::endl;
                 std::ofstream fout;
-                fout.open(std::to_string(i) + ".calib");
+                fout.open(std::to_string(device_ids[i]) + ".calib");
                 fout << "camera_matrix =";
                 for (int r = 0; r < camera_matrix.rows; r++) {
                     for (int c = 0; c < camera_matrix.cols; c++) {
-                        //fout << " " << camera_matrix.at<float>(r, c);
+                        fout << " " << camera_matrix.at<double>(r, c);
                     }
                 }
+                fout << std::endl;
+                fout << "dist_coeffs =";
+                for (int r = 0; r < dist_coeffs.rows; r++) {
+                    for (int c = 0; c < dist_coeffs.cols; c++) {
+                        fout << " " << dist_coeffs.at<double>(r, c);
+                    }
+                }
+                fout << std::endl;
                 fout.close();
 
-                std::cout << "Write calibration output to " << i << ".calib" << std:: endl;
+                std::cout << "Write calibration output to " << device_ids[i] << ".calib" << std:: endl;
             }
         }
     }
