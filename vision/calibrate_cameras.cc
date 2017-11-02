@@ -22,8 +22,8 @@ int main(int argc, char** argv) {
 
     // Open video capture devices
     vector<VideoCapture> devices;
-    vector<vector<Point2f>> img_points;
-    vector<vector<Point3f>> obj_points;
+    vector<vector<vector<Point2f>>> img_points;
+    vector<vector<vector<Point3f>>> obj_points;
     for (int i = 4; i < argc; i++) {
         int id = atoi(argv[i]);
         VideoCapture device(id);
@@ -31,8 +31,8 @@ int main(int argc, char** argv) {
             device.set(CV_CAP_PROP_FRAME_WIDTH, 1280);
             device.set(CV_CAP_PROP_FRAME_HEIGHT, 720);
             device.set(CV_CAP_PROP_FPS, 30);
-            img_points.push_back(vector<Point2f>());
-            obj_points.push_back(vector<Point3f>());
+            img_points.push_back(vector<vector<Point2f>>());
+            obj_points.push_back(vector<vector<Point3f>>());
         }
         else {
             std::cerr << "Failed to open video capture device " << id << std::endl;
@@ -66,10 +66,8 @@ int main(int argc, char** argv) {
                 bool found = findChessboardCorners(gray, checkerboard_size, corners);
                 if (found) {
                     std::cout << "Found checkerboard on " << i << std::endl;
-                    img_points[i].insert(
-                            std::end(img_points[i]), std::begin(corners), std::end(corners));
-                    obj_points[i].insert(std::end(obj_points[i]), std::begin(checkerboard_points),
-                            std::end(checkerboard_points));
+                    img_points[i].push_back(corners);
+                    obj_points[i].push_back(checkerboard_points);
                     cornerSubPix(gray, corners, Size(11, 11), Size(-1, -1),
                             TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
                 }
@@ -89,8 +87,12 @@ int main(int argc, char** argv) {
                 if (!devices[i].isOpened()) {
                     continue;
                 }
+                if (obj_points[i].size() == 0) {
+                    std::cout << "No checkerboards detected on camera " << i << std::endl;
+                    continue;
+                }
 
-                std::cout << "Calibrate camera" << std::endl;
+                std::cout << "Calibrate camera " << i << std::endl;
                 calibrateCamera(obj_points[i], img_points[i], frame.size(), camera_matrix,
                         dist_coeffs, rvecs, tvecs);
 
