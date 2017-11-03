@@ -1,3 +1,6 @@
+#include <apriltag/apriltag.h>
+#include <apriltag/tag36h11.h>
+#include <apriltag/tag36artoolkit.h>
 #include <iostream>
 #include <fstream>
 #include <opencv2/opencv.hpp>
@@ -6,6 +9,9 @@
 #include <vector>
 using namespace cv;
 using std::vector;
+
+#define TAG_SIZE 0.5625f
+
 int main(int argc, char** argv) {
     // Display usage
     if (argc < 2) {
@@ -112,9 +118,65 @@ int main(int argc, char** argv) {
             if (!devices[i].isOpened()) {
                 continue;
             }
+
             devices[i] >> frame;
+            cvtColor(frame, gray, COLOR_BGR2GRAY);
+            image_u8_t im = {
+                .width = gray.cols,
+                .height = gray.rows,
+                .stride = gray.cols,
+                .buf = gray.data
+            };
+
+            zarray_t* detections = apriltag_detector_detect(td, &im);
+
+            vector<Point2f> img_points(4);
+            vector<Point3f> obj_points(4);
+            Mat rvec(3, 1, CV_64FC1);
+            Mat tvec(3, 1, CV_64FC1);
+            for (int j = 0; j < zarray_size(detections); j++) {
+                // Get the ith detection
+                apriltag_detection_t *det;
+                zarray_get(detections, j, &det);
+
+                // Draw onto the frame
+                line(frame, Point(det->p[0][0], det->p[0][1]),
+                         Point(det->p[1][0], det->p[1][1]),
+                         Scalar(0, 0xff, 0), 2);
+                line(frame, Point(det->p[0][0], det->p[0][1]),
+                         Point(det->p[3][0], det->p[3][1]),
+                         Scalar(0, 0, 0xff), 2);
+                line(frame, Point(det->p[1][0], det->p[1][1]),
+                         Point(det->p[2][0], det->p[2][1]),
+                         Scalar(0xff, 0, 0), 2);
+                line(frame, Point(det->p[2][0], det->p[2][1]),
+                         Point(det->p[3][0], det->p[3][1]),
+                         Scalar(0xff, 0, 0), 2);
+
+                // Compute transformation using PnP
+                img_points[0] = Point2f(det->p[0][0], det->p[0][1]);
+                img_points[1] = Point2f(det->p[1][0], det->p[1][1]);
+                img_points[2] = Point2f(det->p[2][0], det->p[2][1]);
+                img_points[3] = Point2f(det->p[3][0], det->p[3][1]);
+
+                obj_points[0] = Point3f(-TAG_SIZE * 0.5f, -TAG_SIZE * 0.5f, 0.f);
+                obj_points[1] = Point3f( TAG_SIZE * 0.5f, -TAG_SIZE * 0.5f, 0.f);
+                obj_points[2] = Point3f( TAG_SIZE * 0.5f,  TAG_SIZE * 0.5f, 0.f);
+                obj_points[3] = Point3f(-TAG_SIZE * 0.5f,  TAG_SIZE * 0.5f, 0.f);
+
+                solvePnP(obj_points, img_points, device_camera_matrix[i],
+                        device_dist_coeffs[i], rvec, tvec);
+                printf("%zu :: %d :: % 3.3f % 3.3f % 3.3f  ::  % 3.3f % 3.3f % 3.3f\n",
+                        i, det->id,
+                        rvec.at<double>(0), rvec.at<double>(1), rvec.at<double>(2),
+                        tvec.at<double>(0), tvec.at<double>(1), tvec.at<double>(2));
+            }
+
+            zarray_destroy(detections);
+
             imshow(std::to_string(i), frame);
         }
+
         key = waitKey(16);
     }
-}
+    }
