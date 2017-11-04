@@ -21,7 +21,6 @@ export default class ControlPanel extends React.Component {
         this.sendMotors = this.sendMotors.bind(this);
         this.removeBot = this.removeBot.bind(this);
         this.xboxToggle = this.xboxToggle.bind(this);
-        this.getBotID = this.getBotID.bind(this);
         this.getTrackedBots = this.getTrackedBots.bind(this);
         this.selectBot = this.selectBot.bind(this);
     }
@@ -48,12 +47,6 @@ export default class ControlPanel extends React.Component {
      */
     componentWillMount() {
         this.getTrackedBots()
-    }
-
-    /* helper function for getting id of selected bot */
-    getBotID(){
-        console.log('bot id '+document.getElementById('botlist').value);
-        return document.getElementById('botlist').value;
     }
 
     /* sends a key-value command to bot */
@@ -91,10 +84,8 @@ export default class ControlPanel extends React.Component {
                 data: JSON.stringify({
                     key: document.getElementById('kv_key').value,
                     value: document.getElementById('kv_value').value,
-                    name: this.getBotID()
+                    name: this.state.currentBot
                 }),
-                dataType: 'json',
-                contentType: 'application/json'
             })
             .then(function(response) {
                 console.log('sent kv');
@@ -159,7 +150,7 @@ export default class ControlPanel extends React.Component {
         axios({
             method:'POST',
             url:'/logdata',
-            data: JSON.stringify({name: this.getBotId()}),
+            data: JSON.stringify({name: this.state.currentBot}),
             dataType: 'json',
             processData: false,
             contentType: 'application/json'
@@ -178,7 +169,7 @@ export default class ControlPanel extends React.Component {
         axios({
             method:'POST',
             url:'/removeBot',
-            data: JSON.stringify({name: this.getBotId()}),
+            data: JSON.stringify({name: this.state.currentBot}),
             dataType: 'json',
             contentType: 'application/json'
         })
@@ -197,7 +188,7 @@ export default class ControlPanel extends React.Component {
             axios({
                 method:'POST',
                 url:'/runXbox',
-                data: JSON.stringify({name: this.getBotId()}),
+                data: JSON.stringify({name: this.state.currentBot}),
                 dataType: 'json',
                 contentType: 'application/json'
             })
@@ -211,7 +202,7 @@ export default class ControlPanel extends React.Component {
             axios({
                 method:'POST',
                 url:'/stopXbox',
-                data: JSON.stringify({name: this.getBotId()}),
+                data: JSON.stringify({name: this.state.currentBot}),
                 dataType: 'json',
                 contentType: 'application/json'
             })
