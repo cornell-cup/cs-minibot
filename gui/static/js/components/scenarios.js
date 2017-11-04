@@ -49,7 +49,7 @@ export default class ScenariosItem extends React.Component {
 
         var scenario = {items: this.state.items};
         console.log("numBots:" + this.state.numBots);
-        if (this.state.numBots != 1) alert("There must be exactly one bot!");
+        if (this.state.numBots != 1) alert("You need to add a bot!");
         else {
             //Implemented the same way as Python script saving. This might not work so use axios code if it doesn't
             //event . preventDefault ()
@@ -112,6 +112,7 @@ export default class ScenariosItem extends React.Component {
 
         //check that inputs are valid
         if (this.state.angle > 360) alert("The angle is too large!");
+        else if (this.state.type == 'simulator.simbot' && this.state.numBots == 1) alert("You already have one bot!");
         else if (this.state.angle == '' || this.state.posx == '' || this.state.posy == '') alert("Fields cannot be empty!");
         else {
             var li = this.state.items;
