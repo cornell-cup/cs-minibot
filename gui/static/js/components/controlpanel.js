@@ -265,7 +265,6 @@ export default class ControlPanel extends React.Component {
     }
 
     render(){
-        console.log(this.state.currentBot);
         return (
             <div id ="component_controlpanel" className = "box">
                 Control Panel<br/>
