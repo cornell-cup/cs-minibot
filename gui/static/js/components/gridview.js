@@ -9,36 +9,36 @@ export default class GridView extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            ms_per_update: 33; // modbot update interval in ms
-            bots: [];
-            viewWidth:  520; //size of simulator display in pixels
-            startScale: 4; //number of meters displayed by simulator at start, 4 is 4x4 meters
+            ms_per_update: 33, // modbot update interval in ms
+            bots: [],
+            viewWidth:  520, //size of simulator display in pixels
+            startScale: 4, //number of meters displayed by simulator at start, 4 is 4x4 meters
 
-            x_int: 520/4; // actual spacing between grid lines
-            y_int: 520/4;
+            x_int: 520/4, // actual spacing between grid lines
+            y_int: 520/4,
 
-            scale: 100; //percentage, 100% is equal to 4x4 grid displayed, with each grid being 130pixels wide
-            xOffset: 0; //for purposes of adjusting viewport, this is a raw pixel value
-            yOffset: 0; //same as above
+            scale: 100, //percentage, 100% is equal to 4x4 grid displayed, with each grid being 130pixels wide
+            xOffset: 0, //for purposes of adjusting viewport, this is a raw pixel value
+            yOffset: 0, //same as above
 
             // pixi elements for displaying information
-            stage: null;
-            back: null;
-            botContainer: null;
-            gridContainer: null;
-            grid: null;
-            imageLoader: null;
+            stage: null,
+            back: null,
+            botContainer: null,
+            gridContainer: null,
+            grid: null,
+            imageLoader: null,
 
             // occupancy matrix
-            listBots: [];
-            occupancyMatrix: null;
-            path: null;
-            foundPath: false;
-            omPresent: false;
+            listBots: [],
+            occupancyMatrix: null,
+            path: null,
+            foundPath: false,
+            omPresent: false,
 
-            backgroundSprite: null;
-            lock: false;
-            lastTime: new Date();
+            backgroundSprite: null,
+            lock: false,
+            lastTime: new Date()
         };
 
         //Setup
@@ -65,8 +65,8 @@ export default class GridView extends React.Component {
 
     /* executes after the component gets rendered */
     componentDidMount(){
-        //main();
         //TODO
+        //main();
     }
 
     /* literally just a helper function - takes in a number for radians, spits out a number for degrees */
@@ -544,8 +544,10 @@ export default class GridView extends React.Component {
 
     render() {
         return(
-            <div id ="component_view" className = "box">GridView</div>
-            <div id ="view"></div>
+            <div id ="component_view" className = "box">
+                GridView<br/>
+                <div id ="view"></div>
+            </div>
         );
     }
 }
