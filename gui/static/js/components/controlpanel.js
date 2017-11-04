@@ -93,8 +93,6 @@ export default class ControlPanel extends React.Component {
                     value: document.getElementById('kv_value').value,
                     name: this.getBotID()
                 }),
-                dataType: 'json',
-                contentType: 'application/json'
             })
             .then(function(response) {
                 console.log('sent kv');
@@ -160,9 +158,7 @@ export default class ControlPanel extends React.Component {
             method:'POST',
             url:'/logdata',
             data: JSON.stringify({name: this.getBotId()}),
-            dataType: 'json',
             processData: false,
-            contentType: 'application/json'
         })
         .then(function(response) {
             console.log('started logging data');
@@ -179,8 +175,6 @@ export default class ControlPanel extends React.Component {
             method:'POST',
             url:'/removeBot',
             data: JSON.stringify({name: this.getBotId()}),
-            dataType: 'json',
-            contentType: 'application/json'
         })
         .then(function(response) {
             console.log('removed bot successfully');
@@ -198,8 +192,6 @@ export default class ControlPanel extends React.Component {
                 method:'POST',
                 url:'/runXbox',
                 data: JSON.stringify({name: this.getBotId()}),
-                dataType: 'json',
-                contentType: 'application/json'
             })
             .then(function(response) {
                 console.log('successfully toggled Xbox ON');
@@ -212,8 +204,6 @@ export default class ControlPanel extends React.Component {
                 method:'POST',
                 url:'/stopXbox',
                 data: JSON.stringify({name: this.getBotId()}),
-                dataType: 'json',
-                contentType: 'application/json'
             })
             .then(function(response) {
                 console.log('successfully toggled Xbox OFF');
