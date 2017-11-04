@@ -166,10 +166,41 @@ int main(int argc, char** argv) {
 
                 solvePnP(obj_points, img_points, device_camera_matrix[i],
                         device_dist_coeffs[i], rvec, tvec);
-                printf("%zu :: %d :: % 3.3f % 3.3f % 3.3f  ::  % 3.3f % 3.3f % 3.3f\n",
+                Matx33d r;
+                Rodrigues(rvec,r);
+
+                vector<double> data;
+                data.push_back(r(0,0));
+                data.push_back(r(0,1));
+                data.push_back(r(0,2));
+                data.push_back(tvec.at<double>(0));
+                data.push_back(r(1,0));
+                data.push_back(r(1,1));
+                data.push_back(r(1,2));
+                data.push_back(tvec.at<double>(0));
+                data.push_back(r(2,0));
+                data.push_back(r(2,1));
+                data.push_back(r(2,2));
+                data.push_back(tvec.at<double>(0));
+                data.push_back(0);
+                data.push_back(0);
+                data.push_back(0);
+                data.push_back(1);
+                Mat tag2cam = Mat(data,true).reshape(1,4);
+
+                vector<double> data2;
+                data2.push_back(0);
+                data2.push_back(0);
+                data2.push_back(0);
+                data2.push_back(1);
+                Mat genout = Mat(data2,true).reshape(1,1);
+
+
+                Mat tag2orig = tag2cam * cam_transforms[i];
+                Mat tagXYZS = tag2orig * genout;
+                printf("%zu :: %d :: % 3.3f % 3.3f % 3.3f",
                         i, det->id,
-                        rvec.at<double>(0), rvec.at<double>(1), rvec.at<double>(2),
-                        tvec.at<double>(0), tvec.at<double>(1), tvec.at<double>(2));
+                        tagXYZS.at<double>(0,0), tagXYZS.at<double>(1,0), tagXYZS.at<double>(2,0));
             }
 
             zarray_destroy(detections);
