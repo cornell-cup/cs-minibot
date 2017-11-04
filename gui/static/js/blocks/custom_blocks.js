@@ -79,3 +79,16 @@ Blockly.Python['wait'] = function(block) {
   var code = 'wait(' + time + ')';
   return [code, Blockly.Python.ORDER_NONE];
 };
+
+// ================== COLOR SENSOR BLOCK ================== //
+Blockly.Blocks['minibot_color'] = {
+  init: function(){
+    this.jsonInit(miniblocks.minibot_color);
+  }
+};
+
+Blockly.Python['minibot_color'] = function(block) {
+  var dropdown_hue = block.getFieldValue('hue');
+  var code = 'colorSensed = ' + dropdown_hue;
+  return [code, Blockly.Python.ORDER_NONE];
+};
