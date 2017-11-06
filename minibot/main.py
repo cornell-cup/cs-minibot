@@ -52,5 +52,11 @@ def parse_command(cmd, bot):
             print("oh no!")
             pass
 
+def send_command(key, val, tcp):
+    """
+    Sends command to BaseStation.
+    """
+    tcp.send_to_basestation(key, val)
+
 if __name__ == "__main__":
     main()

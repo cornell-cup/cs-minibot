@@ -1,6 +1,5 @@
 import json
 
-
 class SensorCenter(object):
     """
     Hosts methods to retrieve data from all applicable MiniBot sensors
