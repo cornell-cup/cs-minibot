@@ -45,8 +45,6 @@ def parse_command(cmd, bot):
     end = cmd.find(">>>>")
     key = cmd[start + 4:comma]
     value = cmd[comma + 1:end]
-    print(key)
-    print(value)
     if key == "WHEELS":
         try:
             values = value.split(",")
@@ -56,6 +54,8 @@ def parse_command(cmd, bot):
             print("oh no!")
             pass
     elif key == "SCRIPT":
+        print(key)
+        print(value)
         user_script_file = open("/home/pi/cs-minibot/minibot/UserScript.py",'w')
         user_script_file.write(value)
         user_script_file.close()
