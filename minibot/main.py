@@ -11,11 +11,13 @@ import json
 from threading import Thread
 import time
 import importlib
+import os
 
 CONFIG_LOCATION = '/home/pi/cs-minibot/minibot/configs/config.json'
 
 def main():
     print("Initializing Minibot Software")
+    p = None
     config_file = open(CONFIG_LOCATION)
     config = json.loads(config_file.read())
     bot = Bot(config)
@@ -51,6 +53,46 @@ def parse_command(cmd, bot):
             print(e)
             print("oh no!")
             pass
+    elif key == "SCRIPT":
+        user_script_file = open("scripts/UserScript.py",'w')
+        user_script_file.write(value)
+        user_script_file.close()
+        p = spawn_script_process(p, bot)
+        return p
+    elif key == "RUN":
+        if os.path.isfile(value):
+            p = spawn_named_script_process(p, bot, value)
+        else:
+            print "Invalid File path"
+    else:
+        print("Unknown key: " + key)
+        print("Cmd: " + cmd)
+
+def spawn_script_process(p,bot):
+    if (p is not None and p.is_alive()):
+        p.terminate()
+    time.sleep(0.1)
+    p = Thread(target=run_script, args=[bot])
+    p.start()
+    # Return control to main after .1 seconds
+    return p
+
+def spawn_named_script_process(p,bot,filename):
+    if (p is not None and p.is_alive()):
+        p.terminate()
+    time.sleep(0.1)
+    p = Thread(target=run_script, args=[bot,filename])
+    p.start()
+    # Return control to main after .1 seconds
+    return p
+
+def run_script_with_name(bot,script_name):
+    UserScript = importlib.import_module("scripts." + script_name)
+    UserScript.run(bot)
+
+def run_script(bot):
+    from scripts import UserScript
+    UserScript.run(bot)
 
 if __name__ == "__main__":
     main()
