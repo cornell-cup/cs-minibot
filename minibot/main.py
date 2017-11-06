@@ -65,10 +65,7 @@ def parse_command(cmd, bot):
         if os.path.isfile(value):
             p = spawn_named_script_process(p, bot, value)
         else:
-            print "Invalid File path"
-    else:
-        print("Unknown key: " + key)
-        print("Cmd: " + cmd)
+            print("Invalid File path")
 
 def spawn_script_process(p,bot):
     if (p is not None and p.is_alive()):
