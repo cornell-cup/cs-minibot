@@ -15,9 +15,9 @@ import os
 
 CONFIG_LOCATION = '/home/pi/cs-minibot/minibot/configs/config.json'
 
+p = None
 def main():
     print("Initializing Minibot Software")
-    p = None
     config_file = open(CONFIG_LOCATION)
     config = json.loads(config_file.read())
     bot = Bot(config)
@@ -27,7 +27,7 @@ def main():
     thread_udp.start()    
     while True:
         tcpCmd = tcpInstance.get_command()
-        parse_command(tcpCmd, bot)
+        parse_command(tcpCmd, bot):
         time.sleep(0.01)
 
 def parse_command(cmd, bot):
@@ -40,6 +40,7 @@ def parse_command(cmd, bot):
          bot (:obj:`Bot`): Bot object to run the command on.
          p (:obj:`str`): Payload or contents of command.
     """
+    global p
     comma = cmd.find(",")
     start = cmd.find("<<<<")
     end = cmd.find(">>>>")
@@ -56,15 +57,16 @@ def parse_command(cmd, bot):
     elif key == "SCRIPT":
         print(key)
         print(value)
-        user_script_file = open("/home/pi/cs-minibot/minibot/UserScript.py",'w')
+        user_script_file = open("/home/pi/cs-minibot/minibot/scripts/UserScript.py",'w')
         user_script_file.write(value)
         user_script_file.close()
         p = spawn_script_process(p, bot)
-        return p
     elif key == "RUN":
         print(key)
         print(value)
-        if os.path.isfile(value):
+        filename = os.path.basename(value)
+        filepath = "/home/pi/cs-minibot/minibot/scripts/" + filename
+        if os.path.isfile(filepath):
             p = spawn_named_script_process(p, bot, value)
         else:
             print("Invalid File path")
@@ -82,7 +84,7 @@ def spawn_named_script_process(p,bot,filename):
     if (p is not None and p.is_alive()):
         p.terminate()
     time.sleep(0.1)
-    p = Thread(target=run_script, args=[bot,filename])
+    p = Thread(target=run_script_with_name, args=[bot,filename])
     p.start()
     # Return control to main after .1 seconds
     return p
