@@ -11,7 +11,7 @@
 
 import sys, os, time, zmq
 from threading import Thread
-from queue import queue
+from queue import Queue
 import random
 import socket
 import fcntl
