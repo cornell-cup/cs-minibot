@@ -28,7 +28,7 @@ def main():
     thread_udp.start()    
     while True:
         tcpCmd = tcpInstance.get_command()
-        parse_command(tcpCmd, bot):
+        parse_command(tcpCmd, bot)
         time.sleep(0.01)
 
 def parse_command(cmd, bot):
@@ -67,6 +67,7 @@ def parse_command(cmd, bot):
         print(value)
         filename = os.path.basename(value)
         filepath = "/home/pi/cs-minibot/minibot/scripts/" + filename
+        print(filepath)
         if os.path.isfile(filepath):
             p = spawn_named_script_process(p, bot, value)
         else:
