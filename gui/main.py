@@ -30,7 +30,8 @@ class BaseInterface:
             ("/discoverBots", DiscoverBotsHandler),
             ("/getTrackedBots", GetTrackedBotHandler),
             ("/removeBot", RemoveBotHandler),
-            ("/sendKV", SendKVHandler)
+            ("/sendKV", SendKVHandler),
+            ("/botData", BotDataHandler1)
         ]
         self.settings = {
             "static_path": os.path.join(os.path.dirname(__file__), "static")
@@ -158,6 +159,10 @@ class SendKVHandler(tornado.web.RequestHandler):
         bot_cc = BaseStation().get_bot_manager().\
             get_bot_by_name(name).get_command_center()
         self.write(json.dumps(bot_cc.sendKV(key, val)))
+
+class BotDataHandler1(tornado.web.RequestHandler):
+    def get(self):
+        pass
 
 
 class ScriptHandler(tornado.web.RequestHandler):
