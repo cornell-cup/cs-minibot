@@ -68,7 +68,7 @@ def parse_command(cmd, bot):
         filepath = "/home/pi/cs-minibot/minibot/scripts/" + filename
         print(filepath)
         if os.path.isfile(filepath):
-            p = spawn_named_script_process(p, bot, value)
+            p = spawn_named_script_process(p, bot, filename.split('.')[0])
         else:
             print("Invalid File path")
 
@@ -81,17 +81,17 @@ def spawn_script_process(p,bot):
     # Return control to main after .1 seconds
     return p
 
-def spawn_named_script_process(p,bot,filename):
+def spawn_named_script_process(p,bot,script_name):
     if (p is not None and p.is_alive()):
         p.terminate()
     time.sleep(0.1)
-    p = Thread(target=run_script_with_name, args=[bot,filename])
+    p = Thread(target=run_script_with_name, args=[bot,script_name])
     p.start()
     # Return control to main after .1 seconds
     return p
 
 def run_script_with_name(bot,script_name):
-    UserScript = importlib.import_module("home.pi.cs-minibot.minibot.scripts." + script_name)
+    UserScript = importlib.import_module("scripts." + script_name)
     UserScript.run(bot)
 
 def run_script(bot):

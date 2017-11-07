@@ -74,7 +74,7 @@ class ZMQExchange:
         self.poller.register(self.xsub, zmq.POLLIN)
         self.poller.register(self.xpub, zmq.POLLIN)
         self.isMediator = True
-        print "Successfully set up mediator"
+        print("Successfully set up mediator")
 
     def mediate(self):
         """
@@ -87,7 +87,7 @@ class ZMQExchange:
                     # poll the proxy URLs to see what messages are waiting
                     # if any, forward them
                     events = dict(self.poller.poll(1000))
-                    #print "mediating..."
+                    #print("mediating...")
         
                     if self.xpub in events:
                         # message received from Minions on successful subscription
@@ -101,7 +101,7 @@ class ZMQExchange:
                         #print("publishing message: %r" % message)
                         self.xpub.send_multipart(message)
                 except KeyboardInterrupt:
-                    print "Mediator ending"
+                    print("Mediator ending")
                     break
             else:
                 break
@@ -113,7 +113,7 @@ class ZMQExchange:
         # broadcaster pub connects to the receiver subs' proxy url
         self.pub.connect(self.__xsub_url)
         self.isBroadcaster = True
-        print "Successfully set up broadcaster"
+        print("Successfully set up broadcaster")
 
     def broadcast(self, data):
         """
@@ -125,10 +125,10 @@ class ZMQExchange:
         
         # send the message
         if self.isBroadcaster:
-            #print "broadcasting", str(data)
+            #print("broadcasting", str(data))
             msg = [self.messageTopic, str(data)]
             self.pub.send_multipart(msg)
-            #print "broadcasted"
+            #print("broadcasted")
         
     def setReceiver(self, mediatorIP = None):
         """
@@ -146,7 +146,7 @@ class ZMQExchange:
         # only accept messages that start with self.messagetopic
         self.sub.setsockopt(zmq.SUBSCRIBE, self.messageTopic)
         self.isReceiver = True
-        print "Successfully set up receiver"
+        print("Successfully set up receiver")
 
     def receive(self, receivedQueue = None):
         """
@@ -161,7 +161,7 @@ class ZMQExchange:
                     # wait infinitely to receive the message
                     if self.sub.poll(timeout=0):
                         data = self.sub.recv_multipart()
-                        #print "received ", data
+                        #print("received ", data)
                         
                         if oldData != data:
                             # parse the data into lWheel and rWheel and send it as a
@@ -177,11 +177,11 @@ class ZMQExchange:
                             if receivedQueue is not None:
                                 receivedQueue.put(info)
                             else:
-                                #print "received ", info
+                                #print("received ", info)
                                 pass
                             oldData = data            
                 except KeyboardInterrupt:
-                    print "Receiver stopping"
+                    print("Receiver stopping")
                     break
             else:
                 break

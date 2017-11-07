@@ -87,7 +87,7 @@ def increment_speed(direction, inc_time, speed, inc_amt):
         count[direction] = 0
         if(speed<50):
             speed += inc_amt
-        print "Speed increased: " + str(speed)
+        print("Speed increased: " + str(speed))
     return speed
 
 def echobot(bot,z):
@@ -95,7 +95,7 @@ def echobot(bot,z):
         while(True):
             # msg is a tuple of left motor and right motor, respectively.
             msg = bot.get_actuator_by_name("two_wheel_movement").get_value()
-            print "MSG: " + msg
+            print("MSG: " + msg)
             z.broadcast(msg)
             time.sleep(0.1)
 
