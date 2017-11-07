@@ -50,21 +50,17 @@ def parse_command(cmd, bot):
     if key == "WHEELS":
         try:
             values = value.split(",")
-            bot.motors.set_speed(int(values[0])/100., int(values[1])/100.)
+            bot.set_wheel_power(int(values[0]), int(values[1]))
         except Exception as e:
             print(e)
             print("oh no!")
             pass
     elif key == "SCRIPT":
-        print(key)
-        print(value)
         user_script_file = open("/home/pi/cs-minibot/minibot/scripts/UserScript.py",'w')
         user_script_file.write(value)
         user_script_file.close()
         p = spawn_script_process(p, bot)
     elif key == "RUN":
-        print(key)
-        print(value)
         filename = os.path.basename(value)
         filepath = "/home/pi/cs-minibot/minibot/scripts/" + filename
         print(filepath)
