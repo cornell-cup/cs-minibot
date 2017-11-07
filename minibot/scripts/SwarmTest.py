@@ -8,9 +8,9 @@ def run(bot):
     print "================== TESTING =================="
 
     while len(raw_input("GO?"))>-1:
-        print "RGB: " + str(cs.read())
+        print("RGB: " + str(cs.read()))
         color = str(cs.read_color())
-        print "Color: " + color
+        print("Color: " + color)
 
         if(color=="RED"):
             # stop
