@@ -1,6 +1,6 @@
 from hardware.communication.ZMQ import ZMQExchange
 from hardware.communication.TCP import TCP
-from queue import queue
+from queue import Queue
 import time
 from threading import Thread
 
