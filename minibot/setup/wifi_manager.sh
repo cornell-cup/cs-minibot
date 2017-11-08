@@ -53,7 +53,7 @@ copy_conf_wifi_setup () {
     sudo sed -i -- 's/#DAEMON_CONF=""/DAEMON_CONF="\/etc\/hostapd\/hostapd.conf"/g' /etc/default/hostapd
 
     # add new information to interfaces and dhcpcd.conf
-    
+
     sudo cat >> $inter_file <<EOF
     # added by MiniBot to make pi an access point
     iface wlan0 inet static
