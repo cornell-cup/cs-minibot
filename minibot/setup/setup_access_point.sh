@@ -30,17 +30,13 @@ copy_conf_wifi_setup () {
     sudo sed -i -- 's/#DAEMON_CONF=""/DAEMON_CONF="\/etc\/hostapd\/hostapd.conf"/g' /etc/default/hostapd
 
     # add new information to interfaces and dhcpcd.conf
-
-    sudo cat >> /etc/network/interfaces <<EOF
-# added by MiniBot to make pi an access point
-iface wlan0 inet static
-    address 192.168.10.1
-    netmask 255.255.255.0
-    network 192.168.10.0
-    broadcast 192.168.10.255
-EOF
-
-    sudo echo "denyinterfaces wlan0" >> /etc/dhcpcd.conf
+    sudo cp ./minibot-interfaces /etc/network/interfaces
+    
+    sudo grep "denyinterfaces wlan0" /etc/dhcpcd.conf
+    if [[ $? != 0 ]]
+    then sudo echo "denyinterfaces wlan0" >> /etc/dhcpcd.conf
+    fi
+    
     echo "Setup the Wifi interfaces for Access Point."
 }
 
