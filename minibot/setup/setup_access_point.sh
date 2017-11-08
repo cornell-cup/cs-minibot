@@ -32,7 +32,7 @@ copy_conf_wifi_setup () {
     # add new information to interfaces and dhcpcd.conf
     sudo cp ./minibot-interfaces /etc/network/interfaces
     
-    sudo grep "denyinterfaces wlan0" /etc/dhcpcd.conf
+    sudo grep "denyinterfaces wlan0" /etc/dhcpcd.conf >/dev/null
     if [[ $? != 0 ]]
     then sudo echo "denyinterfaces wlan0" >> /etc/dhcpcd.conf
     fi
@@ -43,7 +43,6 @@ copy_conf_wifi_setup () {
 check_dependencies
 
 echo "Starting Access Point..."
-sudo service dhcpcd stop
 sudo service apache2 stop
 sudo service hostapd stop && sudo service dnsmasq stop
 
@@ -52,7 +51,5 @@ copy_conf_wifi_setup
 # start all services and reboot
 sudo systemctl enable hostapd && sudo systemctl enable dnsmasq
 sudo service hostapd start && sudo service dnsmasq start
-sudo service dhcpcd restart
-sudo service apache2 restart
 
 echo "Access Point has been set up."

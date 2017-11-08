@@ -23,22 +23,14 @@ is_connected_to_wifi () {
 }
 
 copy_conf_default () {
-    inter_file="/etc/network/interfaces"
 
     sudo cp ./dnsmasq.conf.orig /etc/dnsmasq.conf
-    sudo cp ./hostapd.conf.orif /etc/hostapd/hostapd.conf
+    sudo cp ./hostapd.conf.orig /etc/hostapd/hostapd.conf
+    sudo cp ./interfaces.orig /etc/network/interfaces
 
     # remove information about access point
-    sudo sed -i -- 's/DAEMON_CONF="\/etc\/hostapd\/hostapd.conf/#DAEMON_CONF=""/g"' /etc/default/hostapd
+    sudo sed -i -- 's/DAEMON_CONF="\/etc\/hostapd\/hostapd.conf/#DAEMON_CONF=""/g' /etc/default/hostapd
     sudo sed -i -- '/denyinterfaces wlan0/ d' /etc/dhcpcd.conf
-
-    # remove information from /etc/network/interfaces
-    sudo sed -i -- '/# access point/ d' $inter_file
-    sudo sed -i -- '/iface wlan0 inet static/ d' $inter_file
-    sudo sed -i -- '/address 192.168.10.1/ d' $inter_file
-    sudo sed -i -- '/netmask 255.255.255.0/ d' $inter_file
-    sudo sed -i -- '/network 192.168.10.0/ d' $inter_file
-    sudo sed -i -- '/broadcast 192.168.10.255/ d' $inter_file
 }
 
 add_wifi_ssid_pass_setting () {
@@ -57,15 +49,17 @@ EOF
 
 sleep 3    # sleep 3 seconds to allow wifi to connect
 
-is_connected_to_wifi
-if [[ $? != 0 ]]
-then
-    echo "Not connected to Wifi, starting a Access Point."
-    sudo ./setup_access_point.sh
+if [[ $1 == "clean" ]]
+then copy_conf_default
+    sudo service dhcpcd restart
+    exit
 else
-    echo "Connected to Wifi."
-#     sudo service dhcpcd stop
-#     copy_conf_default
-#     add_wifi_ssid_pass_setting $1 $2
-#     sudo systemctl disable hostapd && sudo systemctl disable dnsmasq
+    is_connected_to_wifi
+    if [[ $? != 0 ]]
+    then
+        echo "Not connected to Wifi, starting a Access Point."
+        sudo ./setup_access_point.sh
+    else
+        echo "Connected to Wifi."
+    fi
 fi
