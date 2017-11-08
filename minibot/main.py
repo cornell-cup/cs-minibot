@@ -19,6 +19,7 @@ def main():
     config_file = open(CONFIG_LOCATION)
     config = json.loads(config_file.read())
     bot = Bot(config)
+    bot.motors.set_speed(1, 0)
     tcpInstance = TCP()
     print(tcpInstance)
     thread_udp = Thread(target= minibot.hardware.communication.UDP.udpBeacon)

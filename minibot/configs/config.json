@@ -8,14 +8,14 @@
   "actuators": [
     {
        "name" : "leftMotor",
-        "pinPWM": 13,
-        "pinHighLow" :20
+        "pinPWM": 19,
+        "pinHighLow" :18
 
     },
     {
       "name" :"rightMotor",
-        "pinPWM": 19,
-        "pinHighLow": 18
+        "pinPWM": 13,
+        "pinHighLow": 20
 
     }
   ],
