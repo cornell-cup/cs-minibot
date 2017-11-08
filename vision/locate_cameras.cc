@@ -198,16 +198,18 @@ int main(int argc, char** argv) {
                     printf("%zu :: %d :: % 3.3f % 3.3f % 3.3f\n", i, det->id,
                             camcoords.at<double>(0,0), camcoords.at<double>(1,0), camcoords.at<double>(2,0));
 
-                    std::ofstream fout;
-                    fout.open(std::to_string(device_ids[i]) + ".calib", "a");
-                    fout << "transform_matrix =";
-                    for (int r = 0; r < cam2origin.rows; r++) {
-                        for (int c = 0; c < cam2origin.cols; c++) {
-                            fout << " " << cam2origin.at<double>(r, c);
+                    if (key == 'w') {
+                        std::ofstream fout;
+                        fout.open(std::to_string(device_ids[i]) + ".calib", std::ofstream::out | std::ofstream::app);
+                        fout << "transform_matrix =";
+                        for (int r = 0; r < cam2origin.rows; r++) {
+                            for (int c = 0; c < cam2origin.cols; c++) {
+                                fout << " " << cam2origin.at<double>(r, c);
+                            }
                         }
+                        fout << std::endl;
+                        fout.close();
                     }
-                    fout << std::endl;
-                    fout.close();
                 }
             }
 

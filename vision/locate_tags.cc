@@ -7,10 +7,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <vector>
+
 using namespace cv;
 using std::vector;
 
-#define TAG_SIZE 0.5625f
+#define TAG_SIZE 6.5f
 
 int main(int argc, char** argv) {
     // Display usage
@@ -23,7 +24,7 @@ int main(int argc, char** argv) {
     vector<int> device_ids;
     vector<Mat> device_camera_matrix;
     vector<Mat> device_dist_coeffs;
-    vector<Mat> cam_transforms;
+    vector<Mat> device_transform_matrix;
     for (int i = 1; i < argc; i++) {
         int id = atoi(argv[i]);
         VideoCapture device(id);
@@ -37,7 +38,7 @@ int main(int argc, char** argv) {
             std::cerr << "Failed to open file " << argv[i] << std::endl;
             continue;
         }
-        Mat camera_matrix, dist_coeffs, cam_transform;
+        Mat camera_matrix, dist_coeffs, transform_matrix;
         std::string line;
         // TODO Error checking
         while (std::getline(fin, line)) {
@@ -60,7 +61,7 @@ int main(int argc, char** argv) {
                     line_stream >> v;
                     data.push_back(v);
                 }
-                dist_coeffs = Mat(data, true).reshape(1,1);//one row 5 cols
+                dist_coeffs = Mat(data, true).reshape(1,1);
             }
             else if (key == "transform_matrix"){
                 vector<double> data;
@@ -69,7 +70,7 @@ int main(int argc, char** argv) {
                   line_stream >> v;
                   data.push_back(v);
                 }
-                cam_transform = Mat(data, true).reshape(1,4);
+                transform_matrix = Mat(data, true).reshape(1,4);
             }
             else {
                 std::cerr << "Unrecognized key '" << key << "' in file " << argv[i] << std::endl;
@@ -80,13 +81,13 @@ int main(int argc, char** argv) {
             continue;
         }
 
-        if (dist_coeffs.rows != 3 || dist_coeffs.cols != 3) {
+        if (dist_coeffs.rows != 1 || dist_coeffs.cols != 5) {
             std::cerr << "Error reading dist_coeffs in file " << argv[i] << std::endl;
             continue;
         }
 
-        if (transform_matrix.rows != 4 || dist_coeffs.cols != 4){
-            std::cerr << "Error reading transforms in file " << argv[i] << std::endl;
+        if (transform_matrix.rows != 4 || transform_matrix.cols != 4){
+            std::cerr << "Error reading transform_matrix in file " << argv[i] << std::endl;
             continue;
         }
 
@@ -97,7 +98,7 @@ int main(int argc, char** argv) {
         device_ids.push_back(id);
         device_camera_matrix.push_back(camera_matrix);
         device_dist_coeffs.push_back(dist_coeffs);
-        cam_transforms.push_back(cam_transform);
+        device_transform_matrix.push_back(transform_matrix);
     }
     // Initialize detector
     apriltag_family_t* tf = tag36h11_create();
@@ -177,30 +178,29 @@ int main(int argc, char** argv) {
                 data.push_back(r(1,0));
                 data.push_back(r(1,1));
                 data.push_back(r(1,2));
-                data.push_back(tvec.at<double>(0));
+                data.push_back(tvec.at<double>(1));
                 data.push_back(r(2,0));
                 data.push_back(r(2,1));
                 data.push_back(r(2,2));
-                data.push_back(tvec.at<double>(0));
+                data.push_back(tvec.at<double>(2));
                 data.push_back(0);
                 data.push_back(0);
                 data.push_back(0);
                 data.push_back(1);
-                Mat tag2cam = Mat(data,true).reshape(1,4);
+                Mat tag2cam = Mat(data,true).reshape(1, 4);
 
                 vector<double> data2;
                 data2.push_back(0);
                 data2.push_back(0);
                 data2.push_back(0);
                 data2.push_back(1);
-                Mat genout = Mat(data2,true).reshape(1,1);
+                Mat genout = Mat(data2,true).reshape(1, 4);
 
-
-                Mat tag2orig = tag2cam * cam_transforms[i];
+                Mat tag2orig = tag2cam * device_transform_matrix[i];
                 Mat tagXYZS = tag2orig * genout;
-                printf("%zu :: %d :: % 3.3f % 3.3f % 3.3f",
+                printf("%zu :: %d :: % 3.3f % 3.3f % 3.3f\n",
                         i, det->id,
-                        tagXYZS.at<double>(0,0), tagXYZS.at<double>(1,0), tagXYZS.at<double>(2,0));
+                        tagXYZS.at<double>(0), tagXYZS.at<double>(1), tagXYZS.at<double>(2));
             }
 
             zarray_destroy(detections);
