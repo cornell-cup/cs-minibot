@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-if [ "$EUID" -ne 0]
-    then echo "[ERROR] Must be Root. Try again with sudo."
+if [ "$EUID" -ne 0 ]
+then echo "[ERROR] Must be Root. Try again with sudo."
     exit
 fi
 

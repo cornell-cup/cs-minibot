@@ -1,9 +1,9 @@
-    #!/usr/bin/env bash
+#!/usr/bin/env bash
 
 # works on Raspbian Stretch
 
-if [ "$EUID" -ne 0]
-    then echo "[ERROR] Must be Root. Try again with sudo."
+if [ "$EUID" -ne 0 ]
+then echo "[ERROR] Must be Root. Try again with sudo."
     exit
 fi
 
@@ -55,8 +55,10 @@ add_wifi_ssid_pass_setting () {
 EOF
 }
 
-sleep 10    # sleep 10 seconds to allow wifi to connect
-if [[ is_connected_to_wifi != 0 ]]
+sleep 3    # sleep 3 seconds to allow wifi to connect
+
+is_connected_to_wifi
+if [[ $? != 0 ]]
 then
     echo "Not connected to Wifi, starting a Access Point."
     sudo ./setup_access_point.sh
