@@ -49,7 +49,10 @@ sudo service hostapd stop && sudo service dnsmasq stop
 copy_conf_wifi_setup
 
 # start all services and reboot
-sudo systemctl enable hostapd && sudo systemctl enable dnsmasq
-sudo service hostapd start && sudo service dnsmasq start
+systemctl enable hostapd
+systemctl enable dnsmasq
+
+sudo service hostapd start
+sudo service dnsmasq start
 
 echo "Access Point has been set up."

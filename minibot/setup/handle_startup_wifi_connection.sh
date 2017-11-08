@@ -29,7 +29,7 @@ copy_conf_default () {
     sudo cp ./interfaces.orig /etc/network/interfaces
 
     # remove information about access point
-    sudo sed -i -- 's/DAEMON_CONF="\/etc\/hostapd\/hostapd.conf/#DAEMON_CONF=""/g' /etc/default/hostapd
+    sudo sed -i -- 's/DAEMON_CONF="\/etc\/hostapd\/hostapd.conf"/#DAEMON_CONF=""/g' /etc/default/hostapd
     sudo sed -i -- '/denyinterfaces wlan0/ d' /etc/dhcpcd.conf
 }
 
