@@ -46,8 +46,3 @@ class HBridge():
         else:
             self.right_pin.set_low()
             self.right_pwm.set_duty_cycle(1-abs(right))
-
-        print(self.left_pin)
-        print(self.left_pwm)
-        print(self.right_pin)
-        print(self.right_pwm)
