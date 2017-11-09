@@ -50,7 +50,7 @@ def parse_command(cmd, bot):
     if key == "WHEELS":
         try:
             values = value.split(",")
-            bot.motors.set_speed(int(values[0])/100., int(values[1])/100.)
+            bot.set_wheel_power(int(values[0]), int(values[1]))
         except Exception as e:
             print(e)
             print("oh no!")
