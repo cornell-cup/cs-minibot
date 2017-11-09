@@ -88,7 +88,7 @@ def spawn_named_script_process(p,bot,filename):
     return p
 
 def run_script_with_name(bot,script_name):
-    UserScript = importlib.import_module("home.pi.cs-minibot.minibot.scripts." + script_name)
+    UserScript = importlib.import_module("scripts." + script_name)
     UserScript.run(bot)
 
 def run_script(bot):
