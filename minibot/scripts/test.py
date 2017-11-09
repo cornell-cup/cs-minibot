@@ -1,5 +1,5 @@
 """
-Tests for minibot movement.
+Test script for minibot movement
 """
 from minibot.bot import Bot
 
@@ -7,7 +7,7 @@ import json
 
 CONFIG_LOCATION = '/home/pi/cs-minibot/minibot/configs/config.json'
 
-if __name__ == "__main__":
+def run(bot):
     print("Initializing Minibot Software")
     config_file = open(CONFIG_LOCATION)
     config = json.loads(config_file.read())
