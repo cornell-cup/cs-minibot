@@ -20,9 +20,29 @@ export default class ControlPanel extends React.Component {
         this.sendMotors = this.sendMotors.bind(this);
         this.removeBot = this.removeBot.bind(this);
         this.xboxToggle = this.xboxToggle.bind(this);
-        //this.keyboardToggle = this.keyboardToggle.bind(this);
         this.getTrackedBots = this.getTrackedBots.bind(this);
         this.selectBot = this.selectBot.bind(this);
+        this.onKeyDown = this.onKeyDown.bind(this);
+        window.addEventListener('keydown', this.onKeyDown);
+
+    }
+
+    onKeyDown(event){
+        if (this.state.keyboard){
+            if (event.key == 'w'){
+                this.sendMotors(100, 100, 100, 100);
+            }
+            else if (event.key == 'a'){
+                this.sendMotors(-100, 100, 0,0 );
+            }
+            else if (event.key == 'd'){
+                this.sendMotors(100, -100,0 ,0);
+            }
+            else{
+                this.sendMotors(-100, -100, 0, 0);
+            }
+
+        }
     }
 
     /* handler for input changes to modify the state */
@@ -35,6 +55,11 @@ export default class ControlPanel extends React.Component {
                 [name]: target.checked
             });
             this.xboxToggle(target.checked);
+        } else if (name=="keyboard"){
+            this.setState({
+                [name]: target.checked
+            });
+            console.log(this.state.keyboard)
         } else {
             this.setState({
                 [name]: value
@@ -177,6 +202,7 @@ export default class ControlPanel extends React.Component {
         });
     }
 
+
     /* toggles xbox controls on or off */
     xboxToggle(checked){
         console.log('xboxToggle '+checked);
@@ -206,6 +232,7 @@ export default class ControlPanel extends React.Component {
             });
         }
     }
+
 
     updateDiscoveredBots(){
         //TODO (#32) - change below request to axios
@@ -248,9 +275,8 @@ export default class ControlPanel extends React.Component {
     }
 
     render(){
-        console.log(this.props)
         return (
-            <div id ="component_controlpanel" className = "box">
+            <div id ="component_controlpanel" className = "box" >
                 Control Panel<br/>
                 <h4>Movement controls:</h4>
                 <br/>
@@ -301,7 +327,7 @@ export default class ControlPanel extends React.Component {
                         <td>
                             Keyboard Controls <br/>
                             <label className="switch">
-                                <input name="keyboard" type="checkbox" id="keyboard-controls"/>
+                                <input name="keyboard" type="checkbox" id="keyboard-controls" onChange={this.handleInputChange} />
                                 <span className="slider"></span>
                             </label>
                         </td>
