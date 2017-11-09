@@ -11,7 +11,6 @@ export default class ControlPanel extends React.Component {
             keyboard: false,
             xbox: false,
             trackedBots: [],
-            currentBot: ''
         };
 
         this.handleInputChange = this.handleInputChange.bind(this);
@@ -21,6 +20,7 @@ export default class ControlPanel extends React.Component {
         this.sendMotors = this.sendMotors.bind(this);
         this.removeBot = this.removeBot.bind(this);
         this.xboxToggle = this.xboxToggle.bind(this);
+        //this.keyboardToggle = this.keyboardToggle.bind(this);
         this.getTrackedBots = this.getTrackedBots.bind(this);
         this.selectBot = this.selectBot.bind(this);
     }
@@ -84,7 +84,7 @@ export default class ControlPanel extends React.Component {
                 data: JSON.stringify({
                     key: document.getElementById('kv_key').value,
                     value: document.getElementById('kv_value').value,
-                    name: this.state.currentBot
+                    name: this.props.currentBot
                 }),
             })
             .then(function(response) {
@@ -105,7 +105,7 @@ export default class ControlPanel extends React.Component {
             method:'POST',
             url:'/commandBot',
             data: JSON.stringify({
-                name: this.state.currentBot,
+                name: this.props.currentBot,
                 fl: fl,
                 fr: fr,
                 bl: bl,
@@ -141,7 +141,7 @@ export default class ControlPanel extends React.Component {
      * Handles onChange for bot dropdown. Changes currently selected bot.
      */
     selectBot(event) {
-        this.setState({currentBot: event.target.value})
+        this.props.setCurrentBot(event.target.value);
     }
 
     /* starts data logging */
@@ -150,7 +150,7 @@ export default class ControlPanel extends React.Component {
         axios({
             method:'POST',
             url:'/logdata',
-            data: JSON.stringify({name: this.state.currentBot}),
+            data: JSON.stringify({name: this.props.currentBot}),
             processData: false,
         })
         .then(function(response) {
@@ -167,7 +167,7 @@ export default class ControlPanel extends React.Component {
         axios({
             method:'POST',
             url:'/removeBot',
-            data: JSON.stringify({name: this.state.currentBot}),
+            data: JSON.stringify({name: this.props.currentBot}),
         })
         .then(function(response) {
             console.log('removed bot successfully');
@@ -184,7 +184,7 @@ export default class ControlPanel extends React.Component {
             axios({
                 method:'POST',
                 url:'/runXbox',
-                data: JSON.stringify({name: this.state.currentBot}),
+                data: JSON.stringify({name: this.props.currentBot}),
             })
             .then(function(response) {
                 console.log('successfully toggled Xbox ON');
@@ -196,7 +196,7 @@ export default class ControlPanel extends React.Component {
             axios({
                 method:'POST',
                 url:'/stopXbox',
-                data: JSON.stringify({name: this.state.currentBot}),
+                data: JSON.stringify({name: this.props.currentBot}),
             })
             .then(function(response) {
                 console.log('successfully toggled Xbox OFF');
@@ -248,6 +248,7 @@ export default class ControlPanel extends React.Component {
     }
 
     render(){
+        console.log(this.props)
         return (
             <div id ="component_controlpanel" className = "box">
                 Control Panel<br/>
@@ -259,7 +260,7 @@ export default class ControlPanel extends React.Component {
                         <td>
                             <label>
                                  Choose bot:
-                                <select value={this.state.currentBot} onChange={this.selectBot}> id="botlist" name="bots">
+                                <select value={this.props.currentBot} onChange={this.selectBot}> id="botlist" name="bots">
                                     <option value="(DEBUG) Sim Bot">(DEBUG) Sim Bot</option>
                                     {
                                         this.state.trackedBots.map(function(botname, idx){
