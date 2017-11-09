@@ -18,6 +18,7 @@ CONFIG_LOCATION = '/home/pi/cs-minibot/minibot/configs/config.json'
 p = None
 def main():
     print("Initializing Minibot Software")
+    p = None
     config_file = open(CONFIG_LOCATION)
     config = json.loads(config_file.read())
     bot = Bot(config)
