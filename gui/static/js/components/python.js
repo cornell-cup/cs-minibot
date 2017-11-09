@@ -94,7 +94,7 @@ export default class Python extends React.Component {
                 data: JSON.stringify({
                     key: 'SCRIPT',
                     value: document.getElementById('data').value,
-                    name: this.state.currentBot
+                    name: this.props.currentBot
                 }),
             })
             .then(function(response) {

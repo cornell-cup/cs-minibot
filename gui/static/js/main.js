@@ -78,6 +78,21 @@ class SetupTab extends React.Component {
  * python, blockly, gridView, controlpanel
  */
 class ControlTab extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            currentBot: ''
+        };
+        this.setCurrentBot = this.setCurrentBot.bind(this)
+     }
+
+     setCurrentBot(botName){
+        console.log(botName);
+        this.setState({
+            currentBot: botName
+        });
+     }
+
     render(){
         return (
             <div id ="tab_control">
@@ -87,8 +102,8 @@ class ControlTab extends React.Component {
                         <GridView/>
                     </div>
                     <div className="col-md-5">
-                        <Python/>
-                        <ControlPanel/>
+                        <Python setCurrentBot={this.setCurrentBot} currentBot={this.state.currentBot} />
+                        <ControlPanel setCurrentBot={this.setCurrentBot} currentBot = {this.state.currentBot} />
                     </div>
                 </div>
             </div>
