@@ -42,9 +42,9 @@ class TestHBridge(unittest.TestCase):
                           PWM(18))
         hbridge.set_speed(-1, -1)
         self.assertEqual(hbridge.left_pin.state, 1)
-        self.assertEqual(hbridge.left_pwm.duty_cycle, 0)
+        self.assertEqual(hbridge.left_pwm.duty_cycle, 1)
         self.assertEqual(hbridge.right_pin.state, 1)
-        self.assertEqual(hbridge.right_pwm.duty_cycle, 0)
+        self.assertEqual(hbridge.right_pwm.duty_cycle, 1)
 
     def test_counterclockwise(self):
         """ Tests to make sure turns left correctly """
@@ -54,7 +54,7 @@ class TestHBridge(unittest.TestCase):
                           PWM(18))
         hbridge.set_speed(-1, 1)
         self.assertEqual(hbridge.left_pin.state, 1)
-        self.assertEqual(hbridge.left_pwm.duty_cycle, 0)
+        self.assertEqual(hbridge.left_pwm.duty_cycle, 1)
         self.assertEqual(hbridge.right_pin.state, 0)
         self.assertEqual(hbridge.right_pwm.duty_cycle, 0)
 
@@ -68,10 +68,10 @@ class TestHBridge(unittest.TestCase):
         self.assertEqual(hbridge.left_pin.state, 0)
         self.assertEqual(hbridge.left_pwm.duty_cycle, 0)
         self.assertEqual(hbridge.right_pin.state, 1)
-        self.assertEqual(hbridge.right_pwm.duty_cycle, 0)
+        self.assertEqual(hbridge.right_pwm.duty_cycle, 1)
 
     def test_pivotright(self):
-        """ Tests to make sure turns left correctly """
+        """ Tests to make sure turns right correctly """
         hbridge = HBridge(DigitalOutput(10),
                           PWM(13),
                           DigitalOutput(24),
