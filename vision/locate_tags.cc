@@ -1,6 +1,7 @@
 #include <apriltag/apriltag.h>
 #include <apriltag/tag36h11.h>
 #include <apriltag/tag36artoolkit.h>
+#include <curl/curl.h>
 #include <iostream>
 #include <fstream>
 #include <opencv2/opencv.hpp>
@@ -15,17 +16,26 @@ using std::vector;
 
 int main(int argc, char** argv) {
     // Display usage
-    if (argc < 2) {
-        printf("Usage: %s [cameras...]\n", argv[0]);
+    if (argc < 3) {
+        printf("Usage: %s <basestation url> [cameras...]\n", argv[0]);
         return -1;
     }
     // Parse arguments
+    CURL *curl;
+    curl = curl_easy_init();
+    if (!curl) {
+        std::cerr << "Failed to initialize curl" << std::endl;
+        return -1;
+    }
+    curl_easy_setopt(curl, CURLOPT_URL, argv[1]);
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT_MS, 200L);
+
     vector<VideoCapture> devices;
     vector<int> device_ids;
     vector<Mat> device_camera_matrix;
     vector<Mat> device_dist_coeffs;
     vector<Mat> device_transform_matrix;
-    for (int i = 1; i < argc; i++) {
+    for (int i = 2; i < argc; i++) {
         int id = atoi(argv[i]);
         VideoCapture device(id);
         if (!device.isOpened()) {
@@ -114,6 +124,7 @@ int main(int argc, char** argv) {
     td->refine_pose = 0;
     int key = 0;
     Mat frame, gray;
+    char postDataBuffer[100];
     while (key != 27) { // Quit on escape keypress
         for (size_t i = 0; i < devices.size(); i++) {
             if (!devices[i].isOpened()) {
@@ -201,6 +212,13 @@ int main(int argc, char** argv) {
                 printf("%zu :: %d :: % 3.3f % 3.3f % 3.3f\n",
                         i, det->id,
                         tagXYZS.at<double>(0), tagXYZS.at<double>(1), tagXYZS.at<double>(2));
+
+                // Send data to basestation
+                sprintf(postDataBuffer, "{\"id\":%d,\"x\":%f,\"y\":%f,\"z\":%f}",
+                        det->id, tagXYZS.at<double>(0), tagXYZS.at<double>(1), tagXYZS.at<double>(2));
+                curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postDataBuffer);
+                // TODO Check for error response
+                curl_easy_perform(curl);
             }
 
             zarray_destroy(detections);
@@ -210,4 +228,5 @@ int main(int argc, char** argv) {
 
         key = waitKey(16);
     }
-    }
+    curl_easy_cleanup(curl);
+}
