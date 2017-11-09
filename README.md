@@ -44,14 +44,15 @@ From the root directory, run the following line in terminal.
 ```
 pip install -r requirements.txt
 ```
-cd into gui and run
+Then run the following line.
 ```
-npm install
+./init_gui.sh
 ```
-to build the frontend files, cd into gui and run
+If this does not work, run
 ```
-npm run webpack
+chmod u+x init.sh
 ```
+to give persmission to run the init file.
 
 ### Dependencies on the Rapsberry Pi
 
@@ -77,7 +78,7 @@ To run the BaseStation, run the following line in your terminal from the root di
 of this repo.
 
 ```
-python3 gui/main.py
+./start_gui.sh
 ```
 
 Go to any browser on your computer and go to `localhost:1234/gui` to see the GUI in action.
