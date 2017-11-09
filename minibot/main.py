@@ -56,15 +56,11 @@ def parse_command(cmd, bot):
             print("oh no!")
             pass
     elif key == "SCRIPT":
-        print(key)
-        print(value)
         user_script_file = open("/home/pi/cs-minibot/minibot/scripts/UserScript.py",'w')
         user_script_file.write(value)
         user_script_file.close()
         p = spawn_script_process(p, bot)
     elif key == "RUN":
-        print(key)
-        print(value)
         filename = os.path.basename(value)
         filepath = "/home/pi/cs-minibot/minibot/scripts/" + filename
         print(filepath)
