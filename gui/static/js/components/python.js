@@ -88,23 +88,21 @@ export default class Python extends React.Component {
       the actual MiniBot.
     */
     send(){
-        console.log("send listener");
-        axios({
-            method:'POST',
-            url:'/uploadScript',
-            data: JSON.stringify({
-                name: document.getElementById("id").value,
-                script: getBlocklyScript()
-            }),
-            dataType: 'json',
-            contentType: 'application/json'
-        })
-        .then(function(response) {
-            console.log('sent script successfully');
-        })
-        .catch(function (error) {
-            console.warn(error);
-        });
+            axios({
+                method:'POST',
+                url:'/sendKV',
+                data: JSON.stringify({
+                    key: 'SCRIPT',
+                    value: document.getElementById('data').value,
+                    name: this.state.currentBot
+                }),
+            })
+            .then(function(response) {
+                console.log('sent script');
+            })
+            .catch(function (error) {
+                console.warn(error);
+            });
     }
 
     render(){
