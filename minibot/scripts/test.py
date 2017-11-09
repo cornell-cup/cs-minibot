@@ -5,6 +5,8 @@ from minibot.bot import Bot
 
 import json
 
+CONFIG_LOCATION = '/home/pi/cs-minibot/minibot/configs/config.json'
+
 def run(bot):
     print("Initializing Minibot Software")
     config_file = open(CONFIG_LOCATION)
