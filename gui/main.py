@@ -132,7 +132,6 @@ class RemoveBotHandler(tornado.web.RequestHandler):
     """
     Used to remove a MiniBot.
     """
-
     def post(self):
         info = json.loads(self.request.body.decode())
         name = info["name"]
@@ -160,9 +159,15 @@ class SendKVHandler(tornado.web.RequestHandler):
             get_bot_by_name(name).get_command_center()
         self.write(json.dumps(bot_cc.sendKV(key, val)))
 
-class BotDataHandler1(tornado.web.RequestHandler):
+
+class BotDataHandler(tornado.web.RequestHandler):
     def get(self):
-        pass
+        info = json.loads(self.request.body.decode())
+        name = info['name']
+        bot = BaseStation().get_bot_manager().get_bot_by_name(name)
+
+        if bot.is_bot_connection_active():
+            # Collect information
 
 
 class ScriptHandler(tornado.web.RequestHandler):
@@ -180,8 +185,6 @@ class ScriptHandler(tornado.web.RequestHandler):
             self.write(bot.get_command_center().sendKV("SCRIPT", script))
         else:
             logging.warning("[ERROR] Bot not detected when trying to send script.")
-
-
 
 class XboxHandler(tornado.web.RequestHandler):
     """

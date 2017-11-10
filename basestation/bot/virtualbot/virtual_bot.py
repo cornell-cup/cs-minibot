@@ -55,12 +55,22 @@ class VirtualBot(object):
         """
         return self.__command_center_obj
 
-    def get_sensor_center(self) -> SensorCenter:
-        """
-        Returns:
-             (SensorCenter): The Sensor Center associated with this VirtualBot.
-        """
-        return self.__sensor_center_obj
+    # def get_sensor_center(self) -> SensorCenter:
+    #     """
+    #     Returns:
+    #          (SensorCenter): The Sensor Center associated with this VirtualBot.
+    #     """
+    #     return self.__sensor_center_obj
+
+    def inbox_is_empty(self):
+        # TODO:
+        return None
+
+    def check_inbox(self):
+        # Checks if there is any incoming data via TCP connection from the PI.
+        self.__tcp_connection
+        # TODO: Parse incoming information. Return
+        return None
 
     def get_name(self) -> str:
         """
@@ -139,11 +149,11 @@ class VirtualBot(object):
                 value (str): Should qualify the `key`.
             """
             if len(value) != 0:
-                # MiniBot requesting information
+                # MiniBot requesting information, sending info from BaseStation.
                 value_to_send = bot_exchange.msg_map.get(key, None)
                 self.tcp_connection_obj.sendKV(key, value_to_send)
             else:
-                # MiniBot sending information
+                # MiniBot sending information, BaseStation is receiving info.
                 bot_exchange.msg_map[key] = value
 
             return

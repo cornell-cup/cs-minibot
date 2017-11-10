@@ -42,29 +42,5 @@ def main():
         bot.parse_command(tcpCmd, tcpInstance)
         time.sleep(0.01)
 
-def parse_command(cmd, bot):
-    """
-    Parses command sent by SendKV via TCP to the bot.
-    Sent from BaseStation.
-
-    Args:
-         cmd (:obj:`str`): The command name.
-         bot (:obj:`Bot`): Bot object to run the command on.
-         p (:obj:`str`): Payload or contents of command.
-    """
-    comma = cmd.find(",")
-    start = cmd.find("<<<<")
-    end = cmd.find(">>>>")
-    key = cmd[start + 4:comma]
-    value = cmd[comma + 1:end]
-    if key == "WHEELS":
-        try:
-            values = value.split(",")
-            bot.set_wheel_power(int(values[0]), int(values[1]))
-        except Exception as e:
-            print(e)
-            print("oh no!")
-            pass
-
 if __name__ == "__main__":
     main()
