@@ -9,7 +9,7 @@ source-directory /etc/network/interfaces.d
 # added by MiniBot to make pi an access point
 allow-hotplug wlan0
 iface wlan0 inet static
-    address 0.0.0.1
+    address 10.0.0.1
     netmask 255.255.255.0
     network 10.0.0.0
-    broadcast 0.0.0.255
+    broadcast 10.0.0.255
