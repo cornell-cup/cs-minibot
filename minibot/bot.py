@@ -2,7 +2,7 @@
 Minibot object.
 """
 import multiprocessing
-from multiprocessing import Queue
+from queue import Queue
 from minibot.botstate import BotState
 from minibot.hardware.rpi.gpio import DigitalInput, DigitalOutput, PWM, RGPIO
 from minibot.peripherals.colorsensor import ColorSensor
@@ -26,6 +26,9 @@ class Bot():
         self.actuators = {}
         self.motors = None
         self._parse_config(config)
+
+        # queue for extra unrecognized commands by parser
+        self.extraCMD = Queue()
 
     def _parse_config(self, config):
         """
