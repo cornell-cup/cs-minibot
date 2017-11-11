@@ -1,6 +1,15 @@
 var React = require('react');
 var axios = require('axios');
 
+class scenarioObject {
+    constructor(type, angle, size, position) {
+        this.type = type;
+        this.angle = angle;
+        this.size = size;
+        this.position = position;
+    }
+}
+
 export default class ScenariosItem extends React.Component {
     constructor() {
         super();
@@ -49,7 +58,7 @@ export default class ScenariosItem extends React.Component {
 
         var scenario = {items: this.state.items};
         console.log("numBots:" + this.state.numBots);
-        if (this.state.numBots != 1) alert("You need to add a bot!");
+        if (this.state.numBots != 1) alert("There must be exactly one bot!");
         else {
             //Implemented the same way as Python script saving. This might not work so use axios code if it doesn't
             //event . preventDefault ()
@@ -85,12 +94,27 @@ export default class ScenariosItem extends React.Component {
         var _this = this;
         var file = event.target.files[0];
         var reader = new FileReader();
-        reader.onload = function(event) {
-            var scenario = JSON.parse(event.target.result).items;
-            _this.setState({items: scenario});
-        };
         reader.readAsText(file);
-        console.log("done");
+        var jsonString = reader.result;
+        var scenarioDict = {};
+        var numBot = 0;
+
+        for (objectString in scenarioDict) {
+            objectString = dict[objectString];
+            //counts number of bots in file
+            if (objectString['type'] == 'simulator.simbot') numBot++;
+
+            //scenario objects must include position, size, angle
+            else if (objectString['type'] == 'scenario_object') {
+                if (objectString['position'] == "undefined" || objectString['size'] == "undefined" or objectString['angle'] == "undefined") {
+                    console.log("missing psa");
+                }
+            }
+            //type equals anything other than simbot or object
+            else {
+                console.log("entered else");
+            }
+        }
     }
 
     /* handles input change for input fields */
@@ -112,20 +136,20 @@ export default class ScenariosItem extends React.Component {
 
         //check that inputs are valid
         if (this.state.angle > 360) alert("The angle is too large!");
-        else if (this.state.type == 'simulator.simbot' && this.state.numBots == 1) alert("You already have one bot!");
         else if (this.state.angle == '' || this.state.posx == '' || this.state.posy == '') alert("Fields cannot be empty!");
+        else if (this.state.type == "simulator.simbot" && this.state.numBots == 1) alert("Only one bot can be added!");
         else {
             var li = this.state.items;
-            var string = "[" + this.state.posx + "," + this.state.posy + "]";
+            var positionString = "[" + this.state.posx + "," + this.state.posy + "]";
             console.log(this.state.type);
 
             if (this.state.type == "simulator.simbot") {
                 console.log("add bot");
                 this.state.numBots++;
                 console.log("numBot:" + this.state.numBots);
-                li.push({type: this.state.type, angle: this.state.angle, position: string});
+                li.push(new scenarioObject(this.state.type, this.state.angle, 1, positionString));
             } else {
-                li.push({type: this.state.type, angle: this.state.angle, size: this.state.size, position: string});
+                li.push(new scenarioObject(this.state.type, this.state.angle, this.state.size, positionString));
             }
 
             this.setState({items: li});
@@ -140,12 +164,12 @@ export default class ScenariosItem extends React.Component {
         if (li[event.idx].type == "simulator.simbot") {
             this.state.numBots--;
         }
-        console.log("type1: " + li[event.idx].type);
+        console.log("type: " + li[event.idx].type);
         console.log("numBot: " + this.state.numBots);
         li.splice(event.idx, 1);
         this.setState({items: li});
     }
-    
+
     render() {
         var styles = {
             ScenariosItem: {
@@ -164,13 +188,14 @@ export default class ScenariosItem extends React.Component {
             Button: {
                 marginLeft: '10px',
                 marginRight: '15px'
-            }
+            },
+
         }
         var _this = this;
         return(
             <div id = "scenariobox" className = "box">
                 <button onClick={this.saveScenario} style={styles.Button}>Save</button>
-                <button style={styles.Button}>Load</button>
+                <form><input type="file" style={styles.Button} accept=".txt" id="loadBtn" onChange={this.loadScenario}/></form>
                 <button style={styles.Button}>Add to Simulator</button>
                 <table style={styles.ScenariosItem}>
                     <tbody>
