@@ -54,5 +54,5 @@ systemctl enable dnsmasq
 
 sudo service hostapd start
 sudo service dnsmasq start
-
+sudo service apache2 start
 echo "Access Point has been set up."
