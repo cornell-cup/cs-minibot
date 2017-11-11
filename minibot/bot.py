@@ -43,6 +43,11 @@ class Bot():
                       DigitalOutput(self.actuators["right"]["pinHighLow"]),
                       PWM(self.actuators["right"]["pinPWM"]))
 
+        for sensor in config["sensors"]:
+            name = sensor["name"]
+            pin = sensor["pin"]
+            self.sensors[name] = ColorSensor(self, name, pin)
+
     def get_state(self):
         """
         Gets the BotState of the minibot.
@@ -113,8 +118,23 @@ class Bot():
     def register_actuator(self,actuator):
         self.actuators[actuator.name] = actuator
 
+    def register_sensor(self,sensor):
+        self.sensors[sensor.name] = sensor
+
     def get_actuator_by_name(self, name):
         return self.actuators[name]
 
+    def get_sensor_by_name(self, name):
+        return self.sensors[name]
+
     def get_all_actuators(self):
         return self.actuators.values()
+
+    def get_all_sensors(self):
+        return self.sensors.values()
+
+    def poll_sensors(self):
+        data = {}
+        for sensor in self.sensors:
+            data[sensor] = self.sensors[sensor].read()
+        return data
