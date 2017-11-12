@@ -159,7 +159,7 @@ class SendKVHandler(tornado.web.RequestHandler):
         # Sends KV through command center.
         bot_cc = BaseStation().get_bot_manager().\
             get_bot_by_name(name).get_command_center()
-        self.write(bot_cc.sendKV(key, val))
+        self.write(json.dumps(bot_cc.sendKV(key, val)))
 
 
 class ScriptHandler(tornado.web.RequestHandler):
