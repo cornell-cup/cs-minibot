@@ -19,6 +19,12 @@ check_dependencies () {
     fi
 }
 
+copy_apache_info () {
+    sudo mkdir /var/www/minibotAP >/dev/null
+    sudo cp ./minibot-apache2.conf /etc/apache2/apache2.conf
+    sudo cp ./wifi-app/* /var/www/minibotAP/
+}
+
 copy_conf_wifi_setup () {
     sudo cp ./minibot-dnsmasq.conf /etc/dnsmasq.conf
     sudo cp ./minibot-hostapd.conf /etc/hostapd/hostapd.conf
@@ -38,6 +44,9 @@ copy_conf_wifi_setup () {
     fi
     
     echo "Setup the Wifi interfaces for Access Point."
+
+    # setup apache2 server conf files
+    copy_apache_info
 }
 
 check_dependencies
