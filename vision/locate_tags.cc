@@ -207,7 +207,7 @@ int main(int argc, char** argv) {
                 data2.push_back(1);
                 Mat genout = Mat(data2,true).reshape(1, 4);
 
-                Mat tag2orig = tag2cam * device_transform_matrix[i];
+                Mat tag2orig = device_transform_matrix[i] * tag2cam;
                 Mat tagXYZS = tag2orig * genout;
                 printf("%zu :: %d :: % 3.3f % 3.3f % 3.3f\n",
                         i, det->id,
