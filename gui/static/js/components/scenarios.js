@@ -94,27 +94,31 @@ export default class ScenariosItem extends React.Component {
         var _this = this;
         var file = event.target.files[0];
         var reader = new FileReader();
-        reader.readAsText(file);
-        var jsonString = reader.result;
-        var scenarioDict = {};
-        var numBot = 0;
-
-        for (objectString in scenarioDict) {
-            objectString = dict[objectString];
-            //counts number of bots in file
-            if (objectString['type'] == 'simulator.simbot') numBot++;
-
-            //scenario objects must include position, size, angle
-            else if (objectString['type'] == 'scenario_object') {
-                if (objectString['position'] == "undefined" || objectString['size'] == "undefined" or objectString['angle'] == "undefined") {
-                    console.log("missing psa");
+        var li = [];
+        var objectString;
+        _this.state.numBots = 0;
+        reader.onload = function(fileLoadedEvent) {
+           objectString = fileLoadedEvent.target.result;
+           var jsonArray = JSON.parse(objectString);
+           jsonArray.forEach(function(object) {
+                if (object.type == "simulator.simbot")  {
+                    _this.state.numBots++;
+                    console.log("bot:" + _this.state.numBots);
                 }
-            }
-            //type equals anything other than simbot or object
-            else {
-                console.log("entered else");
-            }
+                if (object.position != "undefined" && object.size != "undefined" && object.angle != "undefined") {
+                    li.push(new scenarioObject(object.type, object.angle, object.size, object.position));
+                } else {
+                    alert("Invalid file! Please submit a properly formatted file!");
+                }
+           });
+
+           if (_this.state.numBots == 1) {
+                console.log("SETTTT!");
+                 _this.setState({items: li});
+           }
         }
+        reader.readAsText(file);
+
     }
 
     /* handles input change for input fields */
