@@ -276,7 +276,7 @@ export default class ControlPanel extends React.Component {
 
     render(){
         return (
-            <div id ="component_controlpanel" className = "box" >
+            <div id ="component_controlpanel" className = "box">
                 Control Panel<br/>
                 <h4>Movement controls:</h4>
                 <br/>

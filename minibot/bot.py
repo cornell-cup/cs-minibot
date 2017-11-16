@@ -63,7 +63,6 @@ class Bot():
         :return True if the action is supported
         """
         self.motors.set_speed(power/100,power/100)
-        print("moving forward")
 
     def move_backward(self, power):
         """

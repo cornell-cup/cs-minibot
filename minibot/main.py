@@ -70,6 +70,8 @@ def parse_command(cmd, bot):
         else:
             print("Invalid File path")
 
+# Copy script sent from GUI into 'run' command
+# So we can call that method to initiate the commands
 def process_string(value):
     cmds = value.splitlines()
     str = "def run(bot):\n"
