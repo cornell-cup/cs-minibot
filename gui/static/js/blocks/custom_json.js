@@ -131,5 +131,47 @@ wait: {
   "colour": 230,
   "tooltip": "",
   "helpUrl": ""
+},
+
+minibot_color: {
+  "type": "minibot_color",
+  "message0": "color sensed is %1",
+  "args0": [
+    {
+      "type": "field_dropdown",
+      "name": "hue",
+      "options": [
+        [
+          "red",
+          "RED"
+        ],
+        [
+          "blue",
+          "BLUE"
+        ],
+        [
+          "green",
+          "GREEN"
+        ],
+        [
+          "yellow",
+          "YELLOW"
+        ],
+        [
+          "violet",
+          "VIOLET"
+        ],
+        [
+          "white",
+          "WHITE"
+        ]
+      ]
+    }
+  ],
+  "inputsInline": false,
+  "output": "Boolean",
+  "colour": 230,
+  "tooltip": "",
+  "helpUrl": ""
 }
 };
