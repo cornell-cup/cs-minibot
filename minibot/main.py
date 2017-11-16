@@ -11,11 +11,13 @@ import json
 from threading import Thread
 import time
 import importlib
+import os
 
 # Location of config file which contains hardware pin info about
 # bot peripherals, etc.
 CONFIG_LOCATION = '/home/pi/cs-minibot/minibot/configs/config.json'
 
+p = None
 def main():
     """
     Main method. Initializes communication methods and MiniBot object
@@ -24,6 +26,7 @@ def main():
     """
 
     print("Initializing Minibot Software")
+    p = None
     config_file = open(CONFIG_LOCATION)
     config = json.loads(config_file.read())
 
@@ -41,6 +44,70 @@ def main():
         tcpCmd = tcpInstance.get_command()
         bot.parse_command(tcpCmd, tcpInstance)
         time.sleep(0.01)
+
+def parse_command(cmd, bot):
+    """
+    Parses command sent by SendKV via TCP to the bot.
+    Sent from BaseStation.
+
+    Args:
+         cmd (:obj:`str`): The command name.
+         bot (:obj:`Bot`): Bot object to run the command on.
+         p (:obj:`str`): Payload or contents of command.
+    """
+    global p
+    comma = cmd.find(",")
+    start = cmd.find("<<<<")
+    end = cmd.find(">>>>")
+    key = cmd[start + 4:comma]
+    value = cmd[comma + 1:end]
+    if key == "WHEELS":
+        try:
+            values = value.split(",")
+            bot.set_wheel_power(int(values[0]), int(values[1]))
+        except Exception as e:
+            print(e)
+            print("oh no!")
+            pass
+    elif key == "SCRIPT":
+        user_script_file = open("/home/pi/cs-minibot/minibot/scripts/UserScript.py",'w')
+        user_script_file.write(value)
+        user_script_file.close()
+        p = spawn_script_process(p, bot)
+    elif key == "RUN":
+        filename = os.path.basename(value)
+        filepath = "/home/pi/cs-minibot/minibot/scripts/" + filename
+        print(filepath)
+        if os.path.isfile(filepath):
+            p = spawn_named_script_process(p, bot, filename.split('.')[0])
+        else:
+            print("Invalid File path")
+
+def spawn_script_process(p,bot):
+    if (p is not None and p.is_alive()):
+        p.terminate()
+    time.sleep(0.1)
+    p = Thread(target=run_script, args=[bot])
+    p.start()
+    # Return control to main after .1 seconds
+    return p
+
+def spawn_named_script_process(p,bot,script_name):
+    if (p is not None and p.is_alive()):
+        p.terminate()
+    time.sleep(0.1)
+    p = Thread(target=run_script_with_name, args=[bot,script_name])
+    p.start()
+    # Return control to main after .1 seconds
+    return p
+
+def run_script_with_name(bot,script_name):
+    UserScript = importlib.import_module("scripts." + script_name)
+    UserScript.run(bot)
+
+def run_script(bot):
+    from scripts import UserScript
+    UserScript.run(bot)
 
 if __name__ == "__main__":
     main()
