@@ -30,7 +30,8 @@ class BaseInterface:
             ("/discoverBots", DiscoverBotsHandler),
             ("/getTrackedBots", GetTrackedBotHandler),
             ("/removeBot", RemoveBotHandler),
-            ("/sendKV", SendKVHandler)
+            ("/sendKV", SendKVHandler),
+            ("/getBotData", BotDataHandler)
         ]
         self.settings = {
             "static_path": os.path.join(os.path.dirname(__file__), "static")
@@ -183,6 +184,23 @@ class XboxHandler(tornado.web.RequestHandler):
     """
     def post(self):
         pass
+
+class BotDataHandler(tornado.web.RequestHandler):
+    """
+    Handles Bot Data.
+    """
+    def get(self):
+        info = json.loads(self.request.body.decode())
+        print(info)
+        name = info['name']
+        bot = BaseStation().get_bot_manager().get_bot_by_name(name)
+        if bot is not None:
+            center = bot.get_sensor_center()
+            #getalldatajson is not implemented, assume that it gives the name of the sensor as keys
+            sensorinfo = list(center.get_all_data_json().keys())
+        else:
+            logging.warning("[ERROR] Bot not detected when trying to get data.")
+
 
 if __name__ == "__main__":
     """

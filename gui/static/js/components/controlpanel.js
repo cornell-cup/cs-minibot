@@ -150,7 +150,68 @@ export default class ControlPanel extends React.Component {
      * Handles onChange for bot dropdown. Changes currently selected bot.
      */
     selectBot(event) {
-        this.setState({currentBot: event.target.value})
+        this.setState({currentBot: event.target.value});
+        // Insert code to change Blockly toolbox here.
+        // get_all_data_json(self)
+        var sensoroptions = null;
+        axios({
+            method:'GET',
+            url:'/getBotData',
+            data: JSON.stringify({name: this.getBotId()}),
+            dataType: 'json',
+            processData: false,
+            contentType: 'application/json'
+        })
+        .then(function(response) {
+            sensoroptions = response.data;
+            console.log('getting bot data');
+        })
+        .catch(function (error) {
+            console.warn(error);
+        });
+
+        var completeoptions = [];
+        var count = 1;
+        if(sensoroptions != null) {
+            for(i in sensoroptions) {
+                var temparray = [i, "Sensor" + count];
+                completeoptions.push(temparray);
+                count++;
+            }
+        }
+
+        var sensors = {
+        "type": "sensors",
+        "message0": "%1",
+        "args0": [
+            {
+            "type": "field_dropdown",
+            "name": "NAME",
+            "options": completeoptions
+           }
+        ],
+        "output": null,
+        "colour": 230,
+        "tooltip": "",
+        "helpUrl": ""
+        };
+
+        Blockly.Blocks['sensordata'] = {
+         init: function(){
+            this.jsonInit(sensors);
+         }
+        };
+
+        Blockly.Python['sensordata'] = function(block) {
+            var dropdown_hue = block.getFieldValue('hue');
+            var code = '';
+            var count = 1;
+            for(i in sensoroptions) {
+                var temp = 'Sensor' + count + ' = ' + i + '\n';
+                code += temp;
+            }
+            return [code, Blockly.Python.ORDER_NONE];
+            };
     }
 
     /* starts data logging */
@@ -277,7 +338,7 @@ export default class ControlPanel extends React.Component {
                         <td>
                             <label>
                                  Choose bot:
-                                <select value={this.state.currentBot} onChange={this.selectBot}> id="botlist" name="bots">
+                                <select value={this.state.currentBot} onChange={this.selectBot} id="botlist" name="bots">
                                     <option value="(DEBUG) Sim Bot">(DEBUG) Sim Bot</option>
                                     {
                                         this.state.trackedBots.map(function(botname, idx){
