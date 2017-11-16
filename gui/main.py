@@ -10,7 +10,6 @@ import logging
 import sys
 
 # Minibot imports.
-sys.path.insert(0, basestation)
 from basestation.base_station import BaseStation
 
 class BaseInterface:
