@@ -1,15 +1,6 @@
 var React = require('react');
 var axios = require('axios');
 
-class scenarioObject {
-    constructor(type, angle, size, position) {
-        this.type = type;
-        this.angle = angle;
-        this.size = size;
-        this.position = position;
-    }
-}
-
 export default class ScenariosItem extends React.Component {
     constructor() {
         super();
@@ -98,24 +89,28 @@ export default class ScenariosItem extends React.Component {
         var objectString;
         _this.state.numBots = 0;
         reader.onload = function(fileLoadedEvent) {
-           objectString = fileLoadedEvent.target.result;
-           var jsonArray = JSON.parse(objectString);
-           jsonArray.forEach(function(object) {
-                if (object.type == "simulator.simbot")  {
+            objectString = fileLoadedEvent.target.result;
+            var jsonArray = JSON.parse(objectString);
+            var regexPosition = new RegExp("\[\d,\d]");
+            jsonArray.forEach(function(object) {
+                //checks that bot contains position and angle
+                if (regexPosition.test(object.position) && object.type == "simulator.simbot" && object.position != "undefined" && object.angle != "undefined")  {
                     _this.state.numBots++;
                     console.log("bot:" + _this.state.numBots);
+                    li.push({type: object.type, angle: object.angle, position: object.position});
                 }
-                if (object.position != "undefined" && object.size != "undefined" && object.angle != "undefined") {
-                    li.push(new scenarioObject(object.type, object.angle, object.size, object.position));
+                //checks that scenario object contains position, size, and angle
+                else if (regexPosition.test(object.position) && object.position != "undefined" && object.size != "undefined" && object.angle != "undefined") {
+                    li.push({type: object.type, angle: object.angle, size: object.size, position: object.position});
                 } else {
                     alert("Invalid file! Please submit a properly formatted file!");
                 }
-           });
+            });
 
-           if (_this.state.numBots == 1) {
-                console.log("SETTTT!");
+            //file can only have 1 bot
+            if (_this.state.numBots == 1) {
                  _this.setState({items: li});
-           }
+            }
         }
         reader.readAsText(file);
 
@@ -151,9 +146,9 @@ export default class ScenariosItem extends React.Component {
                 console.log("add bot");
                 this.state.numBots++;
                 console.log("numBot:" + this.state.numBots);
-                li.push(new scenarioObject(this.state.type, this.state.angle, 1, positionString));
+                li.push({type: this.state.type, angle: this.state.angle, position: positionString});
             } else {
-                li.push(new scenarioObject(this.state.type, this.state.angle, this.state.size, positionString));
+                li.push({type: this.state.type, angle: this.state.angle, size: this.state.size, position: positionString});
             }
 
             this.setState({items: li});
