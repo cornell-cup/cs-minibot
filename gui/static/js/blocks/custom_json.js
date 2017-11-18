@@ -509,6 +509,18 @@ sees_color : {
         [
           "green",
           "green"
+        ],
+        [
+          "yellow",
+          "yellow"
+        ],
+        [
+          "violet",
+          "violet"
+        ],
+        [
+          "white",
+          "white"
         ]
       ]
     }
