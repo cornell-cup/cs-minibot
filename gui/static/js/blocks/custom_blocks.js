@@ -153,11 +153,12 @@ Blockly.Blocks['set_power'] = {
   }
 };
 
-Blockly.JavaScript['set_power'] = function(block) {
+Blockly.Python['set_power'] = function(block) {
   var number_left_speed = block.getFieldValue('left_speed');
   var number_right_speed = block.getFieldValue('right_speed');
-  // TODO: Assemble JavaScript into code variable.
-  var code = '...;\n';
+  // TODO: Assemble Python into code variable.
+
+  var code = 'set_wheel_power('+number_left_speed+", "+number_right_speed+")";
   return code;
 };
 
