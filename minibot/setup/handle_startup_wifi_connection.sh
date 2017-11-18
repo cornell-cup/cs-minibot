@@ -14,9 +14,10 @@ is_connected_to_wifi () {
 
 copy_conf_default () {
 
-    sudo cp ../config/dnsmasq.conf.orig /etc/dnsmasq.conf
-    sudo cp ../config/hostapd.conf.orig /etc/hostapd/hostapd.conf
-    sudo cp ../config/interfaces.orig /etc/network/interfaces
+    curr_dir=$(dirname $0)
+    sudo cp orig/dnsmasq.conf.orig /etc/dnsmasq.conf
+    sudo cp orig/hostapd.conf.orig /etc/hostapd/hostapd.conf
+    sudo cp orig/interfaces.orig /etc/network/interfaces
 
     # remove information about access point
     sudo sed -i -- 's/DAEMON_CONF="\/etc\/hostapd\/hostapd.conf"/#DAEMON_CONF=""/g' /etc/default/hostapd
@@ -26,15 +27,15 @@ copy_conf_default () {
 add_wifi_ssid_pass_setting () {
 
     sudo cat > /etc/wpa_supplicant/wpa_supplicant.conf <<EOF
-    ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
-    update_config=1
-    country=US
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+country=US
 
-    network={
-        ssid=$1
-        psk=$2
-        key_mgmt=WPA-PSK
-    }
+network={
+    ssid=$1
+    psk=$2
+    key_mgmt=WPA-PSK
+}
 EOF
 }
 
@@ -58,7 +59,7 @@ else
     if [[ $? != 0 ]]
     then
         echo "Not connected to Wifi, starting a Access Point."
-        sudo ../config/setup_access_point.sh
+        sudo ./setup_access_point.sh
     else
         echo "Connected to Wifi."
     fi
