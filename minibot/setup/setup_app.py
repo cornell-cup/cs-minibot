@@ -3,6 +3,7 @@ import tornado
 import tornado.web
 import os
 import subprocess
+import sys
 
 
 class SetupApp:
@@ -53,6 +54,7 @@ class WifiCredsHandler(tornado.web.RequestHandler):
             self.write("wifi setup failed!".encode())
         else:
             print("wifi setup success")
+            sys.exit()
             self.write("wifi setup succeeded".encode())
 
 

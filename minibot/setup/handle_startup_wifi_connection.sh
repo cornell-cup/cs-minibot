@@ -62,6 +62,7 @@ else
     then
         echo "Not connected to Wifi, starting a Access Point."
         sudo ./setup_access_point.sh
+        exit 2
     else
         echo "Connected to Wifi."
     fi
