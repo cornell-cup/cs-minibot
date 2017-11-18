@@ -59,7 +59,7 @@ export default class GridView extends React.Component {
         this.toDegrees = this.toDegrees.bind(this);
         this.newBot = this.newBot.bind(this);
         this.getNewVisionData = this.getNewVisionData.bind(this);
-        this.pollBotNames = this.pollBotNames.bind(this);
+        // this.pollBotNames = this.pollBotNames.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
     }
 
@@ -168,7 +168,7 @@ export default class GridView extends React.Component {
         this.displayBots();
 
         this.getNewVisionData();
-        this.pollBotNames();
+        // this.pollBotNames();
 
         var stage = this.state.stage;
         stage.addChild(this.state.back);
@@ -341,94 +341,96 @@ export default class GridView extends React.Component {
         this.state.botContainer.addChild(scenarioObject);
     }
 
-    pollBotNames() {
-        //TODO
-        // $.ajax({
-        //     url: '/trackedBots',
-        //     type: 'GET',
-        //     dataType: 'json',
-        //     success: function visionDataGot(data) {
-        //         listBotsPrev = listBots;
-        //         listBots = [];
-        //         for (var b in data) {
-        //             var bot = data[b];
-        //             listBots.push({name: bot.name});
-        //         }
-        //
-        //         if (listBots.length !== listBotsPrev.length) {
-        //             this.redoDropdown(listBots);
-        //         } else {
-        //             for(let i = 0; i < listBots.length; i=i+1) {
-        //                 if (listBots[i].name !== listBotsPrev[i].name) {
-        //                     this.redoDropdown(listBots);
-        //                     break;
-        //                 }
-        //             }
-        //         }
-        //
-        //         setTimeout(this.pollBotNames,2000); // Try again in 2 sec
-        //     },
-        //     error: function() {
-        //         setTimeout(this.pollBotNames,2000); // Try again in 2 sec
-        //     }
-        // });
-    }
+    // pollBotNames() {
+    //     axios({
+    //         method:'GET',
+    //         url:'/trackedBots',
+    //         dataType: 'json'
+    //     })
+    //     .then(function(response) {
+    //         console.log('polled bot names');
+    //         var data = response.data;
+    //         var listBotsPrev = this.state.listBots;
+    //         var listBots = [];
+    //         for (var b in data) {
+    //             var bot = data[b];
+    //             listBots.push({name: bot.name});
+    //         }
+    //         // if (listBots.length !== listBotsPrev.length) {
+    //         //     this.redoDropdown(listBots);
+    //         // } else {
+    //         //     for(let i = 0; i < listBots.length; i=i+1) {
+    //         //         if (listBots[i].name !== listBotsPrev[i].name) {
+    //         //             this.redoDropdown(listBots);
+    //         //             break;
+    //         //         }
+    //         //     }
+    //         // }
+    //         setTimeout(this.pollBotNames,2000);
+    //     }).catch(function (error) {
+    //         console.warn(error);
+    //         setTimeout(this.pollBotNames,2000);
+    //     });
+    // }
 
     /*
         Updating location of bots on grid.
     */
     getNewVisionData() {
-        //TODO
-        // if (document.getElementById('vision-poll').checked) {
-        //     $.ajax({
-        //         url: '/updateloc',
-        //         type: 'GET',
-        //         dataType: 'json',
-        //         success: function visionDataGot(data) {
-        //             currentTime = new Date();
-        //             elapsed = (currentTime - lastTime);
-        //             timeout = MILLIS_PER_VISION_UPDATE;
-        //             if (elapsed > MILLIS_PER_VISION_UPDATE) {
-        //                 timeout = 2*MILLIS_PER_VISION_UPDATE - elapsed;
-        //                 if (timeout < 0) {
-        //                     timeout = 0;
-        //                 }
-        //             }
-        //
-        //             setTimeout(getNewVisionData,timeout);
-        //             if (!lock) {
-        //                 lock = true;
-        //                 bots = [];
-        //                 botContainer.removeChildren();
-        //                 for (var b in data) {
-        //                     var bot = data[b];
-        //                     var botX = bot.x;
-        //                     var botY = bot.y;
-        //                     var botAngle = bot.angle;
-        //                     var botSize = bot.size;
-        //                     if (!botSize) bot.size = 0.15; // TODO: Fix this
-        //                     var botId = bot.id;
-        //                     bots.push(newBot(bot.x, bot.y, bot.angle, bot.id, bot
-        //                         .size));
-        //                 }
-        //
-        //                 stage.removeChild(gridContainer);
-        //                 gridContainer = new PIXI.Container();
-        //                 botContainer.removeChildren();
-        //                 this.drawGridLines(scale, xOffset, yOffset);
-        //                 stage.addChild(gridContainer);
-        //                 this.displayBots(bots,scale, xOffset, yOffset);
-        //                 grid.render(stage);
-        //                 lock = false;
-        //             }
-        //         },
-        //         error: () => {
-        //             console.log("oh no error");
-        //             setTimeout(getNewVisionData,MILLIS_PER_VISION_UPDATE*10);}
-        //     });
-        // } else {
-        //     setTimeout(getNewVisionData,MILLIS_PER_VISION_UPDATE * 10);
-        // }
+        const MILLIS_PER_VISION_UPDATE = 33;
+        try {
+            axios({
+                url: '/updateloc',
+                method: 'GET',
+                dataType: 'json'
+            }).then(
+                function visionDataGot(response) {
+                    var data = response.data;
+                    var currentTime = new Date();
+                    var elapsed = (currentTime - this.state.lastTime);
+                    var timeout = MILLIS_PER_VISION_UPDATE;
+                    if (elapsed > MILLIS_PER_VISION_UPDATE) {
+                        timeout = 2*MILLIS_PER_VISION_UPDATE - elapsed;
+                        if (timeout < 0) {
+                            timeout = 0;
+                        }
+                    }
+                    setTimeout(getNewVisionData,timeout);
+                    var stage = this.state.stage;
+                    var grid = this.state.grid;
+                    var botContainer = this.state.botContainer;
+                    if (!this.state.lock) {
+                        this.state.lock = true;
+                        var bots = [];
+                        botContainer.removeChildren();
+                        for (var b in data) {
+                            var bot = data[b];
+                            var botX = bot.x;
+                            var botY = bot.y;
+                            var botAngle = bot.angle;
+                            var botSize = bot.size;
+                            if (!botSize) bot.size = 0.15; // TODO: LOL
+                            var botId = bot.id;
+                            bots.push(this.newBot(bot.x, bot.y, bot.angle, bot.id, bot.size));
+                        }
+                        this.state.bots = bots;
+                        stage.removeChild(this.state.gridContainer);
+                        this.state.gridContainer = new PIXI.Container();
+                        this.drawGridLines();
+                        stage.addChild(this.state.gridContainer);
+                        this.displayBots();
+                        grid.render(stage);
+                        this.state.lock = false;
+                    }
+                }
+            ).catch(() => {
+                console.log("error");
+                setTimeout(this.getNewVisionData, MILLIS_PER_VISION_UPDATE * 10);
+            });
+        } catch (error) {
+            console.warn(error);
+            setTimeout(this.getNewVisionData, MILLIS_PER_VISION_UPDATE * 10);
+        }
     }
 
     displayOccupancyMatrix(height, width, size) {
