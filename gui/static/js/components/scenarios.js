@@ -87,30 +87,41 @@ export default class ScenariosItem extends React.Component {
         var reader = new FileReader();
         var li = [];
         var objectString;
-        _this.state.numBots = 0;
+        var tempNumBot = 0;
         reader.onload = function(fileLoadedEvent) {
             objectString = fileLoadedEvent.target.result;
-            var jsonArray = JSON.parse(objectString);
-            var regexPosition = new RegExp("\[\d,\d]");
-            jsonArray.forEach(function(object) {
+            //throws error if file is not formatted in json form
+            try {
+                var jsonArray = JSON.parse(objectString);
+                var regexPosition = /\[\d,\d\]/;
+                jsonArray.forEach(function(object) {
                 //checks that bot contains position and angle
-                if (regexPosition.test(object.position) && object.type == "simulator.simbot" && object.position != "undefined" && object.angle != "undefined")  {
-                    _this.state.numBots++;
-                    console.log("bot:" + _this.state.numBots);
-                    li.push({type: object.type, angle: object.angle, position: object.position});
-                }
-                //checks that scenario object contains position, size, and angle
-                else if (regexPosition.test(object.position) && object.position != "undefined" && object.size != "undefined" && object.angle != "undefined") {
-                    li.push({type: object.type, angle: object.angle, size: object.size, position: object.position});
-                } else {
-                    alert("Invalid file! Please submit a properly formatted file!");
-                }
-            });
+                    if (regexPosition.test(object.position) && object.type == "simulator.simbot" && object.position != "undefined" && object.angle != "undefined")  {
+                        tempNumBot++;
+                        li.push({type: object.type, angle: object.angle, position: object.position});
+                    }
+                    //checks that scenario object contains position, size, and angle
+                    else if (regexPosition.test(object.position) && object.position != "undefined" && object.size != "undefined" && object.angle != "undefined") {
+                        li.push({type: object.type, angle: object.angle, size: object.size, position: object.position});
+                    } else {
+                        console.log(regexPosition + " : " + object.position);
+                        throw "wrong format or position (prob position)!";
+                    }
+                });
 
-            //file can only have 1 bot
-            if (_this.state.numBots == 1) {
-                 _this.setState({items: li});
+                //file can only have 1 bot
+                if (tempNumBot != 1) {
+                    throw "too many bots!";
+                }
+
+                _this.setState({items: li});
+                _this.state.numBots = 1;
+            } catch(err) {
+                console.log(err);
+                alert("Invalid file! Please submit a properly formatted file!");
             }
+
+
         }
         reader.readAsText(file);
 
