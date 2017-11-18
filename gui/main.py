@@ -30,7 +30,8 @@ class BaseInterface:
             ("/discoverBots", DiscoverBotsHandler),
             ("/getTrackedBots", GetTrackedBotHandler),
             ("/removeBot", RemoveBotHandler),
-            ("/sendKV", SendKVHandler)
+            ("/sendKV", SendKVHandler),
+            ("/vision", VisionHandler)
         ]
         self.settings = {
             "static_path": os.path.join(os.path.dirname(__file__), "static")
@@ -177,7 +178,6 @@ class ScriptHandler(tornado.web.RequestHandler):
             logging.warning("[ERROR] Bot not detected when trying to send script.")
 
 
-
 class XboxHandler(tornado.web.RequestHandler):
     """
     Handles XBOX.
@@ -185,6 +185,17 @@ class XboxHandler(tornado.web.RequestHandler):
     def post(self):
         pass
 
+
+class VisionHandler(tornado.web.RequestHandler):
+    """
+    Handles vision data.
+    """
+    def post(self):
+        info = json.loads(self.request.body.decode())
+        tag_id = info['id']
+        x, y, z = info['x'], info['y'], info['z']
+        logging.info("Received vision data " + str((tag_id, x, y, z)))
+        # TODO Update appropriate bots with position info
 
 if __name__ == "__main__":
     """

@@ -57,7 +57,8 @@ def parse_command(cmd, bot):
             pass
     elif key == "SCRIPT":
         user_script_file = open("/home/pi/cs-minibot/minibot/scripts/UserScript.py",'w')
-        user_script_file.write(value)
+        val = process_string(value)
+        user_script_file.write(val)
         user_script_file.close()
         p = spawn_script_process(p, bot)
     elif key == "RUN":
@@ -68,6 +69,15 @@ def parse_command(cmd, bot):
             p = spawn_named_script_process(p, bot, filename.split('.')[0])
         else:
             print("Invalid File path")
+
+# Copy script sent from GUI into 'run' command
+# So we can call that method to initiate the commands
+def process_string(value):
+    cmds = value.splitlines()
+    str = "def run(bot):\n"
+    for i in range(len(cmds)):
+        str += "    " +cmds[i] + "\n"
+    return str
 
 def spawn_script_process(p,bot):
     if (p is not None and p.is_alive()):
