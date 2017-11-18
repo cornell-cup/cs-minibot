@@ -1,3 +1,4 @@
+import json
 import tornado
 import tornado.web
 import os
@@ -8,6 +9,9 @@ class SetupApp:
         self.settings = {
             "static_path": os.path.join(os.path.dirname(__file__), "static")
         }
+        self.handlers = [
+            ("/", MainSetup),
+        ]
 
     def start(self):
         """

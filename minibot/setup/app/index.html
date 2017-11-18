@@ -6,5 +6,25 @@
 <body>
     <h1>Hello World.</h1>
     <p>It's time to set up.</p>
+
+    <form TYPE=POST>
+        Network name:<br>
+        <input id="network_name" type="text"><br>
+        Password:<br>
+        <input id="network_password" type="password"><br>
+        <button id="wifi_submit">Submit</button>
+    </form>
+
+<script>
+document.getElementById('wifi_submit').addEventListener('click', function(event) {
+    var post = new XMLHttpRequest();
+    var network_name = document.getElementById('network_name').value;
+    var network_password = document.getElementById('network_password').value;
+
+    post.open("POST", "/", true);
+    post.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    post.send("wifiname=" + network_name + "&wifipass=" + network_password);
+});
+</script>
 </body>
 </html>
