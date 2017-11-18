@@ -33,19 +33,21 @@ class SetupApp:
 
 class WifiSetupPageHandler(tornado.web.RequestHandler):
     def get(self):
-        self.render("index.html", title="Title", items=[])
+        self.render("app/index.html", title="Title", items=[])
 
 
 class WifiCredsHandler(tornado.web.RequestHandler):
     def post(self):
+        print(self.request.body)
+        print(self.request.body.decode())
         info = json.loads(self.request.body.decode())
         print("Wifi Name", info['wifiname'])
         print("Wifi Pass", info['wifipass'])
 
         # call the bash script to feed the wifi credentials
-        res1 = subprocess.run("sudo ../config/handle_startup_wifi_connection", "clean")
-        res2 = subprocess.run("sudo ../config/handle_startup_wifi_connection", 
-            "wifi", info['wifiname'], info['wifipass'])
+        res1 = subprocess.run(["sudo", "./handle_startup_wifi_connection.sh", "clean"])
+        res2 = subprocess.run(["sudo", "./handle_startup_wifi_connection.sh", 
+            "wifi", info['wifiname'], info['wifipass']])
         if res1.returncode != 0 or res2.returncode != 0:
             print("wifi setup failed")
             self.write("wifi setup failed!".encode())

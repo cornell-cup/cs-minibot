@@ -23,7 +23,7 @@ document.getElementById('wifi_submit').addEventListener('click', function(event)
 
     post.open("POST", "/submitWifiCreds", true);
     post.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    post.send("wifiname=" + network_name + "&wifipass=" + network_password);
+    post.send("{\"wifiname\": \"" + network_name + "\", \"wifipass\": \"" + network_password + "\"}");
 });
 </script>
 </body>
