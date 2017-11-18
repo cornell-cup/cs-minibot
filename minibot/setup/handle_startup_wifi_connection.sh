@@ -39,7 +39,7 @@ network={
 EOF
 }
 
-sleep 3    # sleep 3 seconds to allow wifi to connect
+sleep 10    # sleep 10 seconds to allow wifi to connect
 
 if [[ $1 == "clean" ]]
 then copy_conf_default
@@ -53,6 +53,8 @@ then
     else 
         echo "Adding Wifi Credentials"
         add_wifi_ssid_pass_setting $2 $3
+        sudo service dhcpcd restart
+        exit
     fi
 else
     is_connected_to_wifi

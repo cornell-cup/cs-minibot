@@ -2,20 +2,20 @@
 
 if [ "$EUID" -ne 0 ]
 then echo "[ERROR] Must be Root. Try again with sudo."
-    exit
+    exit 1
 fi
 
 check_dependencies () {
     dpkg-query -l apache2 >/dev/null
     if [[ $? != 0 ]]
     then echo "[ERROR] Apache2 is not installed. Install it manually."
-        exit
+        exit 1
     fi
     
     dpkg-query -l hostapd dnsmasq >/dev/null
     if [[ $? != 0 ]]
     then echo "[ERROR] At least one of hostapd and dnsmasq is not installed. Install it manually."
-        exit
+        exit 1
     fi
 }
 
@@ -61,7 +61,7 @@ copy_conf_wifi_setup
 systemctl enable hostapd
 systemctl enable dnsmasq
 
-sudo service hostapd start
-sudo service dnsmasq start
-sudo service apache2 start
+sudo service hostapd start >/dev/null
+sudo service dnsmasq start >/dev/null
+sudo service apache2 start >/dev/null
 echo "Access Point has been set up."
