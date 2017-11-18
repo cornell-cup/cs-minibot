@@ -93,7 +93,7 @@ Blockly.Python['minibot_color'] = function(block) {
   return [code, Blockly.Python.ORDER_NONE];
 };
 
-//* NEW BLOCK TEST *//
+/////////////////////////////////* NEW BLOCK TEST *//////////////////////////
 
 // ================ MOVE BLOCKS ================ //
 
@@ -106,9 +106,12 @@ Blockly.Blocks['move_power'] = {
 Blockly.Python['move_power'] = function(block) {
   var dropdown_direction = block.getFieldValue('direction');
   var number_speed = block.getFieldValue('speed');
-  // TODO: Assemble Python into code variable.
-  var code = '...\n';
-  return code;
+
+  var fcn = {
+    fwd: "move_forward(",
+    bk: "move_backward("
+  }[dropdown_direction];
+  return [fcn+number_speed+")", Blockly.Python.ORDER_NONE];
 };
 
 Blockly.Blocks['move_power_time'] = {
@@ -121,9 +124,12 @@ Blockly.Python['move_power_time'] = function(block) {
   var dropdown_direction = block.getFieldValue('direction');
   var number_speed = block.getFieldValue('speed');
   var number_seconds = block.getFieldValue('seconds');
-  // TODO: Assemble Python into code variable.
-  var code = '...\n';
-  return code;
+
+  var fcn = {
+    fwd: "move_forward(",
+    bk: "move_backward("
+  }[dropdown_direction];
+  return [fcn+number_speed+")", Blockly.Python.ORDER_NONE];
 };
 
 Blockly.Blocks['stop_moving'] = {

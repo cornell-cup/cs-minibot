@@ -191,7 +191,7 @@ move_power : {
         ],
         [
           "backwards",
-          "bwk"
+          "bk"
         ]
       ]
     },
@@ -223,7 +223,7 @@ move_power_time : {
         ],
         [
           "backwards",
-          "bkw"
+          "bk"
         ],
         [
           "option",
