@@ -316,7 +316,7 @@ export default class GridView extends React.Component {
     /* Draw a single scenario object at (x, y)
         b - a JSON object representing a scenario object
      */
-        drawScenarioObject(b) {
+    drawScenarioObject(b) {
         const scale = this.state.scale;
         const xOffset = parseInt(this.state.xOffset);
         const yOffset = parseInt(this.state.yOffset);
@@ -378,6 +378,7 @@ export default class GridView extends React.Component {
     */
     getNewVisionData() {
         const MILLIS_PER_VISION_UPDATE = 33;
+        console.log('getting new vision data?');
         try {
             axios({
                 url: '/updateloc',
