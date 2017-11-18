@@ -4,18 +4,8 @@
 
 if [ "$EUID" -ne 0 ]
 then echo "[ERROR] Must be Root. Try again with sudo."
-    exit
+    exit 1
 fi
-
-# if [[ $# -lt 2 ]];
-#     then echo "[ERROR] Incomplete Arguments. Supply the name of the Wifi network and its password."
-#     echo "Usage:"
-#     echo "sudo $0 [Wifi network] [password]"
-#     exit
-# fi
-
-# WifiSSID="$1"
-# WifiPASS="$2"
 
 is_connected_to_wifi () {
     ping -q -c 1 -W 1 8.8.8.8 >/dev/null
@@ -24,9 +14,9 @@ is_connected_to_wifi () {
 
 copy_conf_default () {
 
-    sudo cp ./dnsmasq.conf.orig /etc/dnsmasq.conf
-    sudo cp ./hostapd.conf.orig /etc/hostapd/hostapd.conf
-    sudo cp ./interfaces.orig /etc/network/interfaces
+    sudo cp ../config/dnsmasq.conf.orig /etc/dnsmasq.conf
+    sudo cp ../config/hostapd.conf.orig /etc/hostapd/hostapd.conf
+    sudo cp ../config/interfaces.orig /etc/network/interfaces
 
     # remove information about access point
     sudo sed -i -- 's/DAEMON_CONF="\/etc\/hostapd\/hostapd.conf"/#DAEMON_CONF=""/g' /etc/default/hostapd
@@ -34,6 +24,7 @@ copy_conf_default () {
 }
 
 add_wifi_ssid_pass_setting () {
+
     sudo cat > /etc/wpa_supplicant/wpa_supplicant.conf <<EOF
     ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
     update_config=1
@@ -53,12 +44,21 @@ if [[ $1 == "clean" ]]
 then copy_conf_default
     sudo service dhcpcd restart
     exit
+elif [[ $1 == "wifi" ]]
+then 
+    if [[ $# -lt 3 ]];
+    then echo "[ERROR] Incomplete Arguments. Supply the name of the Wifi network and its password."
+        exit 1
+    else 
+        echo "Adding Wifi Credentials"
+        add_wifi_ssid_pass_setting $2 $3
+    fi
 else
     is_connected_to_wifi
     if [[ $? != 0 ]]
     then
         echo "Not connected to Wifi, starting a Access Point."
-        sudo ./setup_access_point.sh
+        sudo ../config/setup_access_point.sh
     else
         echo "Connected to Wifi."
     fi
