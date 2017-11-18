@@ -124,15 +124,16 @@ int main(int argc, char** argv) {
 
             zarray_t* detections = apriltag_detector_detect(td, &im);
 
-            vector<Point2f> img_points(4);
-            vector<Point3f> obj_points(4);
+            vector<Point2f> img_points(16);
+            vector<Point3f> obj_points(16);
             Mat rvec(3, 1, CV_64FC1);
             Mat tvec(3, 1, CV_64FC1);
             for (int j = 0; j < zarray_size(detections); j++) {
                 // Get the ith detection
                 apriltag_detection_t *det;
                 zarray_get(detections, j, &det);
-                if ((det -> id) == 0) {
+                if ((det -> id) <= 3) {
+                    int id = det -> id;
                     // Draw onto the frame
                     line(frame, Point(det->p[0][0], det->p[0][1]),
                             Point(det->p[1][0], det->p[1][1]),
@@ -148,70 +149,88 @@ int main(int argc, char** argv) {
                             Scalar(0xff, 0, 0), 2);
 
                     // Compute transformation using PnP
-                    img_points[0] = Point2f(det->p[0][0], det->p[0][1]);
-                    img_points[1] = Point2f(det->p[1][0], det->p[1][1]);
-                    img_points[2] = Point2f(det->p[2][0], det->p[2][1]);
-                    img_points[3] = Point2f(det->p[3][0], det->p[3][1]);
+                    img_points[0 + 4*id] = Point2f(det->p[0][0], det->p[0][1]);
+                    img_points[1 + 4*id] = Point2f(det->p[1][0], det->p[1][1]);
+                    img_points[2 + 4*id] = Point2f(det->p[2][0], det->p[2][1]);
+                    img_points[3 + 4*id] = Point2f(det->p[3][0], det->p[3][1]);
 
-                    obj_points[0] = Point3f(-TAG_SIZE * 0.5f, -TAG_SIZE * 0.5f, 0.f);
-                    obj_points[1] = Point3f( TAG_SIZE * 0.5f, -TAG_SIZE * 0.5f, 0.f);
-                    obj_points[2] = Point3f( TAG_SIZE * 0.5f,  TAG_SIZE * 0.5f, 0.f);
-                    obj_points[3] = Point3f(-TAG_SIZE * 0.5f,  TAG_SIZE * 0.5f, 0.f);
-
-                    solvePnP(obj_points, img_points, device_camera_matrix[i],
-                            device_dist_coeffs[i], rvec, tvec);
-
-                    Matx33d r;
-                    Rodrigues(rvec,r);
-
-                    // Construct the origin to camera matrix
-                    vector<double> data;
-                    data.push_back(r(0,0));
-                    data.push_back(r(0,1));
-                    data.push_back(r(0,2));
-                    data.push_back(tvec.at<double>(0));
-                    data.push_back(r(1,0));
-                    data.push_back(r(1,1));
-                    data.push_back(r(1,2));
-                    data.push_back(tvec.at<double>(1));
-                    data.push_back(r(2,0));
-                    data.push_back(r(2,1));
-                    data.push_back(r(2,2));
-                    data.push_back(tvec.at<double>(2));
-                    data.push_back(0);
-                    data.push_back(0);
-                    data.push_back(0);
-                    data.push_back(1);
-                    Mat origin2cam = Mat(data,true).reshape(1,4);
-
-                    Mat cam2origin = origin2cam.inv();
-
-                    // DEBUG Generate the location of the camera
-                    vector<double> data2;
-                    data2.push_back(0);
-                    data2.push_back(0);
-                    data2.push_back(0);
-                    data2.push_back(1);
-                    Mat genout = Mat(data2,true).reshape(1,4);
-                    Mat camcoords = cam2origin * genout;
-
-                    printf("%zu :: %d :: % 3.3f % 3.3f % 3.3f\n", i, det->id,
-                            camcoords.at<double>(0,0), camcoords.at<double>(1,0), camcoords.at<double>(2,0));
-
-                    if (key == 'w') {
-                        std::ofstream fout;
-                        fout.open(std::to_string(device_ids[i]) + ".calib", std::ofstream::out | std::ofstream::app);
-                        fout << "transform_matrix =";
-                        for (int r = 0; r < cam2origin.rows; r++) {
-                            for (int c = 0; c < cam2origin.cols; c++) {
-                                fout << " " << cam2origin.at<double>(r, c);
-                            }
-                        }
-                        fout << std::endl;
-                        fout.close();
-                    }
+                    int a = (det->id % 2) * 2 - 1;
+                    int b = -((det->id / 2) * 2 - 1);
+                    obj_points[0 + 4*id] = Point3f(-0.5f * TAG_SIZE + a * 8.5f * 0.5f, -0.5f * TAG_SIZE + b * 11.0f * 0.5f, 0.f);
+                    obj_points[1 + 4*id] = Point3f( 0.5f * TAG_SIZE + a * 8.5f * 0.5f, -0.5f * TAG_SIZE + b * 11.0f * 0.5f, 0.f);
+                    obj_points[2 + 4*id] = Point3f( 0.5f * TAG_SIZE + a * 8.5f * 0.5f,  0.5f * TAG_SIZE + b * 11.0f * 0.5f, 0.f);
+                    obj_points[3 + 4*id] = Point3f(-0.5f * TAG_SIZE + a * 8.5f * 0.5f,  0.5f * TAG_SIZE + b * 11.0f * 0.5f, 0.f);
                 }
             }
+
+            solvePnP(obj_points, img_points, device_camera_matrix[i],
+                device_dist_coeffs[i], rvec, tvec);
+
+            Matx33d r;
+            Rodrigues(rvec,r);
+
+            // Construct the origin to camera matrix
+            vector<double> data;
+            data.push_back(r(0,0));
+            data.push_back(r(0,1));
+            data.push_back(r(0,2));
+            data.push_back(tvec.at<double>(0));
+            data.push_back(r(1,0));
+            data.push_back(r(1,1));
+            data.push_back(r(1,2));
+            data.push_back(tvec.at<double>(1));
+            data.push_back(r(2,0));
+            data.push_back(r(2,1));
+            data.push_back(r(2,2));
+            data.push_back(tvec.at<double>(2));
+            data.push_back(0);
+            data.push_back(0);
+            data.push_back(0);
+            data.push_back(1);
+            Mat origin2cam = Mat(data,true).reshape(1,4);
+
+            Mat cam2origin = origin2cam.inv();
+
+            // DEBUG Generate the location of the camera
+            vector<double> data2;
+            data2.push_back(0);
+            data2.push_back(0);
+            data2.push_back(0);
+            data2.push_back(1);
+            Mat genout = Mat(data2,true).reshape(1,4);
+            Mat camcoords = cam2origin * genout;
+
+            printf("%zu :: filler :: % 3.3f % 3.3f % 3.3f\n", i,
+                    camcoords.at<double>(0,0), camcoords.at<double>(1,0), camcoords.at<double>(2,0));
+
+            if (key == 'w') {
+                printf("written to camera %zu\n",i);
+                std::ofstream fout;
+                fout.open(std::to_string(device_ids[i]) + ".calib", std::ofstream::out);
+                fout << "camera_matrix =";
+                for (int r = 0; r < device_camera_matrix[i].rows; r++) {
+                    for (int c = 0; c < device_camera_matrix[i].cols; c++) {
+                        fout << " " << device_camera_matrix[i].at<double>(r, c);
+                    }
+                }
+                fout << std::endl;
+                fout << "dist_coeffs =";
+                for (int r = 0; r < device_dist_coeffs[i].rows; r++) {
+                    for (int c = 0; c < device_dist_coeffs[i].cols; c++) {
+                        fout << " " << device_dist_coeffs[i].at<double>(r, c);
+                    }
+                }
+                fout << std::endl;
+                fout << "transform_matrix =";
+                for (int r = 0; r < cam2origin.rows; r++) {
+                    for (int c = 0; c < cam2origin.cols; c++) {
+                        fout << " " << cam2origin.at<double>(r, c);
+                    }
+                }
+                fout << std::endl;
+                fout.close();
+            }
+
 
             zarray_destroy(detections);
 
