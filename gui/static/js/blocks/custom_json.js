@@ -224,10 +224,6 @@ move_power_time : {
         [
           "backwards",
           "bk"
-        ],
-        [
-          "option",
-          "OPTIONNAME"
         ]
       ]
     },
@@ -262,29 +258,21 @@ stop_moving : {
 },
 set_power : {
   "type": "set_power",
-  "message0": "set %1 to  %2 %% power",
+  "message0": "set left motor to %1 %% power %2 set right motor to %3 %% power",
   "args0": [
     {
-      "type": "field_dropdown",
-      "name": "motor_name",
-      "options": [
-        [
-          "motor1",
-          "motor1"
-        ],
-        [
-          "motor2",
-          "motor2"
-        ],
-        [
-          "motor3",
-          "motor3"
-        ]
-      ]
+      "type": "field_number",
+      "name": "left_speed",
+      "value": 0,
+      "min": 0,
+      "max": 100
+    },
+    {
+      "type": "input_dummy"
     },
     {
       "type": "field_number",
-      "name": "speed",
+      "name": "right_speed",
       "value": 0,
       "min": 0,
       "max": 100
@@ -311,10 +299,6 @@ turn_power : {
         [
           "left",
           "turn_counter_clockwise"
-        ],
-        [
-          "option",
-          "OPTIONNAME"
         ]
       ]
     },
@@ -347,10 +331,6 @@ turn_power_time : {
         [
           "left",
           "turn_counter_clockwise"
-        ],
-        [
-          "option",
-          "OPTIONNAME"
         ]
       ]
     },

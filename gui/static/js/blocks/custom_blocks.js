@@ -153,11 +153,11 @@ Blockly.Blocks['set_power'] = {
   }
 };
 
-Blockly.Python['set_power'] = function(block) {
-  var dropdown_motor_name = block.getFieldValue('motor_name');
-  var number_speed = block.getFieldValue('speed');
-  // TODO: Change block to reflect actual code.
-  var code = '...\n';
+Blockly.JavaScript['set_power'] = function(block) {
+  var number_left_speed = block.getFieldValue('left_speed');
+  var number_right_speed = block.getFieldValue('right_speed');
+  // TODO: Assemble JavaScript into code variable.
+  var code = '...;\n';
   return code;
 };
 
@@ -229,7 +229,7 @@ Blockly.Python['send_commands'] = function(block) {
   var dropdown_bot_name = block.getFieldValue('bot_name');
   var statements_send_commands = Blockly.Python.statementToCode(block, 'send_commands');
   // TODO: Assemble Python into code variable.
-  var code = '...\n';
+  var code = 'pass #TODO Implement backend for send_commands';
   return code;
 };
 
@@ -242,7 +242,7 @@ Blockly.Blocks['wait_for_commands'] = {
 Blockly.Python['wait_for_commands'] = function(block) {
   var dropdown_bot_name = block.getFieldValue('bot_name');
   // TODO: Assemble Python into code variable.
-  var code = '...\n';
+  var code = 'pass #TODO Implement backend for wait_for_commands';
   return code;
 };
 
@@ -256,7 +256,7 @@ Blockly.Python['while_wait_for_commands'] = function(block) {
   var dropdown_bot_name = block.getFieldValue('bot_name');
   var statements_wait_commands = Blockly.Python.statementToCode(block, 'wait_commands');
   // TODO: Assemble Python into code variable.
-  var code = '...\n';
+  var code = 'pass #TODO Implement backend for while_wait_for_commands';
   return code;
 };
 
@@ -272,7 +272,7 @@ Blockly.Python['sees_color'] = function(block) {
   var dropdown_sensor_name = block.getFieldValue('sensor_name');
   var dropdown_color_name = block.getFieldValue('color_name');
   // TODO: Assemble Python into code variable.
-  var code = '...';
+  var code = 'pass #TODO Implement backend for sees_color';
   // TODO: Change ORDER_NONE to the correct strength.
   return [code, Blockly.Python.ORDER_NONE];
 };
