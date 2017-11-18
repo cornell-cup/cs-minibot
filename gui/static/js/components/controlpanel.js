@@ -29,17 +29,25 @@ export default class ControlPanel extends React.Component {
 
     onKeyDown(event){
         if (this.state.keyboard){
-            if (event.key == 'w'){
-                this.sendMotors(100, 100, 100, 100);
+           if(event.keyCode==87) {
+                setTimeout(this.sendMotors(100,100,100,100),500);
+                this.sendMotors(0,0,0,0);
+              console.log('w');
             }
-            else if (event.key == 'a'){
-                this.sendMotors(-100, 100, 0,0 );
+            else if (event.keyCode==65){
+                setTimeout(this.sendMotors(0, 0, -100, 100),500);
+                this.sendMotors(0,0,0,0);
+               console.log('a');
             }
-            else if (event.key == 'd'){
-                this.sendMotors(100, -100,0 ,0);
+            else if (event.keyCode==83){
+                setTimeout(this.sendMotors(100, -100, 0, 0),500);
+                this.sendMotors(0,0,0,0);
+                console.log('d');
             }
-            else{
-                this.sendMotors(-100, -100, 0, 0);
+            else if(event.keyCode==68){
+                setTimeout(this.sendMotors(-100,-100,-100,-100),500);
+                this.sendMotors(0,0,0,0);
+                console.log('s');
             }
 
         }
