@@ -31,6 +31,7 @@ class BaseInterface:
             ("/getTrackedBots", GetTrackedBotHandler),
             ("/removeBot", RemoveBotHandler),
             ("/sendKV", SendKVHandler),
+            #("/getBotData", BotDataHandler),
             ("/vision", VisionHandler)
         ]
         self.settings = {
@@ -60,7 +61,6 @@ class BaseStationHandler(tornado.web.RequestHandler):
     def get(self):
         # self.write("Hi There")
         self.render("../gui/index.html", title="Title", items=[])
-
 
 class AddBotHandler(tornado.web.RequestHandler):
     """
@@ -160,7 +160,6 @@ class SendKVHandler(tornado.web.RequestHandler):
             get_bot_by_name(name).get_command_center()
         self.write(json.dumps(bot_cc.sendKV(key, val)))
 
-
 class ScriptHandler(tornado.web.RequestHandler):
     """
     Sends scripts written in GUI to bot to run.
@@ -184,6 +183,22 @@ class XboxHandler(tornado.web.RequestHandler):
     """
     def post(self):
         pass
+
+# class BotDataHandler(tornado.web.RequestHandler):
+    #"""
+    #Handles Bot Data.
+    #"""
+    #def get(self):
+    #    info = json.loads(self.request.body.decode())
+    #    print(info)
+    #    name = info['name']
+    #    bot = BaseStation().get_bot_manager().get_bot_by_name(name)
+    #    if bot is not None:
+    #        center = bot.get_sensor_center()
+            #getalldatajson is not implemented, assume that it gives the name of the sensor as keys
+    #        sensorinfo = list(center.get_all_data_json().keys())
+    #    else:
+    #        logging.warning("[ERROR] Bot not detected when trying to get data.") */
 
 
 class VisionHandler(tornado.web.RequestHandler):
