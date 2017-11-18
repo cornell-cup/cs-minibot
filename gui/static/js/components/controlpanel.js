@@ -144,7 +144,7 @@ export default class ControlPanel extends React.Component {
         this.setState({currentBot: event.target.value});
         // Insert code to change Blockly toolbox here.
         // get_all_data_json(self)
-        var sensoroptions = null;
+        /* var sensoroptions = null;
         axios({
             method:'GET',
             url:'/getBotData',
@@ -202,7 +202,7 @@ export default class ControlPanel extends React.Component {
                 code += temp;
             }
             return [code, Blockly.Python.ORDER_NONE];
-            };
+            }; */
     }
 
     /* starts data logging */
