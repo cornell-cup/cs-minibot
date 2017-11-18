@@ -378,7 +378,6 @@ export default class GridView extends React.Component {
     */
     getNewVisionData() {
         const MILLIS_PER_VISION_UPDATE = 33;
-        console.log('getting new vision data?');
         try {
             axios({
                 url: '/updateloc',

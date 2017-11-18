@@ -204,3 +204,16 @@ if __name__ == "__main__":
     """
     base_station = BaseInterface(8080)
     base_station.start()
+
+"""
+MISSING ENDPOINTS:
+
+High priority:
+- updateLoc
+- trackedBots
+- addScenario
+
+Low priority:
+- postOccupancyMatrix
+
+"""
