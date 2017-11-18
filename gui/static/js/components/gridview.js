@@ -1,11 +1,10 @@
 var React = require('react');
+var axios = require('axios');
 
 /**
  * Component for the grid view of the simulated bots
- *
  */
 export default class GridView extends React.Component {
-    //TODO
     constructor(props) {
         super(props);
         this.state = {
@@ -22,12 +21,12 @@ export default class GridView extends React.Component {
             yOffset: 0, //same as above
 
             // pixi elements for displaying information
-            stage: null,
-            back: null,
-            botContainer: null,
-            gridContainer: null,
-            grid: null,
-            imageLoader: null,
+            stage: new PIXI.Container(),
+            back: new PIXI.Container(),
+            botContainer: new PIXI.Container(),
+            gridContainer: new PIXI.Container(),
+            grid: PIXI.autoDetectRenderer(520, 520),
+            imageLoader: PIXI.loader,
 
             // occupancy matrix
             listBots: [],
@@ -43,8 +42,8 @@ export default class GridView extends React.Component {
 
         //Setup
         this.main = this.main.bind(this);
-        this.imageLoaded = this.imageLoaded.bind(this);
-        this.setupGridLines = this.setupGridLines.bind(this);
+        this.setup = this.setup.bind(this);
+        this.drawGridLines = this.drawGridLines.bind(this);
 
         //Display
         this.displayBots = this.displayBots.bind(this);
@@ -61,88 +60,145 @@ export default class GridView extends React.Component {
         this.newBot = this.newBot.bind(this);
         this.getNewVisionData = this.getNewVisionData.bind(this);
         this.pollBotNames = this.pollBotNames.bind(this);
+        this.handleInputChange = this.handleInputChange.bind(this);
     }
 
     /* executes after the component gets rendered */
     componentDidMount(){
-        //TODO
-        //main();
+        this.main();
     }
 
-    /* literally just a helper function - takes in a number for radians, spits out a number for degrees */
+    /* handler for input changes to modify the state */
+    handleInputChange(event) {
+        const target = event.target;
+        const value = target.value;
+        const name = target.name;
+        this.setState({
+            [name]: value
+        });
+
+        //handles zooming and panning
+        if(name=="xOffset"||name=="yOffset"||name=="scale"){
+            const x = this.state.xOffset;
+            const y = this.state.yOffset;
+            const scale = this.state.scale;
+            const VIEW_WIDTH = this.state.viewWidth;
+            const START_SCALE = this.state.startScale;
+
+            this.state.x_int = VIEW_WIDTH/START_SCALE*parseInt(x)/100;
+            this.state.y_int = VIEW_WIDTH/START_SCALE*parseInt(y)/100;
+
+            var stage = this.state.stage;
+            var grid = this.state.grid;
+            var bots = this.state.bots;
+
+            this.state.gridContainer.removeChildren();
+            this.state.botContainer.removeChildren();
+            this.drawGridLines();
+
+            if(this.state.occupancyMatrix !== null) {
+                this.displayOccupancyMatrix(40, 40, 1.0);
+            }
+
+            this.displayBots();
+            // this.fillOccupancyMatrix(scale, x, y);
+            grid.render(stage);
+        }
+    }
+
+    /* a helper function - takes in a number for radians, outputs a number for degrees */
     toDegrees(radians) {
         return 180 * radians / Math.PI;
     }
 
-    /* initially sets up the gridview, run once after component loads */
+    /* begins the setup for gridview, called once when the component mounts */
     main() {
         //TODO
-        this.state.botContainer = new PIXI.Container();
-        this.state.gridContainer = new PIXI.Container();
-
-        this.state.stage = new PIXI.Container();
-        this.state.back = new PIXI.Container();
-        this.state.grid = PIXI.autoDetectRenderer(520, 520);
-
         $("#view").append(this.state.grid.view);
 
-        var loadUrl = 'img/line.png';
-        var imageLoader = this.state.imageLoader;
-        imageLoader = PIXI.loader;
-        imageLoader.add('background', loadUrl);
-        imageLoader.once("complete", this.imageLoaded);
-        imageLoader.load();
+        /* temporarily disabled background image loading */
+        // try {
+        //     var loadUrl = 'static/img/line.png';
+        //     var imageLoader = this.state.imageLoader;
+        //     imageLoader.add('background', loadUrl);
+        //     imageLoader.once("complete", ()=>{this.imageLoaded();});
+        //     imageLoader.load();
+        // }
+        // catch (err) {
+        //     console.log("background failed to load! using white background");
+        //     var background = PIXI.Texture.WHITE;
+        //     background.width = 1300;
+        //     background.height = 1300;
+        //     this.setup(background);
+        // }
+
+        console.log("background failed to load! using white background");
+        var background = PIXI.Texture.WHITE;
+        this.setup(background);
     }
 
+    /* handler for when background image has loaded successfully */
     imageLoaded(){
-        var background = PIXI.Texture.fromImage('/img/line.png');
-        var backgroundTexture =  background;
-        var backgroundSprite = new PIXI.Sprite(backgroundTexture);
-        var scale = this.state.scale;
-        var xOffset = this.state.xOffset;
-        var yOffset = this.state.yOffset;
-        var bots = this.state.bot;
+        console.log('background successfully loaded!');
+        var background = PIXI.Texture.fromImage('static/img/line.png');
+        this.setup(background);
+    }
+
+    /* Continue setup of gridview
+        background - a PIXI.Texture object
+     */
+    setup(background) {
+        console.log('setup part 2');
+        const backgroundSprite = new PIXI.Sprite(background);
+        const scale = this.state.scale;
+        const xOffset = this.state.xOffset;
+        const yOffset = this.state.yOffset;
+        const bots = this.state.bots;
 
         backgroundSprite.scale.x =  1300*scale/100;
         backgroundSprite.scale.y =  1300*scale/100;
 
         backgroundSprite.position.x = 0;
         backgroundSprite.position.y = 0;
-        this.state.backgroundSprite = backgroundSprite;
 
+        this.state.backgroundSprite = backgroundSprite;
         this.state.back.addChild(backgroundSprite);
+
+        this.drawGridLines();
+        this.displayBots();
+
+        this.getNewVisionData();
+        this.pollBotNames();
+
         var stage = this.state.stage;
         stage.addChild(this.state.back);
         stage.addChild(this.state.botContainer);
         stage.addChild(this.state.gridContainer);
 
         var grid = this.state.grid;
-        grid.view.style.border = "1px dashed bl ack";
+        grid.view.style.border = "1px dashed black";
         grid.view.style.position = "absolute";
         grid.view.style.display = "block";
         grid.render(stage);
-
-        this.setupGridLines(scale, xOffset, yOffset);
-        this.displayBots(bots, scale, xOffset, yOffset);
-
-        this.getNewVisionData();
-        this.pollBotNames();
     }
 
     /*
         Sets up grid lines within view.
         - 40x40 grid, 4x4 initially visible
-        -
+        - standard coordinate system: 1 unit = 1 meter
+        - start position: bottom left corner = (0,0)
     */
-    setupGridLines(scale, xOffset, yOffset) {
+    drawGridLines() {
         var lines_y = [];
         var lines_x = [];
         var VIEW_WIDTH = this.state.viewWidth;
+        const scale = this.state.scale;
+        const xOffset = parseInt(this.state.xOffset);
+        const yOffset = parseInt(this.state.yOffset);
 
         for(var i=0; i<40; i=i+1){
             lines_y[i] = new PIXI.Graphics();
-            //lines_y[i].lineStyle(1, 0x0000FF, 1);
-            lines_y[i].lineStyle(1, 0x000000, 1);
+            lines_y[i].lineStyle(1, 0x0000FF, 1);
 
             lines_y[i].moveTo(0,i*65*scale/100);
             lines_y[i].lineTo(VIEW_WIDTH,i*65*scale/100);
@@ -158,17 +214,23 @@ export default class GridView extends React.Component {
             lines_x[i].lineTo(i*65*scale/100,VIEW_WIDTH);
             lines_x[i].x = (i-20)*65*scale/100 + xOffset;
             lines_x[i].y = 0;
-
             this.state.gridContainer.addChild(lines_x[i]);
         }
     }
 
-    /* pseudo-constructor for a bot object */
+    /*
+    pseudo-constructor for a bot object
+        x - x coordinate of new bot
+        y - y coordinate of new bot
+        angle - angle of new bot, in radians
+        id - the id for the new bot
+        size - the size of the new bot, in meters
+    */
     newBot(x, y, angle, id, size) {
         var bot = {
             x: x,
             y: y,
-            angle: angle, // radians
+            angle: angle,
             id: id,
             size: size
         };
@@ -180,23 +242,34 @@ export default class GridView extends React.Component {
         return bot;
     }
 
-    /* Displays all bots given an array of bots */
-    displayBots(botArray, scale, xOffset, yOffset) {
+    /*
+    Displays all bots given an array of bots
+        botArray - an array of JSON objects representing bots or scenario objects
+    */
+    displayBots() {
+        const botArray = this.state.bots;
+        const scale = this.state.scale;
+        const xOffset = parseInt(this.state.xOffset);
+        const yOffset = parseInt(this.state.yOffset);
         for(var b=0; b<botArray.length;b++) {
             if (botArray[b].type=='bot'){
-                this.drawBot(botArray[b], scale, xOffset, yOffset);
+                this.drawBot(botArray[b]);
             } else {
-                this.drawScenarioObject(botArray[b], scale, xOffset, yOffset);
+                this.drawScenarioObject(botArray[b]);
             }
         }
     }
 
-    /* Draw a single modbot at (x, y)
-        where (0,0) is bottom left */
-    drawBot(b, scale, xOffset, yOffset) {
-        var VIEW_WIDTH = this.state.viewWidth;
-        var x_int = this.state.x_int;
-        var y_int = this.state.y_int;
+    /* Draw a single bot centered at (x, y)
+        b - a JSON object representing a bot
+    */
+    drawBot(b) {
+        const scale = this.state.scale;
+        const xOffset = parseInt(this.state.xOffset);
+        const yOffset = parseInt(this.state.yOffset);
+        const VIEW_WIDTH = this.state.viewWidth;
+        const x_int = this.state.x_int;
+        const y_int = this.state.y_int;
 
         if (b.size == 0) b.size = 10;
         var size = b.size*x_int;
@@ -241,11 +314,15 @@ export default class GridView extends React.Component {
     }
 
     /* Draw a single scenario object at (x, y)
-    where (0,0) is bottom left */
-    drawScenarioObject(b, scale, xOffset, yOffset) {
-        var VIEW_WIDTH = this.state.viewWidth;
-        var x_int = this.state.x_int;
-        var y_int = this.state.y_int;
+        b - a JSON object representing a scenario object
+     */
+        drawScenarioObject(b) {
+        const scale = this.state.scale;
+        const xOffset = parseInt(this.state.xOffset);
+        const yOffset = parseInt(this.state.yOffset);
+        const VIEW_WIDTH = this.state.viewWidth;
+        const x_int = this.state.x_int;
+        const y_int = this.state.y_int;
 
         var size = b.size*x_int;
         var scenarioObject = new PIXI.Graphics();
@@ -330,7 +407,6 @@ export default class GridView extends React.Component {
         //                     var botAngle = bot.angle;
         //                     var botSize = bot.size;
         //                     if (!botSize) bot.size = 0.15; // TODO: Fix this
-        //                     // really bad hack
         //                     var botId = bot.id;
         //                     bots.push(newBot(bot.x, bot.y, bot.angle, bot.id, bot
         //                         .size));
@@ -339,7 +415,7 @@ export default class GridView extends React.Component {
         //                 stage.removeChild(gridContainer);
         //                 gridContainer = new PIXI.Container();
         //                 botContainer.removeChildren();
-        //                 this.setupGridLines(scale, xOffset, yOffset);
+        //                 this.drawGridLines(scale, xOffset, yOffset);
         //                 stage.addChild(gridContainer);
         //                 this.displayBots(bots,scale, xOffset, yOffset);
         //                 grid.render(stage);
@@ -393,52 +469,52 @@ export default class GridView extends React.Component {
        planning algorithm will not choose a path too close to an obstacle.
     */
     padOccupancyMatrix() {
-        //TODO
-        // var temp = [];
-        // for(var i = 0; i < occupancyMatrix.length; i++) {
-        //     temp.push([]);
-        //     for(var j = 0; j < occupancyMatrix[0].length; j++) {
-        //         temp[i].push(occupancyMatrix[i][j]);
-        //     }
-        // }
-        // for(var i = 0; i < occupancyMatrix.length; i++) {
-        //     for(var j = 0; j < occupancyMatrix.length; j++) {
-        //         if(occupancyMatrix[i][j] === 1) {
-        //             if(i-1 >= 0) {
-        //                 temp[i-1][j] = 1;
-        //             }
-        //             if(i+1 < occupancyMatrix.length) {
-        //                 temp[i+1][j] = 1;
-        //             }
-        //             if(j-1 >= 0) {
-        //                 temp[i][j-1] = 1;
-        //             }
-        //             if(j+1 < occupancyMatrix[0].length) {
-        //                 temp[i][j+1] = 1;
-        //             }
-        //             if(j-1 >= 0 && i-1 >= 0) {
-        //                 temp[i-1][j-1] = 1;
-        //             }
-        //             if(j+1 < occupancyMatrix[0].length && i+1 < occupancyMatrix.length) {
-        //                 temp[i+1][j+1] = 1;
-        //             }
-        //             if(j+1 < occupancyMatrix[0].length && i-1 > 0) {
-        //                 temp[i-1][j+1] = 1;
-        //             }
-        //             if(j-1 > 0 && i+1 < occupancyMatrix.length) {
-        //                 temp[i+1][j-1] = 1;
-        //             }
-        //         }
-        //     }
-        // }
-        // return temp;
+        var occupancyMatrix = this.state.occupancyMatrix;
+        var temp = [];
+        for(var i = 0; i < occupancyMatrix.length; i++) {
+            temp.push([]);
+            for(var j = 0; j < occupancyMatrix[0].length; j++) {
+                temp[i].push(occupancyMatrix[i][j]);
+            }
+        }
+        for(var i = 0; i < occupancyMatrix.length; i++) {
+            for(var j = 0; j < occupancyMatrix.length; j++) {
+                if(occupancyMatrix[i][j] === 1) {
+                    if(i-1 >= 0) {
+                        temp[i-1][j] = 1;
+                    }
+                    if(i+1 < occupancyMatrix.length) {
+                        temp[i+1][j] = 1;
+                    }
+                    if(j-1 >= 0) {
+                        temp[i][j-1] = 1;
+                    }
+                    if(j+1 < occupancyMatrix[0].length) {
+                        temp[i][j+1] = 1;
+                    }
+                    if(j-1 >= 0 && i-1 >= 0) {
+                        temp[i-1][j-1] = 1;
+                    }
+                    if(j+1 < occupancyMatrix[0].length && i+1 < occupancyMatrix.length) {
+                        temp[i+1][j+1] = 1;
+                    }
+                    if(j+1 < occupancyMatrix[0].length && i-1 > 0) {
+                        temp[i-1][j+1] = 1;
+                    }
+                    if(j-1 > 0 && i+1 < occupancyMatrix.length) {
+                        temp[i+1][j-1] = 1;
+                    }
+                }
+            }
+        }
+        return temp;
     }
 
     /* Populates the PIXI view with the squares corresponding to the occupancy matrix and path */
     fillOccupancyMatrix(scale, xOffset, yOffset) {
-        var VIEW_WIDTH = this.state.viewWidth;
-        var x_int = this.state.x_int;
-        var y_int = this.state.y_int;
+        const VIEW_WIDTH = this.state.viewWidth;
+        const x_int = this.state.x_int;
+        const y_int = this.state.y_int;
         var occupancyMatrix = this.state.occupancyMatrix;
         var path = this.state.path;
         var botContainer = this.state.botContainer;
@@ -479,30 +555,8 @@ export default class GridView extends React.Component {
         }
     }
 
-    //TODO
-    //     $('#scale').on('change',function(){
-    //         var val = $(this).val();
-    //         scale=val;
-    //         x_int = VIEW_WIDTH/START_SCALE*val/100;
-    //         y_int = VIEW_WIDTH/START_SCALE*val/100;
-    //
-    //         stage.removeChild(gridContainer);
-    //         gridContainer = new PIXI.Container();
-    //         botContainer.removeChildren();
-    //         setupGridLines(scale, xOffset, yOffset);
-    //
-    //         stage.addChild(gridContainer);
-    // //    if(occupancyMatrix !== null) {
-    // //        displayOccupancyMatrix(40, 40, 1.0);
-    // //
-    // //    }
-    //         displayBots(bots,scale, xOffset, yOffset);
-    //         fillOccupancyMatrix(scale, xOffset, yOffset);
-    //
-    //         grid.render(stage);
-    //     });
 
-    //TODO
+    //TODO - keyboard control for panning - DO WE WANT TO KEEP THIS?
     //     /* for moving the viewport */
     //     document.onkeydown = function (e) {
     //         let code = e.keyCode ? e.keyCode : e.which;
@@ -527,7 +581,7 @@ export default class GridView extends React.Component {
     //
     //         gridContainer.removeChildren();
     //         botContainer.removeChildren();
-    //         setupGridLines(scale, xOffset, yOffset);
+    //         drawGridLines(scale, xOffset, yOffset);
     // //    displayOccupancyMatrix(40, 40, 1.0);
     //
     //         displayBots(bots, scale, xOffset, yOffset);
@@ -545,7 +599,20 @@ export default class GridView extends React.Component {
     render() {
         return(
             <div id ="component_view" className = "box">
-                GridView<br/>
+                <table><tbody>
+                    <tr>
+                        <td className = "gridControlTable">Scale ({this.state.scale}):</td>
+                        <td className = "gridControlTable"><input id="scale" type="range" name="scale" min="25" max="100" className = "gridControl" value={this.state.scale} defaultValue="100" onChange={this.handleInputChange}/></td>
+                    </tr>
+                    <tr>
+                        <td className = "gridControlTable">X Offset ({this.state.xOffset}):</td>
+                        <td className = "gridControlTable"><input id="xOffset" type="range" name="xOffset" min="-100" max="100" className = "gridControl" value={this.state.xOffset} defaultValue="0" onChange={this.handleInputChange}/></td>
+                    </tr>
+                    <tr>
+                        <td className = "gridControlTable">Y Offset ({this.state.yOffset}):</td>
+                        <td className = "gridControlTable"><input id="yOffset" type="range" name="yOffset" min="-100" max="100" className = "gridControl" value={this.state.yOffset} defaultValue="0" onChange={this.handleInputChange}/></td>
+                    </tr>
+                </tbody></table>
                 <div id ="view"></div>
             </div>
         );
