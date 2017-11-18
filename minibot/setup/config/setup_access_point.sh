@@ -21,13 +21,13 @@ check_dependencies () {
 
 copy_apache_info () {
     sudo mkdir /var/www/minibotAP >/dev/null
-    sudo cp ./minibot-apache2.conf /etc/apache2/apache2.conf
-    sudo cp ./wifi-app/* /var/www/minibotAP/
+    sudo cp ../config/minibot-apache2.conf /etc/apache2/apache2.conf
+    sudo cp ../config/wifi-app/* /var/www/minibotAP/
 }
 
 copy_conf_wifi_setup () {
-    sudo cp ./minibot-dnsmasq.conf /etc/dnsmasq.conf
-    sudo cp ./minibot-hostapd.conf /etc/hostapd/hostapd.conf
+    sudo cp ../config/minibot-dnsmasq.conf /etc/dnsmasq.conf
+    sudo cp ../config/minibot-hostapd.conf /etc/hostapd/hostapd.conf
 
     # remove old config if exists
     sudo sed -i -- 's/allow-hotplug wlan0//g' /etc/network/interfaces
@@ -36,7 +36,7 @@ copy_conf_wifi_setup () {
     sudo sed -i -- 's/#DAEMON_CONF=""/DAEMON_CONF="\/etc\/hostapd\/hostapd.conf"/g' /etc/default/hostapd
 
     # add new information to interfaces and dhcpcd.conf
-    sudo cp ./minibot-interfaces /etc/network/interfaces
+    sudo cp ../config/minibot-interfaces /etc/network/interfaces
     
     sudo grep "denyinterfaces wlan0" /etc/dhcpcd.conf >/dev/null
     if [[ $? != 0 ]]
@@ -46,7 +46,7 @@ copy_conf_wifi_setup () {
     echo "Setup the Wifi interfaces for Access Point."
 
     # setup apache2 server conf files
-    copy_apache_info
+    # copy_apache_info
 }
 
 check_dependencies
