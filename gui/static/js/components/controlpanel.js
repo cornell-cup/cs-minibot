@@ -11,7 +11,6 @@ export default class ControlPanel extends React.Component {
             keyboard: false,
             xbox: false,
             trackedBots: [],
-            currentBot: ''
         };
 
         this.handleInputChange = this.handleInputChange.bind(this);
@@ -23,6 +22,27 @@ export default class ControlPanel extends React.Component {
         this.xboxToggle = this.xboxToggle.bind(this);
         this.getTrackedBots = this.getTrackedBots.bind(this);
         this.selectBot = this.selectBot.bind(this);
+        this.onKeyDown = this.onKeyDown.bind(this);
+        window.addEventListener('keydown', this.onKeyDown);
+
+    }
+
+    onKeyDown(event){
+        if (this.state.keyboard){
+            if (event.key == 'w'){
+                this.sendMotors(100, 100, 100, 100);
+            }
+            else if (event.key == 'a'){
+                this.sendMotors(-100, 100, 0,0 );
+            }
+            else if (event.key == 'd'){
+                this.sendMotors(100, -100,0 ,0);
+            }
+            else{
+                this.sendMotors(-100, -100, 0, 0);
+            }
+
+        }
     }
 
     /* handler for input changes to modify the state */
@@ -35,6 +55,11 @@ export default class ControlPanel extends React.Component {
                 [name]: target.checked
             });
             this.xboxToggle(target.checked);
+        } else if (name=="keyboard"){
+            this.setState({
+                [name]: target.checked
+            });
+            console.log(this.state.keyboard)
         } else {
             this.setState({
                 [name]: value
@@ -84,7 +109,7 @@ export default class ControlPanel extends React.Component {
                 data: JSON.stringify({
                     key: document.getElementById('kv_key').value,
                     value: document.getElementById('kv_value').value,
-                    name: this.state.currentBot
+                    name: this.props.currentBot
                 }),
             })
             .then(function(response) {
@@ -105,7 +130,7 @@ export default class ControlPanel extends React.Component {
             method:'POST',
             url:'/commandBot',
             data: JSON.stringify({
-                name: this.state.currentBot,
+                name: this.props.currentBot,
                 fl: fl,
                 fr: fr,
                 bl: bl,
@@ -203,6 +228,7 @@ export default class ControlPanel extends React.Component {
             }
             return [code, Blockly.Python.ORDER_NONE];
             }; */
+        this.props.setCurrentBot(event.target.value);
     }
 
     /* starts data logging */
@@ -211,7 +237,7 @@ export default class ControlPanel extends React.Component {
         axios({
             method:'POST',
             url:'/logdata',
-            data: JSON.stringify({name: this.state.currentBot}),
+            data: JSON.stringify({name: this.props.currentBot}),
             processData: false,
         })
         .then(function(response) {
@@ -228,7 +254,7 @@ export default class ControlPanel extends React.Component {
         axios({
             method:'POST',
             url:'/removeBot',
-            data: JSON.stringify({name: this.state.currentBot}),
+            data: JSON.stringify({name: this.props.currentBot}),
         })
         .then(function(response) {
             console.log('removed bot successfully');
@@ -238,6 +264,7 @@ export default class ControlPanel extends React.Component {
         });
     }
 
+
     /* toggles xbox controls on or off */
     xboxToggle(checked){
         console.log('xboxToggle '+checked);
@@ -245,7 +272,7 @@ export default class ControlPanel extends React.Component {
             axios({
                 method:'POST',
                 url:'/runXbox',
-                data: JSON.stringify({name: this.state.currentBot}),
+                data: JSON.stringify({name: this.props.currentBot}),
             })
             .then(function(response) {
                 console.log('successfully toggled Xbox ON');
@@ -257,7 +284,7 @@ export default class ControlPanel extends React.Component {
             axios({
                 method:'POST',
                 url:'/stopXbox',
-                data: JSON.stringify({name: this.state.currentBot}),
+                data: JSON.stringify({name: this.props.currentBot}),
             })
             .then(function(response) {
                 console.log('successfully toggled Xbox OFF');
@@ -267,6 +294,7 @@ export default class ControlPanel extends React.Component {
             });
         }
     }
+
 
     updateDiscoveredBots(){
         //TODO (#32) - change below request to axios
@@ -319,7 +347,7 @@ export default class ControlPanel extends React.Component {
                     <tr>
                         <td>
                             <label>
-                                 Choose bot:
+                                Choose bot:
                                 <select value={this.state.currentBot} onChange={this.selectBot} id="botlist" name="bots">
                                     <option value="(DEBUG) Sim Bot">(DEBUG) Sim Bot</option>
                                     {
@@ -361,7 +389,7 @@ export default class ControlPanel extends React.Component {
                         <td>
                             Keyboard Controls <br/>
                             <label className="switch">
-                                <input name="keyboard" type="checkbox" id="keyboard-controls"/>
+                                <input name="keyboard" type="checkbox" id="keyboard-controls" onChange={this.handleInputChange} />
                                 <span className="slider"></span>
                             </label>
                         </td>
