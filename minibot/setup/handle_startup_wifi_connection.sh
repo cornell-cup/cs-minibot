@@ -32,8 +32,8 @@ update_config=1
 country=US
 
 network={
-    ssid=$1
-    psk=$2
+    ssid="$1"
+    psk="$2"
     key_mgmt=WPA-PSK
 }
 EOF
