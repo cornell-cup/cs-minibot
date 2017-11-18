@@ -35,7 +35,7 @@ export default class ControlPanel extends React.Component {
               console.log('w');
             }
             else if (event.keyCode==65){
-                setTimeout(this.sendMotors(0, 0, -100, 100),500);
+                setTimeout(this.sendMotors(0, 0, 100, -100),500);
                 this.sendMotors(0,0,0,0);
                console.log('a');
             }
