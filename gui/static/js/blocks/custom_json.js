@@ -251,6 +251,51 @@ move_power_time : {
   "tooltip": "",
   "helpUrl": ""
 },
+stop_moving : {
+  "type": "stop_moving",
+  "message0": "stop moving",
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 230,
+  "tooltip": "",
+  "helpUrl": ""
+},
+set_power : {
+  "type": "set_power",
+  "message0": "set %1 to  %2 %% power",
+  "args0": [
+    {
+      "type": "field_dropdown",
+      "name": "motor_name",
+      "options": [
+        [
+          "motor1",
+          "motor1"
+        ],
+        [
+          "motor2",
+          "motor2"
+        ],
+        [
+          "motor3",
+          "motor3"
+        ]
+      ]
+    },
+    {
+      "type": "field_number",
+      "name": "speed",
+      "value": 0,
+      "min": 0,
+      "max": 100
+    }
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 230,
+  "tooltip": "",
+  "helpUrl": ""
+},
 turn_power : {
   "type": "turn_power",
   "message0": "turn %1 with %2 %% power",
@@ -439,51 +484,6 @@ while_wait_for_commands : {
     {
       "type": "input_statement",
       "name": "wait_commands"
-    }
-  ],
-  "previousStatement": null,
-  "nextStatement": null,
-  "colour": 230,
-  "tooltip": "",
-  "helpUrl": ""
-},
-stop_moving : {
-  "type": "stop_moving",
-  "message0": "stop moving",
-  "previousStatement": null,
-  "nextStatement": null,
-  "colour": 230,
-  "tooltip": "",
-  "helpUrl": ""
-},
-set_power : {
-  "type": "set_power",
-  "message0": "set %1 to  %2 %% power",
-  "args0": [
-    {
-      "type": "field_dropdown",
-      "name": "motor_name",
-      "options": [
-        [
-          "motor1",
-          "motor1"
-        ],
-        [
-          "motor2",
-          "motor2"
-        ],
-        [
-          "motor3",
-          "motor3"
-        ]
-      ]
-    },
-    {
-      "type": "field_number",
-      "name": "speed",
-      "value": 0,
-      "min": 0,
-      "max": 100
     }
   ],
   "previousStatement": null,

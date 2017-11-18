@@ -129,7 +129,10 @@ Blockly.Python['move_power_time'] = function(block) {
     fwd: "move_forward(",
     bk: "move_backward("
   }[dropdown_direction];
-  return [fcn+number_speed+")", Blockly.Python.ORDER_NONE];
+
+  var wait_cmd = "wait("+ number_seconds +")";
+
+  return [fcn+number_speed+")\n" +wait_cmd, Blockly.Python.ORDER_NONE];
 };
 
 Blockly.Blocks['stop_moving'] = {
@@ -140,7 +143,7 @@ Blockly.Blocks['stop_moving'] = {
 
 Blockly.Python['stop_moving'] = function(block) {
   // TODO: Assemble Python into code variable.
-  var code = '...\n';
+  var code = 'stop()';
   return code;
 };
 
@@ -153,7 +156,7 @@ Blockly.Blocks['set_power'] = {
 Blockly.Python['set_power'] = function(block) {
   var dropdown_motor_name = block.getFieldValue('motor_name');
   var number_speed = block.getFieldValue('speed');
-  // TODO: Assemble Python into code variable.
+  // TODO: Change block to reflect actual code.
   var code = '...\n';
   return code;
 };
@@ -170,8 +173,12 @@ Blockly.Python['turn_power'] = function(block) {
   var dropdown_direction = block.getFieldValue('direction');
   var number_percent = block.getFieldValue('percent');
   // TODO: Assemble Python into code variable.
-  var code = '...\n';
-  return code;
+  var fcn = {
+    turn_clockwise: "turn_clockwise(",
+    turn_counter_clockwise: "turn_counter_clockwise("
+  }[dropdown_direction];
+
+  return [fcn+number_percent+")", Blockly.Python.ORDER_NONE];
 };
 
 Blockly.Blocks['turn_power_time'] = {
@@ -185,8 +192,14 @@ Blockly.Python['turn_power_time'] = function(block) {
   var number_percent = block.getFieldValue('percent');
   var number_seconds = block.getFieldValue('seconds');
   // TODO: Assemble Python into code variable.
-  var code = '...\n';
-  return code;
+  var fcn = {
+    turn_clockwise: "turn_clockwise(",
+    turn_counter_clockwise: "turn_counter_clockwise("
+  }[dropdown_direction];
+
+  var wait_cmd = "wait("+ number_seconds +")";
+
+  return [fcn+number_percent+")\n" +wait_cmd, Blockly.Python.ORDER_NONE];
 };
 
 // ================ WAIT BLOCK ================ //
@@ -200,8 +213,8 @@ Blockly.Blocks['wait_seconds'] = {
 Blockly.Python['wait_seconds'] = function(block) {
   var number_seconds = block.getFieldValue('seconds');
   // TODO: Assemble Python into code variable.
-  var code = '...\n';
-  return code;
+  var wait_cmd = "wait("+ number_seconds +")";
+  return wait_cmd;
 };
 
 // ================ COMMUNICATION BLOCKS ================ //
