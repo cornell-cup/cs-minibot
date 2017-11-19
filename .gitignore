@@ -1,3 +1,7 @@
+# Minibot config
+minibot/configs/config.json
+minibot/scripts/UserScript.py
+
 # Temporary folder
 tmp/
 
