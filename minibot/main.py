@@ -38,6 +38,7 @@ class MiniBotProcess():
         end = cmd.find(">>>>")
         key = cmd[start + 4:comma]
         value = cmd[comma + 1:end]
+
         if key == "WHEELS":
             try:
                 values = value.split(",")
@@ -47,17 +48,23 @@ class MiniBotProcess():
                 print("oh no!")
                 pass
         elif key == "SCRIPT":
+            # Inserts user's script into UserScript.py file.
             user_script_file = open("/home/pi/cs-minibot/minibot/scripts/UserScript.py", 'w')
             val = process_string(value)
             user_script_file.write(val)
             user_script_file.close()
-            self.p = self.spawn_script_process(p, self.bot)
+
+            # Runs user's script that is now in the dummy file.
+            self.p = self.spawn_script_process()
         elif key == "RUN":
+            # Finds named file within minibot's scripts directory.
             filename = os.path.basename(value)
             filepath = "/home/pi/cs-minibot/minibot/scripts/" + filename
             print(filepath)
+
+            # If file is found, run it.
             if os.path.isfile(filepath):
-                self.p = self.spawn_named_script_process(p, filename.split('.')[0])
+                self.p = self.spawn_named_script_process(filename.split('.')[0])
             else:
                 print("Invalid File path")
 
@@ -65,8 +72,10 @@ class MiniBotProcess():
         if self.p is not None and self.p.is_alive():
             self.p.terminate()
         time.sleep(0.1)
+
         self.p = Thread(target=self.run_script, args=[self.bot])
         self.p.start()
+
         # Return control to main after .1 seconds
         return self.p
 
@@ -74,8 +83,10 @@ class MiniBotProcess():
         if self.p is not None and self.p.is_alive():
             self.p.terminate()
         time.sleep(0.1)
+
         self.p = Thread(target=self.run_script_with_name, args=[self.bot, script_name])
         self.p.start()
+
         # Return control to main after .1 seconds
         return self.p
 
