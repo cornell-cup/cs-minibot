@@ -119,6 +119,8 @@ class VirtualBot(object):
                 data (str): A string to be parsed. Must start with* "<<<<" and
                     end with ">>>>". Key-value pair should be separated by ":"
             """
+            print("Receiving incoming TCP!")
+            print("Message: " + data)
             start = data.index("<<<<")
             comma = data.index(",")
             end = data.index(">>>>")

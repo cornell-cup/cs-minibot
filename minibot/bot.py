@@ -39,6 +39,7 @@ class Bot():
                       PWM(self.actuators["left"]["pinPWM"]),
                       DigitalOutput(self.actuators["right"]["pinHighLow"]),
                       PWM(self.actuators["right"]["pinPWM"]))
+        print("== [INFO] Finished parsing config! ==================== ")
 
     def get_state(self):
         """
@@ -54,6 +55,7 @@ class Bot():
         :param power The percentage of the bot's power to use from 0-100
         :return True if the action is supported
         """
+        print("== [INFO] STOPPING! =================== ")
         self.motors.set_speed(0,0)
 
     def move_forward(self, power):
@@ -62,6 +64,7 @@ class Bot():
         :param power The percentage of the bot's power to use from 0-100
         :return True if the action is supported
         """
+        print("== [INFO] MOVING FORWARD! =================== ")
         self.motors.set_speed(power/100,power/100)
 
     def move_backward(self, power):
@@ -70,6 +73,7 @@ class Bot():
         :param power The percentage of the bot's power to use from 0-100
         :return True if the action is supported
         """
+        print("== [INFO] MOVING BACKWARD! =================== ")
         self.motors.set_speed(-power/100,-power/100)
 
     def turn_clockwise(self, power):
@@ -105,6 +109,7 @@ class Bot():
         Waits for a duration in seconds.
         :param t The duration in seconds
         """
+        print("== [INFO] WAITING! =================== ")
         time.sleep(t)
 
     def register_actuator(self,actuator):
