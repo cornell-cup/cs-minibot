@@ -73,7 +73,7 @@ class MiniBotProcess():
             self.p.terminate()
         time.sleep(0.1)
 
-        self.p = Thread(target=self.run_script, args=[self.bot])
+        self.p = Thread(target=self.run_script)
         self.p.start()
 
         # Return control to main after .1 seconds
@@ -84,7 +84,7 @@ class MiniBotProcess():
             self.p.terminate()
         time.sleep(0.1)
 
-        self.p = Thread(target=self.run_script_with_name, args=[self.bot, script_name])
+        self.p = Thread(target=self.run_script_with_name, args=[script_name])
         self.p.start()
 
         # Return control to main after .1 seconds
