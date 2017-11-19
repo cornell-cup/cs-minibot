@@ -17,7 +17,11 @@ CONFIG_LOCATION = '/home/pi/cs-minibot/minibot/configs/config.json'
 
 class MiniBotProcess():
     def __init__(self, bot):
+        # Bot object.
         self.bot = bot
+
+        # Thread object.
+        self.p = None
 
     def parse_command(self, cmd):
         """
@@ -29,7 +33,6 @@ class MiniBotProcess():
              bot (:obj:`Bot`): Bot object to run the command on.
              p (:obj:`str`): Payload or contents of command.
         """
-        global p
         comma = cmd.find(",")
         start = cmd.find("<<<<")
         end = cmd.find(">>>>")
@@ -38,7 +41,7 @@ class MiniBotProcess():
         if key == "WHEELS":
             try:
                 values = value.split(",")
-                bot.set_wheel_power(int(values[0]), int(values[1]))
+                self.bot.set_wheel_power(int(values[0]), int(values[1]))
             except Exception as e:
                 print(e)
                 print("oh no!")
@@ -48,33 +51,33 @@ class MiniBotProcess():
             val = process_string(value)
             user_script_file.write(val)
             user_script_file.close()
-            p = self.spawn_script_process(p, self.bot)
+            self.p = self.spawn_script_process(p, self.bot)
         elif key == "RUN":
             filename = os.path.basename(value)
             filepath = "/home/pi/cs-minibot/minibot/scripts/" + filename
             print(filepath)
             if os.path.isfile(filepath):
-                p = self.spawn_named_script_process(p, filename.split('.')[0])
+                self.p = self.spawn_named_script_process(p, filename.split('.')[0])
             else:
                 print("Invalid File path")
 
-    def spawn_script_process(self, p):
-        if (p is not None and p.is_alive()):
-            p.terminate()
+    def spawn_script_process(self):
+        if self.p is not None and self.p.is_alive():
+            self.p.terminate()
         time.sleep(0.1)
-        p = Thread(target=self.run_script, args=[self.bot])
-        p.start()
+        self.p = Thread(target=self.run_script, args=[self.bot])
+        self.p.start()
         # Return control to main after .1 seconds
-        return p
+        return self.p
 
-    def spawn_named_script_process(self, p, script_name):
-        if (p is not None and p.is_alive()):
-            p.terminate()
+    def spawn_named_script_process(self, script_name):
+        if self.p is not None and self.p.is_alive():
+            self.p.terminate()
         time.sleep(0.1)
-        p = Thread(target=self.run_script_with_name, args=[self.bot, script_name])
-        p.start()
+        self.p = Thread(target=self.run_script_with_name, args=[self.bot, script_name])
+        self.p.start()
         # Return control to main after .1 seconds
-        return p
+        return self.p
 
     def run_script_with_name(self, script_name):
         UserScript = importlib.import_module("scripts." + script_name)
@@ -85,25 +88,25 @@ class MiniBotProcess():
         UserScript.run(self.bot)
 
 
-p = None
 def main():
     print("Initializing Minibot Software")
-    p = None
     config_file = open(CONFIG_LOCATION)
     config = json.loads(config_file.read())
 
     # Initialize bot and TCP.
     bot = Bot(config)
-    tcpInstance = TCP()
-    print(tcpInstance)
+    tcp = TCP()
+    print(tcp)
+
     # Initialize thread.
     thread_udp = Thread(target=minibot.hardware.communication.UDP.udpBeacon)
     thread_udp.start()
 
+    # Define MiniBot process.
     minibot_process = MiniBotProcess(bot)
 
     while True:
-        tcpCmd = tcpInstance.get_command()
+        tcpCmd = tcp.get_command()
         minibot_process.parse_command(tcpCmd)
         time.sleep(0.01)
 
