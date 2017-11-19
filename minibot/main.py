@@ -49,8 +49,10 @@ class MiniBotProcess():
                 pass
         elif key == "SCRIPT":
             # Inserts user's script into UserScript.py file.
+            print("Script command received!")
             user_script_file = open("/home/pi/cs-minibot/minibot/scripts/UserScript.py", 'w')
             val = process_string(value)
+            print("Value: ", val)
             user_script_file.write(val)
             user_script_file.close()
 
@@ -70,12 +72,14 @@ class MiniBotProcess():
 
     def spawn_script_process(self):
         if self.p is not None and self.p.is_alive():
+            print("Terminating spawned script process")
             self.p.terminate()
         time.sleep(0.1)
 
         self.p = Thread(target=self.run_script)
         self.p.start()
         self.p.join()
+        print("Starting thread!")
 
         # Return control to main after .1 seconds
         return self.p
