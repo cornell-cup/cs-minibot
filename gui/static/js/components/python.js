@@ -88,6 +88,7 @@ export default class Python extends React.Component {
       the actual MiniBot.
     */
     send(){
+	    console.log("sending");
             axios({
                 method:'POST',
                 url:'/sendKV',
