@@ -11,9 +11,7 @@ import importlib
 import json
 import time
 import os
-from multiprocessing import Process as Thread
-
-CONFIG_LOCATION = '/home/pi/cs-minibot/minibot/configs/config.json'
+from multiprocessing import Process
 
 class MiniBotProcess():
     def __init__(self, bot):
@@ -52,7 +50,7 @@ class MiniBotProcess():
             print("Script command received!")
             user_script_file = open("/home/pi/cs-minibot/minibot/scripts/UserScript.py", 'w')
             val = process_string(value)
-            print("Value: ", val)
+            print("Value: \n", val)
             user_script_file.write(val)
             user_script_file.close()
 
@@ -76,10 +74,10 @@ class MiniBotProcess():
             self.p.terminate()
         time.sleep(0.1)
 
-        self.p = Thread(target=self.run_script)
+        self.p = Process(target=self.run_script)
         self.p.start()
         self.p.join()
-        print("Starting thread!")
+        print("Starting process!")
 
         # Return control to main after .1 seconds
         return self.p
@@ -89,7 +87,7 @@ class MiniBotProcess():
             self.p.terminate()
         time.sleep(0.1)
 
-        self.p = Thread(target=self.run_script_with_name, args=[script_name])
+        self.p = Process(target=self.run_script_with_name, args=[script_name])
         self.p.start()
         self.p.join()
 
@@ -101,12 +99,14 @@ class MiniBotProcess():
         UserScript.run(self.bot)
 
     def run_script(self):
-        from scripts import UserScript
+        print("Running the UserScript")
+        from minibot.scripts import UserScript
         UserScript.run(self.bot)
 
 
 def main():
     print("Initializing Minibot Software")
+    CONFIG_LOCATION = '/home/pi/cs-minibot/minibot/configs/config.json'
     config_file = open(CONFIG_LOCATION)
     config = json.loads(config_file.read())
 
@@ -115,9 +115,10 @@ def main():
     tcp = TCP()
     print(tcp)
 
-    # Initialize thread.
-    thread_udp = Thread(target=minibot.hardware.communication.UDP.udpBeacon)
+    # Initialize process.
+    thread_udp = Process(target=minibot.hardware.communication.UDP.udpBeacon)
     thread_udp.start()
+    thread_udp.join()
 
     # Define MiniBot process.
     minibot_process = MiniBotProcess(bot)
