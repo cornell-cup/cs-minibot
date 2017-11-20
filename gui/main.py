@@ -7,6 +7,7 @@ import tornado.web
 import os.path
 import json
 import logging
+import sys
 
 # Minibot imports.
 from basestation.base_station import BaseStation
@@ -203,3 +204,16 @@ if __name__ == "__main__":
     """
     base_station = BaseInterface(8080)
     base_station.start()
+
+"""
+MISSING ENDPOINTS:
+
+High priority:
+- updateLoc
+- trackedBots
+- addScenario
+
+Low priority:
+- postOccupancyMatrix
+
+"""
