@@ -2,11 +2,12 @@ var React = require('react');
 var axios = require('axios');
 
 /**
- * Component for the grid view of the simulated bots
+ * Component for the grid view of the simulated bots.
  */
 export default class GridView extends React.Component {
     constructor(props) {
         super(props);
+
         this.state = {
             ms_per_update: 33, // modbot update interval in ms
             bots: [],
@@ -40,35 +41,41 @@ export default class GridView extends React.Component {
             lastTime: new Date()
         };
 
-        //Setup
+        // Setup
         this.main = this.main.bind(this);
         this.setup = this.setup.bind(this);
         this.drawGridLines = this.drawGridLines.bind(this);
 
-        //Display
+        // Display
         this.displayBots = this.displayBots.bind(this);
         this.drawBot = this.drawBot.bind(this);
         this.drawScenarioObject = this.drawScenarioObject.bind(this);
 
-        //Occupancy Matrix
+        // Occupancy Matrix
         this.displayOccupancyMatrix = this.displayOccupancyMatrix.bind(this);
         this.padOccupancyMatrix = this.padOccupancyMatrix.bind(this);
         this.fillOccupancyMatrix = this.fillOccupancyMatrix.bind(this);
 
-        //Helper functions
+        // Helper functions
         this.toDegrees = this.toDegrees.bind(this);
         this.newBot = this.newBot.bind(this);
         this.getNewVisionData = this.getNewVisionData.bind(this);
+        // TODO (#73): Implement pollBotNames().
         // this.pollBotNames = this.pollBotNames.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
     }
 
-    /* executes after the component gets rendered */
-    componentDidMount(){
+    /**
+     * Executes after the component gets rendered.
+     **/
+    componentDidMount() {
         this.main();
     }
 
-    /* handler for input changes to modify the state */
+    /**
+     * Handler for input changes to modify the state.
+     * @param {Event} event Event which triggers input change.
+     **/
     handleInputChange(event) {
         const target = event.target;
         const value = target.value;
@@ -77,7 +84,7 @@ export default class GridView extends React.Component {
             [name]: value
         });
 
-        //handles zooming and panning
+        // Handles zooming and panning
         if(name=="xOffset"||name=="yOffset"||name=="scale"){
             const x = this.state.xOffset;
             const y = this.state.yOffset;
@@ -101,19 +108,28 @@ export default class GridView extends React.Component {
             }
 
             this.displayBots();
+            // TODO (#73): Impelment fillOccupancyMatrix().
             // this.fillOccupancyMatrix(scale, x, y);
             grid.render(stage);
         }
     }
 
-    /* a helper function - takes in a number for radians, outputs a number for degrees */
+    /**
+      * Helper function which takes in a number for radians and
+      * outputs a number for degrees.
+      * @param {int} radians Radian value to convert to degrees.
+      * @return {int} Converted value (in degrees).
+      */
     toDegrees(radians) {
         return 180 * radians / Math.PI;
     }
 
-    /* begins the setup for gridview, called once when the component mounts */
+    /**
+      * Main method responsible for the setup of GridView.
+      * Called once when the component mounts.
+      **/
     main() {
-        //TODO
+        // TODO (#73): Implement background image loading.
         $("#view").append(this.state.grid.view);
 
         /* temporarily disabled background image loading */
@@ -137,16 +153,20 @@ export default class GridView extends React.Component {
         this.setup(background);
     }
 
-    /* handler for when background image has loaded successfully */
+    /**
+     * Handler for when background image has loaded successfully.
+     **/
     imageLoaded(){
         console.log('background successfully loaded!');
         var background = PIXI.Texture.fromImage('static/img/line.png');
         this.setup(background);
     }
 
-    /* Continue setup of gridview
-        background - a PIXI.Texture object
-     */
+    /**
+     * Continue setup of GridView
+     * @param {PIXI.Texture} background Texture object for the background
+     *     of the GridView.
+     **/
     setup(background) {
         console.log('setup part 2');
         const backgroundSprite = new PIXI.Sprite(background);
@@ -182,12 +202,12 @@ export default class GridView extends React.Component {
         grid.render(stage);
     }
 
-    /*
-        Sets up grid lines within view.
-        - 40x40 grid, 4x4 initially visible
-        - standard coordinate system: 1 unit = 1 meter
-        - start position: bottom left corner = (0,0)
-    */
+    /**
+     *  Sets up grid lines within view.
+     *  - 40x40 grid, 4x4 initially visible
+     *  - standard coordinate system: 1 unit = 1 meter
+     *  - start position: bottom left corner = (0,0)
+     **/
     drawGridLines() {
         var lines_y = [];
         var lines_x = [];
@@ -218,15 +238,19 @@ export default class GridView extends React.Component {
         }
     }
 
-    /*
-    pseudo-constructor for a bot object
-        x - x coordinate of new bot
-        y - y coordinate of new bot
-        angle - angle of new bot, in radians
-        id - the id for the new bot
-        size - the size of the new bot, in meters
+    /**
+     * Pseudo-constructor for a bot object.
+     *
+     * @param {int} x The x coordinate of new bot.
+     * @param {int} y The y coordinate of new bot.
+     * @param {int} angle The angle of new bot, in radians.
+     * @param {string} id The id for the new bot.
+     * @param {int} size The size of the new bot, in meters
+     * @return {Object} Object which contains information about
+     *     the virtual bot.
     */
     newBot(x, y, angle, id, size) {
+        // TODO: Create a Bot class.
         var bot = {
             x: x,
             y: y,
@@ -234,11 +258,12 @@ export default class GridView extends React.Component {
             id: id,
             size: size
         };
-        /*in the future add something to identify bots vs objects*/
-        if (size==0.15){
-            bot.type = 'bot';}
-        else{
-            bot.type = 'scenario_obj';}
+
+        if (size==0.15) {
+            bot.type = 'bot';
+        } else {
+            bot.type = 'scenario_obj';
+        }
         return bot;
     }
 
@@ -341,6 +366,7 @@ export default class GridView extends React.Component {
         this.state.botContainer.addChild(scenarioObject);
     }
 
+    // TODO (#73): Implement or remove pollBotNames().
     // pollBotNames() {
     //     axios({
     //         method:'GET',
@@ -373,9 +399,10 @@ export default class GridView extends React.Component {
     //     });
     // }
 
-    /*
-        Updating location of bots on grid.
-    */
+    /**
+     * Updates location of bots on grid after getting location
+     * information from the BaseStation.
+     **/
     getNewVisionData() {
         const MILLIS_PER_VISION_UPDATE = 33;
         try {
@@ -433,8 +460,14 @@ export default class GridView extends React.Component {
         }
     }
 
+    /**
+     * Displays occupancy matrix.
+     * @param {int} height Height of matrix.
+     * @param {int} width Width of matrix.
+     * @param {int} size Size of matrix.
+     */
     displayOccupancyMatrix(height, width, size) {
-    //TODO
+    // TODO (#73): Implement displaying occupancy matrix. Old code below.
     //     $.ajax({
     //         method: "POST",
     //         url: '/postOccupancyMatrix',
@@ -466,10 +499,13 @@ export default class GridView extends React.Component {
     //     });
     }
 
-    /* Iterates through the occupancy matrix. When a 1 is encountered in a cell, all of the
-       adjacent cells will be marked by a 1. This is to increase the margin so that any path
-       planning algorithm will not choose a path too close to an obstacle.
-    */
+    /**
+     * Iterates through the occupancy matrix. When a 1 is encountered in a cell, all of the
+     * adjacent cells will be marked by a 1. This is to increase the margin so that any path
+     * planning algorithm will not choose a path too close to an obstacle.
+     *
+     * @returns {Array<Array<int>>} 2-D array of occupancy matrix.
+     **/
     padOccupancyMatrix() {
         var occupancyMatrix = this.state.occupancyMatrix;
         var temp = [];
@@ -512,7 +548,14 @@ export default class GridView extends React.Component {
         return temp;
     }
 
-    /* Populates the PIXI view with the squares corresponding to the occupancy matrix and path */
+    /**
+     * Populates the PIXI view with the squares corresponding to
+     * the occupancy matrix and path.
+     *
+     * @param {int} scale Scaling of gridview.
+     * @param {int} xOffset How much X value should be offset by.
+     * @param {int} yOffset How much Y value should be offset by.
+     **/
     fillOccupancyMatrix(scale, xOffset, yOffset) {
         const VIEW_WIDTH = this.state.viewWidth;
         const x_int = this.state.x_int;
@@ -558,7 +601,8 @@ export default class GridView extends React.Component {
     }
 
 
-    //TODO - keyboard control for panning - DO WE WANT TO KEEP THIS?
+    // TODO (#72): Implement keyboard control for panning. Old code shown below for reference.
+
     //     /* for moving the viewport */
     //     document.onkeydown = function (e) {
     //         let code = e.keyCode ? e.keyCode : e.which;
@@ -620,9 +664,3 @@ export default class GridView extends React.Component {
         );
     }
 }
-
-
-
-
-
-
