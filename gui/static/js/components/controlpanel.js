@@ -166,6 +166,7 @@ export default class ControlPanel extends React.Component {
      * Handles onChange for bot dropdown. Changes currently selected bot.
      */
     selectBot(event) {
+        this.setState({currentBot: event.target.value});
         this.props.setCurrentBot(event.target.value);
     }
 
@@ -285,8 +286,8 @@ export default class ControlPanel extends React.Component {
                     <tr>
                         <td>
                             <label>
-                                 Choose bot:
-                                <select value={this.props.currentBot} onChange={this.selectBot}> id="botlist" name="bots">
+                                Choose bot:
+                                <select value={this.props.currentBot} onChange={this.selectBot} id="botlist" name="bots">
                                     <option value="(DEBUG) Sim Bot">(DEBUG) Sim Bot</option>
                                     {
                                         this.state.trackedBots.map(function(botname, idx){

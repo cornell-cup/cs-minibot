@@ -62,7 +62,6 @@ class BaseStationHandler(tornado.web.RequestHandler):
         # self.write("Hi There")
         self.render("../gui/index.html", title="Title", items=[])
 
-
 class AddBotHandler(tornado.web.RequestHandler):
     """
     Adds a bot to the BotManager.
@@ -161,7 +160,6 @@ class SendKVHandler(tornado.web.RequestHandler):
             get_bot_by_name(name).get_command_center()
         self.write(json.dumps(bot_cc.sendKV(key, val)))
 
-
 class ScriptHandler(tornado.web.RequestHandler):
     """
     Sends scripts written in GUI to bot to run.
@@ -185,7 +183,6 @@ class XboxHandler(tornado.web.RequestHandler):
     """
     def post(self):
         pass
-
 
 class VisionHandler(tornado.web.RequestHandler):
     """
