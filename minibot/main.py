@@ -48,6 +48,7 @@ def parse_command(cmd, bot):
     key = cmd[start + 4:comma]
     value = cmd[comma + 1:end]
     if key == "WHEELS":
+        print("Received WHEELS command.")
         try:
             values = value.split(",")
             bot.set_wheel_power(int(values[0]), int(values[1]))
@@ -56,12 +57,15 @@ def parse_command(cmd, bot):
             print("oh no!")
             pass
     elif key == "SCRIPT":
+        print("Received SCRIPT command.")
         user_script_file = open("/home/pi/cs-minibot/minibot/scripts/UserScript.py",'w')
         val = process_string(value)
+        print(val)
         user_script_file.write(val)
         user_script_file.close()
         p = spawn_script_process(p, bot)
     elif key == "RUN":
+        print("Recieved RUN command.")
         filename = os.path.basename(value)
         filepath = "/home/pi/cs-minibot/minibot/scripts/" + filename
         print(filepath)
@@ -81,6 +85,7 @@ def process_string(value):
 
 def spawn_script_process(p,bot):
     if (p is not None and p.is_alive()):
+        print("Terminating thread.")
         p.exit()
     time.sleep(0.1)
     p = Thread(target=run_script, args=[bot])
@@ -103,8 +108,10 @@ def run_script_with_name(bot,script_name):
     return None
 
 def run_script(bot):
+    print("Running the script!")
     from scripts import UserScript
     UserScript.run(bot)
+    print("Bot name: " + bot.name)
     return None
 
 if __name__ == "__main__":
