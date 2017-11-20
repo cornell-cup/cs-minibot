@@ -100,6 +100,7 @@ class VirtualBot(object):
                 while True:
                     if self.tcp_connection_obj.is_connection_active():
                         msg = self.tcp_connection_obj.receive()
+                        print("Received message:\n", msg)
                         if msg is not None:
                             self.__tcp_parse_incoming(msg)
 
