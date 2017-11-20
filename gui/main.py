@@ -191,12 +191,18 @@ class VisionHandler(tornado.web.RequestHandler):
     """
     Handles vision data.
     """
+
+    def get(self):
+        self.write(json.dumps(loc_info).encode())
+
     def post(self):
         info = json.loads(self.request.body.decode())
         tag_id = info['id']
         x, y, z = info['x'], info['y'], info['z']
         logging.info("Received vision data " + str((tag_id, x, y, z)))
-        # TODO Update appropriate bots with position info
+
+        # BaseStation().vision_manager
+
 
 if __name__ == "__main__":
     """
