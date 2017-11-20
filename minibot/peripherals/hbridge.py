@@ -37,7 +37,8 @@ class HBridge():
         print("Right speed: " + str(right))
 
         if left < 0:
-            self.left_pin.set_high()
+            # self.left_pin.set_high()
+            self.left_pin.set_low()
             self.left_pwm.set_duty_cycle(abs(left))
         else:
             self.left_pin.set_low()
