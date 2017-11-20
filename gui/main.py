@@ -6,6 +6,8 @@ import tornado
 import tornado.web
 import os.path
 import json
+import logging
+import sys
 
 # Minibot imports.
 from basestation.base_station import BaseStation
@@ -27,8 +29,10 @@ class BaseInterface:
             ("/addBot", AddBotHandler),
             ("/commandBot", CommandBotHandler),
             ("/discoverBots", DiscoverBotsHandler),
+            ("/getTrackedBots", GetTrackedBotHandler),
             ("/removeBot", RemoveBotHandler),
-            ("/sendKV", SendKVHandler)
+            ("/sendKV", SendKVHandler),
+            ("/vision", VisionHandler)
         ]
         self.settings = {
             "static_path": os.path.join(os.path.dirname(__file__), "static")
@@ -77,7 +81,8 @@ class AddBotHandler(tornado.web.RequestHandler):
 
         bot_name = BaseStation().get_bot_manager().add_bot(name, ip, port)
         print("Bot name: " + bot_name)
-        self.write(bot_name.encode())
+        res = {"botName": bot_name, "ip": ip}
+        self.write(json.dumps(res).encode())
 
 
 class CommandBotHandler(tornado.web.RequestHandler):
@@ -109,8 +114,19 @@ class DiscoverBotsHandler(tornado.web.RequestHandler):
     """
     def post(self):
         discovered = BaseStation().get_bot_manager().get_all_discovered_bots()
-        print("Discovered bot: " + discovered)
+        print("Discovered bot: " + str(discovered))
         self.write(json.dumps(discovered))
+
+
+class GetTrackedBotHandler(tornado.web.RequestHandler):
+    """
+    Gets bot tracked by BotManager.
+    """
+    def post(self):
+        tracked_bots = BaseStation().bot_manager. get_all_tracked_bots_names()
+        print('Bots Tracked: ' + str(tracked_bots))
+
+        self.write(json.dumps(tracked_bots).encode())
 
 
 class RemoveBotHandler(tornado.web.RequestHandler):
@@ -125,9 +141,8 @@ class RemoveBotHandler(tornado.web.RequestHandler):
 
         if op_successful:
             self.write(("MiniBot " + name + " successfully removed").encode())
-        else:
-            self.write(("Could not remove " + name).encode())
-        self.write(json.dumps(discovered))
+        self.write(("Could not remove " + name).encode())
+
 
 class SendKVHandler(tornado.web.RequestHandler):
     """
@@ -144,7 +159,7 @@ class SendKVHandler(tornado.web.RequestHandler):
         # Sends KV through command center.
         bot_cc = BaseStation().get_bot_manager().\
             get_bot_by_name(name).get_command_center()
-        self.write(bot_cc.sendKV(key, val))
+        self.write(json.dumps(bot_cc.sendKV(key, val)))
 
 
 class ScriptHandler(tornado.web.RequestHandler):
@@ -161,7 +176,8 @@ class ScriptHandler(tornado.web.RequestHandler):
             print("Script sent to " + name + "!")
             self.write(bot.get_command_center().sendKV("SCRIPT", script))
         else:
-            print("[ERROR] Bot not detected when trying to send script.")
+            logging.warning("[ERROR] Bot not detected when trying to send script.")
+
 
 class XboxHandler(tornado.web.RequestHandler):
     """
@@ -170,9 +186,34 @@ class XboxHandler(tornado.web.RequestHandler):
     def post(self):
         pass
 
+
+class VisionHandler(tornado.web.RequestHandler):
+    """
+    Handles vision data.
+    """
+    def post(self):
+        info = json.loads(self.request.body.decode())
+        tag_id = info['id']
+        x, y, z = info['x'], info['y'], info['z']
+        logging.info("Received vision data " + str((tag_id, x, y, z)))
+        # TODO Update appropriate bots with position info
+
 if __name__ == "__main__":
     """
     Main method for running base station GUI.
     """
     base_station = BaseInterface(8080)
     base_station.start()
+
+"""
+MISSING ENDPOINTS:
+
+High priority:
+- updateLoc
+- trackedBots
+- addScenario
+
+Low priority:
+- postOccupancyMatrix
+
+"""
