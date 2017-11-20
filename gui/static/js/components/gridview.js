@@ -267,10 +267,9 @@ export default class GridView extends React.Component {
         return bot;
     }
 
-    /*
-    Displays all bots given an array of bots
-        botArray - an array of JSON objects representing bots or scenario objects
-    */
+    /**
+     * Displays all bots onto the GridView given an array of bots.
+     **/
     displayBots() {
         const botArray = this.state.bots;
         const scale = this.state.scale;
@@ -285,9 +284,10 @@ export default class GridView extends React.Component {
         }
     }
 
-    /* Draw a single bot centered at (x, y)
-        b - a JSON object representing a bot
-    */
+    /**
+     * Draws a single bot onto the GridView centered at (x, y).
+     * @param {Object} b JSON object representing a bot.
+     **/
     drawBot(b) {
         const scale = this.state.scale;
         const xOffset = parseInt(this.state.xOffset);
@@ -338,10 +338,12 @@ export default class GridView extends React.Component {
         botContainer.addChild(botCoordText);
     }
 
-    /* Draw a single scenario object at (x, y)
-        b - a JSON object representing a scenario object
+    /**
+     * Draw a single scenario object onto the GridView
+     * at (x, y).
+     * @param {Object} scenario_obj Scenario object.
      */
-    drawScenarioObject(b) {
+    drawScenarioObject(scenario_obj) {
         const scale = this.state.scale;
         const xOffset = parseInt(this.state.xOffset);
         const yOffset = parseInt(this.state.yOffset);
@@ -349,17 +351,17 @@ export default class GridView extends React.Component {
         const x_int = this.state.x_int;
         const y_int = this.state.y_int;
 
-        var size = b.size*x_int;
+        var size = scenario_obj.size*x_int;
         var scenarioObject = new PIXI.Graphics();
 
         scenarioObject.beginFill(0x0EB530);
         scenarioObject.drawRect(0, 0, size, size);
         scenarioObject.pivot = new PIXI.Point(size/2, size/2);
-        scenarioObject.rotation = b.angle;
+        scenarioObject.rotation = scenario_obj.angle;
         scenarioObject.endFill();
 
-        var cx = (b.x)*x_int;
-        var cy = VIEW_WIDTH - ((b.y)*y_int);
+        var cx = (scenario_obj.x)*x_int;
+        var cy = VIEW_WIDTH - ((scenario_obj.y)*y_int);
         scenarioObject.x = cx+xOffset;
         scenarioObject.y = cy+yOffset;
 
