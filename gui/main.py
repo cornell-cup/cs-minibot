@@ -32,7 +32,8 @@ class BaseInterface:
             ("/getTrackedBots", GetTrackedBotHandler),
             ("/removeBot", RemoveBotHandler),
             ("/sendKV", SendKVHandler),
-            ("/vision", VisionHandler)
+            ("/vision", VisionHandler),
+            ("/updateLoc", VisionHandler)
         ]
         self.settings = {
             "static_path": os.path.join(os.path.dirname(__file__), "static")
@@ -193,15 +194,19 @@ class VisionHandler(tornado.web.RequestHandler):
     """
 
     def get(self):
+        # TODO: Remove hard-coded name of MinIBot.
+        loc_info = BaseStation().get_vision_manager().get_location('Minibot')
         self.write(json.dumps(loc_info).encode())
 
     def post(self):
         info = json.loads(self.request.body.decode())
+        print("Received vision info: ", info)
         tag_id = info['id']
         x, y, z = info['x'], info['y'], info['z']
         logging.info("Received vision data " + str((tag_id, x, y, z)))
 
-        # BaseStation().vision_manager
+        # TODO: Remove hard-coded name of MiniBot.
+        BaseStation().get_vision_manager().update_location('Minibot', (x, y, z))
 
 
 if __name__ == "__main__":
