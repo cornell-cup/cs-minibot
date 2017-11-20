@@ -403,7 +403,7 @@ send_commands : {
   ],
   "previousStatement": null,
   "nextStatement": null,
-  "colour": 230,
+  "colour": 150,
   "tooltip": "",
   "helpUrl": ""
 },
@@ -432,7 +432,7 @@ wait_for_commands : {
   ],
   "previousStatement": null,
   "nextStatement": null,
-  "colour": 230,
+  "colour": 150,
   "tooltip": "",
   "helpUrl": ""
 },
@@ -468,7 +468,7 @@ while_wait_for_commands : {
   ],
   "previousStatement": null,
   "nextStatement": null,
-  "colour": 230,
+  "colour": 150,
   "tooltip": "",
   "helpUrl": ""
 },
@@ -526,7 +526,7 @@ sees_color : {
     }
   ],
   "output": "Boolean",
-  "colour": 230,
+  "colour": 180,
   "tooltip": "",
   "helpUrl": ""
 }
