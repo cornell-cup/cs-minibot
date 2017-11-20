@@ -1,6 +1,6 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
-
+var axios = require('axios');
 
 /**
  * Component for the Python text box
@@ -8,12 +8,11 @@ var ReactDOM = require('react-dom');
  * upload, download, send script
  */
 export default class Python extends React.Component {
-    //TODO UPLOAD, CAPTURE TAB KEY AND PREVENT DEFAULT ACTION, SEND SCRIPT
     constructor(props) {
         super(props);
         this.state = {
             filename:"myBlocklyCode.py",
-            data:""
+            data: ""
         };
 
         this.handleInputChange = this.handleInputChange.bind(this);
@@ -74,7 +73,7 @@ export default class Python extends React.Component {
     handleKeyInput(event){
         if(event.keyCode===9){
             event.preventDefault();
-            var data = document.getElementById("data");
+            var data = this.state.data;
             var v=data.value;
             var s=data.selectionStart;
             var e=data.selectionEnd;
@@ -89,25 +88,22 @@ export default class Python extends React.Component {
       the actual MiniBot.
     */
     send(){
-        console.log("send listener");
-        axios({
-            method:'POST',
-            url:'/uploadScript',
-            data: JSON.stringify({
-                name: document.getElementById("id").value,
-                script: getBlocklyScript()
-            }),
-            dataType: 'json',
-            contentType: 'application/json'
-        })
-        .then(function(response) {
-            console.log('sent script successfully');
-        })
-        .catch(function (error) {
-            console.log(error);
-        });
+            axios({
+                method:'POST',
+                url:'/sendKV',
+                data: JSON.stringify({
+                    key: 'SCRIPT',
+                    value: document.getElementById('data').value,
+                    name: this.props.currentBot
+                }),
+            })
+            .then(function(response) {
+                console.log('sent script');
+            })
+            .catch(function (error) {
+                console.warn(error);
+            });
     }
-
 
     render(){
         return (
@@ -130,81 +126,3 @@ export default class Python extends React.Component {
         )
     }
 }
-
-// /* ======================= USER FUNCTIONALITY ======================== */
-//
-// /* DOWNLOAD FUNCTION
-//
-//   Allows users to download raw code as a file. Users must
-//   manually input file name and file type. */
-//
-// // Prevents page from refreshing when download button is clicked.
-// $("#dwn").submit(function(event){ event.preventDefault(); });
-//
-// // Download file as file-name manually inputted into textbox.
-// function download(filename, text) {
-//     var element = document.createElement('a');
-//     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-//     element.setAttribute('download', filename);
-//
-//     element.style.display = 'none';
-//     document.body.appendChild(element);
-//
-//     element.click();
-//
-//     document.body.removeChild(element);
-// }
-//
-// /* UPLOAD FUNCTION
-//
-//     Allows users to upload previously written code as a file
-//     so that they may run Python scripts that have been written
-//     externally without Blockly.
-//
-//     TODO: possibly make it so that uploaded scripts can be also
-//     represented as blocks in the blockly view???
-//
-//     */
-// $("#upload").change(function(event) {
-//     //console.log("upload change listener");
-//     var files = event.target.files;
-//     //console.log("files:" + files[0]);
-//     var reader = new FileReader();
-//     var f = files[0];
-//     reader.onload = (function(file) {
-//         return function(e) {
-//             setCode(e.target.result);
-//         }
-//     })(f);
-//     reader.readAsText(f);
-// });
-//
-// /*
-//   RUN/SEND FUNCTION
-//
-//   Clicking "run" will send Blockly scripts to the base station for
-//   the actual MiniBot.
-// */
-// var pythonConverter = new Blockly.Generator("Python");
-//
-// $("#send").click(sendBlockly);
-// function sendBlockly(event){
-//     $.ajax({
-//         method: "POST",
-//         url: '/uploadScript',
-//         dataType: 'json',
-//         data: JSON.stringify({
-//             name: $("#id").val(),
-//             script: getBlocklyScript()
-//         }),
-//         contentType: 'application/json'
-//     });
-// }
-//
-// /* ======================= HELPER FUNCTIONS ======================== */
-// /* Returns a string of the entire blockly script. */
-
-// function appendCode(code) {
-//     var content = $("#data").val();
-//     $("data").val(content + code);
-// }

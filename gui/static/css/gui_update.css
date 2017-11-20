@@ -41,13 +41,18 @@ table{
     min-height: 40vw;
 }
 
-#addbot{
-
+.gridControlTable{
+    width: 40%;
 }
 
-#scenarios{
-    min-height: 80vh;
+.gridControl{
+    width: 200%;
 }
+
+#component_view{
+    min-height: 55vw;
+}
+
 /*CONTROL TAB*/
 #controltab {
 
@@ -55,10 +60,6 @@ table{
 
 #controlpanel {
 
-}
-
-#python{
-    height: 80vh;
 }
 
 #blockly{
