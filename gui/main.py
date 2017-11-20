@@ -32,7 +32,8 @@ class BaseInterface:
             ("/getTrackedBots", GetTrackedBotHandler),
             ("/removeBot", RemoveBotHandler),
             ("/sendKV", SendKVHandler),
-            ("/vision", VisionHandler)
+            ("/vision", VisionHandler),
+            ("/addScenario", ScenarioHandler)
         ]
         self.settings = {
             "static_path": os.path.join(os.path.dirname(__file__), "static")
@@ -197,6 +198,14 @@ class VisionHandler(tornado.web.RequestHandler):
         x, y, z = info['x'], info['y'], info['z']
         logging.info("Received vision data " + str((tag_id, x, y, z)))
         # TODO Update appropriate bots with position info
+
+class ScenarioHandler(tornado.web.RequestHandler):
+    """
+    Handles adding scenarios to simulator.
+    """
+    def post(self):
+        # TODO (#69): Implement add scenario handler to connect to front-end.
+        pass
 
 if __name__ == "__main__":
     """
