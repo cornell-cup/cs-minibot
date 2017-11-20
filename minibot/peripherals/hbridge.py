@@ -33,8 +33,8 @@ class HBridge():
         left = max(min(left, 1.0), -1.0)
         right = max(min(right, 1.0), -1.0)
         print("set_speed()")
-        print("Left speed: " + left)
-        print("Right speed: "+ right)
+        print("Left speed: " + str(left))
+        print("Right speed: " + str(right))
 
         if left < 0:
             self.left_pin.set_high()
