@@ -54,6 +54,7 @@ then
         echo "Adding Wifi Credentials"
         add_wifi_ssid_pass_setting $2 $3
         sudo service dhcpcd restart
+        sudo sed -i -- 's/MINIBOTAP=[0-9]/MINIBOT=0/g' /etc/profile
         exit
     fi
 else
@@ -62,8 +63,10 @@ else
     then
         echo "Not connected to Wifi, starting a Access Point."
         sudo ./setup_access_point.sh
-        exit 2
+        sudo sed -i -- 's/MINIBOTAP=[0-9]/MINIBOT=1/g' /etc/profile
+        exit
     else
         echo "Connected to Wifi."
+        sudo sed -i -- 's/MINIBOTAP=[0-9]/MINIBOT=0/g' /etc/profile
     fi
 fi
