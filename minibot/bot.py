@@ -39,6 +39,10 @@ class Bot():
                       PWM(self.actuators["left"]["pinPWM"]),
                       DigitalOutput(self.actuators["right"]["pinHighLow"]),
                       PWM(self.actuators["right"]["pinPWM"]))
+        #self.motors = HBridge(DigitalOutput(self.actuators["left"]["pinHighLow"]),
+        #              DigitalOutput(self.actuators["left"]["pinPWM"]),
+        #              DigitalOutput(self.actuators["right"]["pinHighLow"]),
+        #              DigitalOutput(self.actuators["right"]["pinPWM"]))
         print("== [INFO] Finished parsing config! ==================== ")
 
     def get_state(self):
