@@ -148,7 +148,6 @@ export default class GridView extends React.Component {
         //     this.setup(background);
         // }
 
-        console.log("background failed to load! using white background");
         var background = PIXI.Texture.WHITE;
         this.setup(background);
     }
@@ -157,7 +156,6 @@ export default class GridView extends React.Component {
      * Handler for when background image has loaded successfully.
      **/
     imageLoaded(){
-        console.log('background successfully loaded!');
         var background = PIXI.Texture.fromImage('static/img/line.png');
         this.setup(background);
     }
@@ -168,7 +166,6 @@ export default class GridView extends React.Component {
      *     of the GridView.
      **/
     setup(background) {
-        console.log('setup part 2');
         const backgroundSprite = new PIXI.Sprite(background);
         const scale = this.state.scale;
         const xOffset = this.state.xOffset;
@@ -453,7 +450,6 @@ export default class GridView extends React.Component {
                     }
                 }
             ).catch(() => {
-                console.log("error");
                 setTimeout(this.getNewVisionData, MILLIS_PER_VISION_UPDATE * 10);
             });
         } catch (error) {

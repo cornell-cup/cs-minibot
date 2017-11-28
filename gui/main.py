@@ -32,7 +32,9 @@ class BaseInterface:
             ("/getTrackedBots", GetTrackedBotHandler),
             ("/removeBot", RemoveBotHandler),
             ("/sendKV", SendKVHandler),
-            ("/vision", VisionHandler)
+            ("/vision", VisionHandler),
+            ("/updateloc", UpdateLocationHandler),
+            ("/findScripts", FindScriptsHandler)
         ]
         self.settings = {
             "static_path": os.path.join(os.path.dirname(__file__), "static")
@@ -160,6 +162,7 @@ class SendKVHandler(tornado.web.RequestHandler):
             get_bot_by_name(name).get_command_center()
         self.write(json.dumps(bot_cc.sendKV(key, val)))
 
+
 class ScriptHandler(tornado.web.RequestHandler):
     """
     Sends scripts written in GUI to bot to run.
@@ -184,6 +187,7 @@ class XboxHandler(tornado.web.RequestHandler):
     def post(self):
         pass
 
+
 class VisionHandler(tornado.web.RequestHandler):
     """
     Handles vision data.
@@ -194,6 +198,22 @@ class VisionHandler(tornado.web.RequestHandler):
         x, y, z = info['x'], info['y'], info['z']
         logging.info("Received vision data " + str((tag_id, x, y, z)))
         # TODO Update appropriate bots with position info
+
+
+class UpdateLocationHandler(tornado.web.RequestHandler):
+    """
+    Handles vision location update.
+    """
+    def get(self):
+        pass
+
+class FindScriptsHandler(tornado.web.RequestHandler):
+    """
+    Finds existing scripts on minibot.
+    """
+    def get(self):
+        files = BaseStation().get_bot_manager().get_minibot_scripts()
+        self.write(json.dumps(files))
 
 if __name__ == "__main__":
     """
