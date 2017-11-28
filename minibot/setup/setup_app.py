@@ -7,7 +7,20 @@ import sys
 
 
 class SetupApp:
-    def __init__(self, port):
+    """
+    An instance of this class creates a handle for a tornado-based website that is a simple form at URL 10.0.0.1:8080 (default port is 
+    8080).
+    - The form collects wifi credentials, and the submit button triggers a reset to the wifi settings on the pi.
+    - On reboot (after this app has exited), the pi becomes automatically connected to the wifi that was supplied by the user.
+    """
+    
+    def __init__(self, port=8080):
+        """
+        Initializes the tornado webapp handler at <IP>:port.
+        
+        Args:
+            port (int): Port to associate the webapp handle with. (Default=8080) 
+        """
         self.port = port
         self.handlers = [
             ("/", WifiSetupPageHandler),
@@ -33,30 +46,41 @@ class SetupApp:
 
 
 class WifiSetupPageHandler(tornado.web.RequestHandler):
+    """
+    Renders the page to be displayed on the website base URL.
+    """
+    
     def get(self):
+        """
+        Gets the index page to be displayd.
+        """
         self.render("app/index.html", title="Title", items=[])
 
 
 class WifiCredsHandler(tornado.web.RequestHandler):
+    """
+    Handles trigger by the user to submit wifi credential information.
+    """
+    
     def post(self):
-        print(self.request.body)
-        print(self.request.body.decode())
+        """
+        Loads the information from the web page's form and calls the bash scripts to set the wifi configuration settings.
+        """
         info = json.loads(self.request.body.decode())
-        print("Wifi Name", info['wifiname'])
-        print("Wifi Pass", info['wifipass'])
 
         # call the bash script to feed the wifi credentials
         res1 = subprocess.run(["sudo", "./handle_startup_wifi_connection.sh", "clean"])
         res2 = subprocess.run(["sudo", "./handle_startup_wifi_connection.sh", 
             "wifi", info['wifiname'], info['wifipass']])
+        
         if res1.returncode != 0 or res2.returncode != 0:
-            print("wifi setup failed")
+            # wifi setup failed
             self.write("wifi setup failed!".encode())
         else:
-            print("wifi setup success")
+            # wifi setup succeeded
             tornado.ioloop.IOLoop.instance().stop()
-            sys.exit(42)
-            self.write("wifi setup succeeded".encode())
+            sys.exit(0)
+            self.write("wifi setup succeeded!".encode())
 
 
 if __name__ == "__main__":
