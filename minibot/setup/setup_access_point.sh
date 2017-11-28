@@ -6,12 +6,7 @@ then echo "[ERROR] Must be Root. Try again with sudo."
 fi
 
 check_dependencies () {
-    dpkg-query -l apache2 >/dev/null
-    if [[ $? != 0 ]]
-    then echo "[ERROR] Apache2 is not installed. Install it manually."
-        exit 1
-    fi
-    
+    # checks that dependencies: hostapd and dnsmasq are present on the device.    
     dpkg-query -l hostapd dnsmasq >/dev/null
     if [[ $? != 0 ]]
     then echo "[ERROR] At least one of hostapd and dnsmasq is not installed. Install it manually."
@@ -19,13 +14,8 @@ check_dependencies () {
     fi
 }
 
-#copy_apache_info () {
-#    sudo mkdir /var/www/minibotAP >/dev/null
-#    sudo cp minibot-conf/minibot-apache2.conf /etc/apache2/apache2.conf
-#    sudo cp minibot-conf/wifi-app/* /var/www/minibotAP/
-#}
-
 copy_conf_wifi_setup () {
+    # copies configuration files to setup the wifi access point
     sudo cp minibot-conf/minibot-dnsmasq.conf /etc/dnsmasq.conf
     sudo cp minibot-conf/minibot-hostapd.conf /etc/hostapd/hostapd.conf
 
@@ -43,25 +33,17 @@ copy_conf_wifi_setup () {
     then sudo echo "denyinterfaces wlan0" >> /etc/dhcpcd.conf
     fi
     
-    echo "Setup the Wifi interfaces for Access Point."
-
-    # setup apache2 server conf files
-    # copy_apache_info
+    # wifi interfaces for access point are now set
 }
 
 check_dependencies
-
-echo "Starting Access Point..."
-sudo service apache2 stop
 sudo service hostapd stop && sudo service dnsmasq stop
-
 copy_conf_wifi_setup
 
 # start all services and reboot
-systemctl enable hostapd
-systemctl enable dnsmasq
+systemctl enable hostapd >/dev/null
+systemctl enable dnsmasq >/dev/null
 
 sudo service hostapd start >/dev/null
 sudo service dnsmasq start >/dev/null
-sudo service apache2 start >/dev/null
-echo "Access Point has been set up."
+exit 0
