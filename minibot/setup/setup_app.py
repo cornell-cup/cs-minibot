@@ -55,7 +55,7 @@ class WifiCredsHandler(tornado.web.RequestHandler):
         else:
             print("wifi setup success")
             tornado.ioloop.IOLoop.instance().stop()
-            sys.exit()
+            sys.exit(42)
             self.write("wifi setup succeeded".encode())
 
 
