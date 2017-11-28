@@ -2,6 +2,8 @@ from basestation.bot.connection.udp_connection import UDPConnection
 from basestation.bot.virtualbot.virtual_bot import VirtualBot
 
 from typing import Optional
+from os import listdir
+from os.path import isfile, join
 
 
 class BotManager(object):
@@ -22,9 +24,9 @@ class BotManager(object):
         self.__udp_connection.start()
         return
 
-    def add_bot(self, vbot_name: str, ip: str, port: int = 10000) -> Optional[
-        str]:
+    def add_bot(self, vbot_name: str, ip: str, port: int = 10000):
         """
+
         Adds a virtual bot to the virtual bot manager list.
 
         Args:
@@ -52,7 +54,7 @@ class BotManager(object):
             raise Exception("The connection was not active. Not adding the "
                             + "bot.")
 
-    def get_bot_by_name(self, name: str) -> Optional[VirtualBot]:
+    def get_bot_by_name(self, name: str):
         """
         Returns the VirtualBot, which has the name `name`. If no VirtualBot
         `v` exists such that `v.get_name() == name` then `None` is
@@ -88,26 +90,31 @@ class BotManager(object):
         else:
             return False
 
-    def get_all_tracked_bots(self) -> list:
+    def get_all_tracked_bots(self):
         """
         Returns a list of VirtualBots currently tracked.
         """
         return list(self.__vbot_map.values())
 
-    def get_all_tracked_bots_names(self) -> list:
+    def get_all_tracked_bots_names(self):
         """
         Returns a list of the names of VirtualBots currently tracked.
         """
         return list(self.__vbot_map.keys())
 
-    def get_all_discovered_bots(self) -> list:
+    def get_all_discovered_bots(self):
         """
         Returns a list of the names of VirtualBots, which are detectable
         through UDP broadcast.
         """
         return list(self.__udp_connection.get_addresses())
 
-    def __generate_bot_number(self) -> int:
+    def get_minibot_scripts(self):
+        path = "./minibot/scripts"
+        files = [f for f in listdir(path) if isfile(join(path, f))]
+        return files
+
+    def __generate_bot_number(self):
         """
         Returns the next available `int` to be added to the name of the
         VirtualBot v, if there exists a Virtual Bot v2 such that
@@ -120,7 +127,7 @@ class BotManager(object):
         self.__vbot_counter += 1
         return self.__vbot_counter
 
-    def __safe_escape_name(self, name: str) -> str:
+    def __safe_escape_name(self, name: str):
         """
         Safely escapes the name of the vbot to ensure it is unique and
         returns that string. This has a simple implementation for now,
