@@ -24,7 +24,8 @@ class BotManager(object):
         self.__udp_connection.start()
         return
 
-    def add_bot(self, vbot_name: str, ip: str, port: int = 10000):
+    def add_bot(self, vbot_name: str, ip: str, port: int = 10000) -> Optional[str]:
+
         """
 
         Adds a virtual bot to the virtual bot manager list.
@@ -54,7 +55,7 @@ class BotManager(object):
             raise Exception("The connection was not active. Not adding the "
                             + "bot.")
 
-    def get_bot_by_name(self, name: str):
+    def get_bot_by_name(self, name: str) -> Optional[VirtualBot]:
         """
         Returns the VirtualBot, which has the name `name`. If no VirtualBot
         `v` exists such that `v.get_name() == name` then `None` is
@@ -90,19 +91,19 @@ class BotManager(object):
         else:
             return False
 
-    def get_all_tracked_bots(self):
+    def get_all_tracked_bots(self) -> list:
         """
         Returns a list of VirtualBots currently tracked.
         """
         return list(self.__vbot_map.values())
 
-    def get_all_tracked_bots_names(self):
+    def get_all_tracked_bots_names(self) -> list:
         """
         Returns a list of the names of VirtualBots currently tracked.
         """
         return list(self.__vbot_map.keys())
 
-    def get_all_discovered_bots(self):
+    def get_all_discovered_bots(self) -> list:
         """
         Returns a list of the names of VirtualBots, which are detectable
         through UDP broadcast.
@@ -114,7 +115,7 @@ class BotManager(object):
         files = [f for f in listdir(path) if isfile(join(path, f))]
         return files
 
-    def __generate_bot_number(self):
+    def __generate_bot_number(self) -> int:
         """
         Returns the next available `int` to be added to the name of the
         VirtualBot v, if there exists a Virtual Bot v2 such that
@@ -127,7 +128,7 @@ class BotManager(object):
         self.__vbot_counter += 1
         return self.__vbot_counter
 
-    def __safe_escape_name(self, name: str):
+    def __safe_escape_name(self, name: str) -> str:
         """
         Safely escapes the name of the vbot to ensure it is unique and
         returns that string. This has a simple implementation for now,
