@@ -319,6 +319,11 @@ export default class ControlPanel extends React.Component {
     }
 
     render(){
+        var styles = {
+            runBtn: {
+                marginLeft: 10,
+            }
+        }
         return (
             <div id ="component_controlpanel" className = "box">
                 Control Panel<br/>
@@ -387,7 +392,7 @@ export default class ControlPanel extends React.Component {
                     </tbody>
                 </table>
                 <label>
-                    Choose Script:
+                    Choose Script: 
                     <select onChange={this.selectScript} id="scriptlist" name="scripts">
                         <option value=""></option>
                         {
@@ -400,7 +405,7 @@ export default class ControlPanel extends React.Component {
                             })
                         }
                     </select>
-                    <button className="btn btn-success btn-xs" id="run" onClick={this.sendKV}>Run Script</button>
+                    <button style={styles.runBtn} className="btn btn-success btn-sm" id="run" onClick={this.sendKV}>Run Script</button>
                 </label>
             </div>
         )
