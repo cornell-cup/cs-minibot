@@ -116,24 +116,49 @@ class Bot():
         time.sleep(t)
 
     def register_actuator(self,actuator):
+        """
+        Stores actuator object
+        :param actuator object
+        """
         self.actuators[actuator.name] = actuator
 
     def register_sensor(self,sensor):
+        """
+        Stores sensor object
+        :param sensor object
+        """
         self.sensors[sensor.name] = sensor
 
     def get_actuator_by_name(self, name):
+        """
+        Returns actuator object
+        :param name name of the actuator
+        """
         return self.actuators[name]
 
     def get_sensor_by_name(self, name):
+        """
+        Returns sensor object
+        :param name name of the sensor
+        """
         return self.sensors[name]
 
     def get_all_actuators(self):
+        """
+        Returns all actuators in a list
+        """
         return self.actuators.values()
 
     def get_all_sensors(self):
+        """
+        Returns all sensors in a list
+        """
         return self.sensors.values()
 
     def poll_sensors(self):
+        """
+        Reads values from all sensors
+        """
         data = {}
         for sensor in self.sensors:
             data[sensor] = self.sensors[sensor].read()

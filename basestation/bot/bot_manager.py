@@ -111,6 +111,9 @@ class BotManager(object):
         return list(self.__udp_connection.get_addresses())
 
     def get_minibot_scripts(self):
+        """
+        Returns a list of the scripts avaliable on the minibot.
+        """
         path = "./minibot/scripts"
         files = [f for f in listdir(path) if isfile(join(path, f))]
         return files
