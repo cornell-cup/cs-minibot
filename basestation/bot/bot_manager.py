@@ -2,6 +2,8 @@ from basestation.bot.connection.udp_connection import UDPConnection
 from basestation.bot.virtualbot.virtual_bot import VirtualBot
 
 from typing import Optional
+from os import listdir
+from os.path import isfile, join
 
 
 class BotManager(object):
@@ -22,9 +24,10 @@ class BotManager(object):
         self.__udp_connection.start()
         return
 
-    def add_bot(self, vbot_name: str, ip: str, port: int = 10000) -> Optional[
-        str]:
+    def add_bot(self, vbot_name: str, ip: str, port: int = 10000) -> Optional[str]:
+
         """
+
         Adds a virtual bot to the virtual bot manager list.
 
         Args:
@@ -106,6 +109,14 @@ class BotManager(object):
         through UDP broadcast.
         """
         return list(self.__udp_connection.get_addresses())
+
+    def get_minibot_scripts(self):
+        """
+        Returns a list of the scripts avaliable on the minibot.
+        """
+        path = "./minibot/scripts"
+        files = [f for f in listdir(path) if isfile(join(path, f))]
+        return files
 
     def __generate_bot_number(self) -> int:
         """
