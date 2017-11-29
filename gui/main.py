@@ -90,6 +90,8 @@ class CommandBotHandler(tornado.web.RequestHandler):
     """
     def post(self):
         info = json.loads(self.request.body.decode())
+        print("CommandBot data")
+        print(info)
         name = info['name']
         fl = info['fl']
         fr = info['fr']
