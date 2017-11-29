@@ -51,4 +51,3 @@ export default class Blockly extends React.Component {
         )
     }
 }
-

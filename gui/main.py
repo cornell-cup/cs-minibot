@@ -7,6 +7,7 @@ import tornado.web
 import os.path
 import json
 import logging
+import sys
 
 # Minibot imports.
 from basestation.base_station import BaseStation
@@ -31,7 +32,9 @@ class BaseInterface:
             ("/getTrackedBots", GetTrackedBotHandler),
             ("/removeBot", RemoveBotHandler),
             ("/sendKV", SendKVHandler),
-            ("/vision", VisionHandler)
+            ("/vision", VisionHandler),
+            ("/updateloc", UpdateLocationHandler),
+            ("/findScripts", FindScriptsHandler)
         ]
         self.settings = {
             "static_path": os.path.join(os.path.dirname(__file__), "static")
@@ -60,7 +63,6 @@ class BaseStationHandler(tornado.web.RequestHandler):
     def get(self):
         # self.write("Hi There")
         self.render("../gui/index.html", title="Title", items=[])
-
 
 class AddBotHandler(tornado.web.RequestHandler):
     """
@@ -197,9 +199,38 @@ class VisionHandler(tornado.web.RequestHandler):
         logging.info("Received vision data " + str((tag_id, x, y, z)))
         # TODO Update appropriate bots with position info
 
+
+class UpdateLocationHandler(tornado.web.RequestHandler):
+    """
+    Handles vision location update.
+    """
+    def get(self):
+        pass
+
+class FindScriptsHandler(tornado.web.RequestHandler):
+    """
+    Finds existing scripts on minibot.
+    """
+    def get(self):
+        files = BaseStation().get_bot_manager().get_minibot_scripts()
+        self.write(json.dumps(files))
+
 if __name__ == "__main__":
     """
     Main method for running base station GUI.
     """
     base_station = BaseInterface(8080)
     base_station.start()
+
+"""
+MISSING ENDPOINTS:
+
+High priority:
+- updateLoc
+- trackedBots
+- addScenario
+
+Low priority:
+- postOccupancyMatrix
+
+"""

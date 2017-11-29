@@ -11,6 +11,8 @@ export default class ControlPanel extends React.Component {
             keyboard: false,
             xbox: false,
             trackedBots: [],
+            scripts: [],
+            currentScript: ""
         };
 
         this.handleInputChange = this.handleInputChange.bind(this);
@@ -22,9 +24,9 @@ export default class ControlPanel extends React.Component {
         this.xboxToggle = this.xboxToggle.bind(this);
         this.getTrackedBots = this.getTrackedBots.bind(this);
         this.selectBot = this.selectBot.bind(this);
+        this.selectScript = this.selectScript.bind(this);
         this.onKeyDown = this.onKeyDown.bind(this);
         window.addEventListener('keydown', this.onKeyDown);
-
     }
 
     onKeyDown(event){
@@ -71,7 +73,8 @@ export default class ControlPanel extends React.Component {
      * Updates tracked bots before page load.
      */
     componentWillMount() {
-        this.getTrackedBots()
+        this.getTrackedBots();
+        this.getScripts();
     }
 
     /* sends a key-value command to bot */
@@ -101,6 +104,23 @@ export default class ControlPanel extends React.Component {
         }
         else if(target.id=="log") {
             this.startLogging();
+        }
+        else if(target.id=="run") {
+            axios({
+                method:'POST',
+                url:'/sendKV',
+                data: JSON.stringify({
+                    key: "RUN",
+                    value: this.state.currentScript,
+                    name: this.props.currentBot
+                }),
+            })
+            .then(function(response) {
+                console.log('sent kv');
+            })
+            .catch(function (error) {
+                console.warn(error);
+            });
         }
         else {
             axios({
@@ -163,10 +183,34 @@ export default class ControlPanel extends React.Component {
     }
 
     /**
+     * Gets all avaliable scripts
+     */
+    getScripts() {
+        const _this = this;
+        axios({
+            method:'GET',
+            url:'/findScripts',
+            })
+                .then(function(response) {
+                    _this.setState({scripts: response.data});
+            })
+                .catch(function (error) {
+                    console.log(error);
+        });
+    }
+
+    /**
      * Handles onChange for bot dropdown. Changes currently selected bot.
      */
     selectBot(event) {
         this.props.setCurrentBot(event.target.value);
+    }
+
+    /**
+     * Handles onChange for script dropdown. Changes currently selected script.
+     */
+    selectScript(event) {
+        this.setState({currentScript: event.target.value});
     }
 
     /* starts data logging */
@@ -275,6 +319,11 @@ export default class ControlPanel extends React.Component {
     }
 
     render(){
+        var styles = {
+            runBtn: {
+                marginLeft: 10,
+            }
+        }
         return (
             <div id ="component_controlpanel" className = "box">
                 Control Panel<br/>
@@ -285,8 +334,8 @@ export default class ControlPanel extends React.Component {
                     <tr>
                         <td>
                             <label>
-                                 Choose bot:
-                                <select value={this.props.currentBot} onChange={this.selectBot}> id="botlist" name="bots">
+                                Choose bot:
+                                <select value={this.props.currentBot} onChange={this.selectBot} id="botlist" name="bots">
                                     <option value="(DEBUG) Sim Bot">(DEBUG) Sim Bot</option>
                                     {
                                         this.state.trackedBots.map(function(botname, idx){
@@ -340,13 +389,24 @@ export default class ControlPanel extends React.Component {
                             </label>
                         </td>
                     </tr>
-                    <tr>
-                        <td><input type="text" id="kv_key" placeholder="Key (e.g. WHEELS)"/></td>
-                        <td><input type="text" id="kv_value" placeholder="Value (e.g. 10,10)"/></td>
-                        <td><button id="sendkv" onClick={this.sendKV} className="btn btn-success">Send KV</button></td>
-                    </tr>
                     </tbody>
                 </table>
+                <label>
+                    Choose Script: 
+                    <select onChange={this.selectScript} id="scriptlist" name="scripts">
+                        <option value=""></option>
+                        {
+                            this.state.scripts.map(function(scriptname, idx){
+                                return <option
+                                            key={idx}
+                                            value={scriptname}>
+                                       {scriptname}
+                                       </option>
+                            })
+                        }
+                    </select>
+                    <button style={styles.runBtn} className="btn btn-success btn-sm" id="run" onClick={this.sendKV}>Run Script</button>
+                </label>
             </div>
         )
     }
