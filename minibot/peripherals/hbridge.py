@@ -19,7 +19,10 @@ class HBridge():
         self.left_pwm = left_pwm
         self.right_pin = right_pin
         self.right_pwm = right_pwm
-
+        print("left pin " + str(left_pin))
+        print("right pin " + str(right_pin))
+        print("left pwm " + str(left_pwm))
+        print("right pwm  " + str(right_pwm))
         left_pwm.set_frequency(100)
         right_pwm.set_frequency(100)
 
@@ -49,3 +52,4 @@ class HBridge():
         else:
             self.right_pin.set_low()
             self.right_pwm.set_duty_cycle(1-abs(right))
+
