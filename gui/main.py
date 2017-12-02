@@ -33,7 +33,7 @@ class BaseInterface:
             ("/removeBot", RemoveBotHandler),
             ("/sendKV", SendKVHandler),
             ("/vision", VisionHandler),
-            ("/updateLoc", VisionHandler)
+            ("/updateloc", VisionHandler)
         ]
         self.settings = {
             "static_path": os.path.join(os.path.dirname(__file__), "static")
@@ -79,8 +79,21 @@ class AddBotHandler(tornado.web.RequestHandler):
         name = info['name']
         ip = info['ip']
         port = info['port']
+        bot_type = info['type']
 
-        bot_name = BaseStation().get_bot_manager().add_bot(name, ip, port)
+        if bot_type == 'minibot':
+            bot_name = BaseStation().get_bot_manager().add_bot(name, ip, port)
+        else:
+            print('adding simulated bot')
+            bot_name = name
+            BaseStation().get_vision_manager().update_location(name, {
+                'x': 0,
+                'y': 0,
+                'z': 0,
+                'size': 1,
+                'angle': 0,
+                'type': 'bot'
+            })
         print("Bot name: " + bot_name)
         res = {"botName": bot_name, "ip": ip}
         self.write(json.dumps(res).encode())
@@ -195,7 +208,7 @@ class VisionHandler(tornado.web.RequestHandler):
 
     def get(self):
         # TODO: Remove hard-coded name of MinIBot.
-        loc_info = BaseStation().get_vision_manager().get_location('Minibot')
+        loc_info = BaseStation().get_vision_manager().get_locations()
         self.write(json.dumps(loc_info).encode())
 
     def post(self):

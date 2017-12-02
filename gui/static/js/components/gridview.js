@@ -249,21 +249,16 @@ export default class GridView extends React.Component {
      * @return {Object} Object which contains information about
      *     the virtual bot.
     */
-    newBot(x, y, angle, id, size) {
+    newBot(x, y, angle, id, size, type) {
         // TODO: Create a Bot class.
         var bot = {
             x: x,
             y: y,
             angle: angle,
             id: id,
-            size: size
+            size: size,
+            type: type
         };
-
-        if (size==0.15) {
-            bot.type = 'bot';
-        } else {
-            bot.type = 'scenario_obj';
-        }
         return bot;
     }
 
@@ -406,6 +401,7 @@ export default class GridView extends React.Component {
      * information from the BaseStation.
      **/
     getNewVisionData() {
+        const _this = this;
         const MILLIS_PER_VISION_UPDATE = 33;
         try {
             axios({
@@ -416,7 +412,7 @@ export default class GridView extends React.Component {
                 function visionDataGot(response) {
                     var data = response.data;
                     var currentTime = new Date();
-                    var elapsed = (currentTime - this.state.lastTime);
+                    var elapsed = (currentTime - _this.state.lastTime);
                     var timeout = MILLIS_PER_VISION_UPDATE;
                     if (elapsed > MILLIS_PER_VISION_UPDATE) {
                         timeout = 2*MILLIS_PER_VISION_UPDATE - elapsed;
@@ -424,12 +420,12 @@ export default class GridView extends React.Component {
                             timeout = 0;
                         }
                     }
-                    setTimeout(getNewVisionData,timeout);
-                    var stage = this.state.stage;
-                    var grid = this.state.grid;
-                    var botContainer = this.state.botContainer;
-                    if (!this.state.lock) {
-                        this.state.lock = true;
+                    setTimeout(_this.getNewVisionData,timeout);
+                    var stage = _this.state.stage;
+                    var grid = _this.state.grid;
+                    var botContainer = _this.state.botContainer;
+                    if (!_this.state.lock) {
+                        _this.state.lock = true;
                         var bots = [];
                         botContainer.removeChildren();
                         for (var b in data) {
@@ -438,27 +434,27 @@ export default class GridView extends React.Component {
                             var botY = bot.y;
                             var botAngle = bot.angle;
                             var botSize = bot.size;
-                            if (!botSize) bot.size = 0.15; // TODO: LOL
+                            var botType = bot.type;
                             var botId = bot.id;
-                            bots.push(this.newBot(bot.x, bot.y, bot.angle, bot.id, bot.size));
+                            bots.push(_this.newBot(bot.x, bot.y, bot.angle, bot.id, bot.size, bot.type));
                         }
-                        this.state.bots = bots;
-                        stage.removeChild(this.state.gridContainer);
-                        this.state.gridContainer = new PIXI.Container();
-                        this.drawGridLines();
-                        stage.addChild(this.state.gridContainer);
-                        this.displayBots();
+                        _this.state.bots = bots;
+                        stage.removeChild(_this.state.gridContainer);
+                        _this.state.gridContainer = new PIXI.Container();
+                        _this.drawGridLines();
+                        stage.addChild(_this.state.gridContainer);
+                        _this.displayBots();
                         grid.render(stage);
-                        this.state.lock = false;
+                        _this.state.lock = false;
                     }
                 }
-            ).catch(() => {
-                console.log("error");
-                setTimeout(this.getNewVisionData, MILLIS_PER_VISION_UPDATE * 10);
+            ).catch((error) => {
+                console.warn(error);
+                setTimeout(_this.getNewVisionData, MILLIS_PER_VISION_UPDATE * 10);
             });
         } catch (error) {
             console.warn(error);
-            setTimeout(this.getNewVisionData, MILLIS_PER_VISION_UPDATE * 10);
+            setTimeout(_this.getNewVisionData, MILLIS_PER_VISION_UPDATE * 10);
         }
     }
 
