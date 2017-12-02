@@ -28,20 +28,40 @@ export default class ControlPanel extends React.Component {
         this.onKeyDown = this.onKeyDown.bind(this);
         window.addEventListener('keydown', this.onKeyDown);
     }
-
+     /* sends a command to bot according to the button pressed */
     onKeyDown(event){
         if (this.state.keyboard){
-            if (event.key == 'w'){
-                this.sendMotors(100, 100, 100, 100);
+           if(event.keyCode==87) {
+                // If the 'W' key is pressed,move forward
+                this.sendMotors(20,20,20,20);
+                var a=this;
+                setTimeout(function(){
+                    a.sendMotors(0,0,0,0);
+                },500);
             }
-            else if (event.key == 'a'){
-                this.sendMotors(-100, 100, 0,0 );
+            else if (event.keyCode==65){
+                // If the 'A' key is pressed, turn left
+                this.sendMotors(0,20,0,0);
+                var a=this;
+                setTimeout(function(){
+                    a.sendMotors(0,0,0,0);
+                },500);
             }
-            else if (event.key == 'd'){
-                this.sendMotors(100, -100,0 ,0);
+            else if (event.keyCode==68){
+                // If the 'D' key is pressed, turn right
+                this.sendMotors(20,0,0,0);
+                var a=this;
+                setTimeout(function(){
+                    a.sendMotors(0,0,0,0);
+                },500);
             }
-            else{
-                this.sendMotors(-100, -100, 0, 0);
+            else if(event.keyCode==83){
+                //If the 'S' ket is pressed,move backward
+                this.sendMotors(-20,-20,-20,-20);
+                var a=this;
+                setTimeout(function(){
+                    a.sendMotors(0,0,0,0);
+                },500);
             }
 
         }
