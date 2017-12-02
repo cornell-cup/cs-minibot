@@ -233,15 +233,6 @@ export default class AddBot extends React.Component {
                                                 changeIPAddress={_this.changeIPAddress} />;
                                 })
                             }
-                            {
-                                this.state.discoveredBots.map(function(ip, idx){
-                                    return <DiscoveredBot
-                                                key={idx}
-                                                idx={idx}
-                                                ip_address={ip}
-                                                changeIPAddress={_this.changeIPAddress} />;
-                                })
-                            }
                         </div>
                     </div>
                 </div>
