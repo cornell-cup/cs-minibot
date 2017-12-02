@@ -34,7 +34,9 @@ class BaseInterface:
             ("/sendKV", SendKVHandler),
             ("/vision", VisionHandler),
             ("/updateloc", UpdateLocationHandler),
-            ("/findScripts", FindScriptsHandler)
+            ("/findScripts", FindScriptsHandler),
+            ("/addScenario", AddScenarioHandler),
+            ("/updateGridview", GridViewHandler)
         ]
         self.settings = {
             "static_path": os.path.join(os.path.dirname(__file__), "static")
@@ -55,6 +57,15 @@ class BaseInterface:
         """
         return tornado.web.Application(self.handlers, **self.settings)
 
+class AddScenarioHandler(tornado.web.RequestHandler):
+    """
+    Adds scenario objects to gridview
+    """
+    def post(self):
+        listofscenario = json.loads(self.request.body.decode())
+        # BaseStation().get_simulator_manager().simulator.set_scenario_list(listofscenario)
+        # BaseStation().vision_manager.up
+        self.write(json.dumps(listofscenario).encode())
 
 class BaseStationHandler(tornado.web.RequestHandler):
     """

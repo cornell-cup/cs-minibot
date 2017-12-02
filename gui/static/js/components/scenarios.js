@@ -108,23 +108,18 @@ export default class ScenariosItem extends React.Component {
                         throw "wrong format or position (prob position)!";
                     }
                 });
-
                 //file can only have 1 bot
                 if (tempNumBot != 1) {
                     throw "too many bots!";
                 }
-
                 _this.setState({items: li});
                 _this.state.numBots = 1;
             } catch(err) {
                 console.log(err);
                 alert("Invalid file! Please submit a properly formatted file!");
             }
-
-
         }
         reader.readAsText(file);
-
     }
 
     /* handles input change for input fields */
@@ -206,7 +201,7 @@ export default class ScenariosItem extends React.Component {
             <div id = "scenariobox" className = "box">
                 <button onClick={this.saveScenario} style={styles.Button}>Save</button>
                 <form><input type="file" style={styles.Button} accept=".txt" id="loadBtn" onChange={this.loadScenario}/></form>
-                <button style={styles.Button}>Add to Simulator</button>
+                <button style={styles.Button} onClick={this.addScenario}>Add to Simulator</button>
                 <table style={styles.ScenariosItem}>
                     <tbody>
                         <tr>
