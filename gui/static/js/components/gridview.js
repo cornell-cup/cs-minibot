@@ -92,8 +92,8 @@ export default class GridView extends React.Component {
             const VIEW_WIDTH = this.state.viewWidth;
             const START_SCALE = this.state.startScale;
 
-            this.state.x_int = VIEW_WIDTH/START_SCALE*parseInt(x)/100;
-            this.state.y_int = VIEW_WIDTH/START_SCALE*parseInt(y)/100;
+            this.state.x_int = VIEW_WIDTH/4*(scale/100);
+            this.state.y_int = VIEW_WIDTH/4*(scale/100);
 
             var stage = this.state.stage;
             var grid = this.state.grid;
@@ -215,24 +215,26 @@ export default class GridView extends React.Component {
         const scale = this.state.scale;
         const xOffset = parseInt(this.state.xOffset);
         const yOffset = parseInt(this.state.yOffset);
+        const x_int = this.state.x_int;
+        const y_int = this.state.y_int;
 
         for(var i=0; i<40; i=i+1){
             lines_y[i] = new PIXI.Graphics();
             lines_y[i].lineStyle(1, 0x0000FF, 1);
 
-            lines_y[i].moveTo(0,i*65*scale/100);
-            lines_y[i].lineTo(VIEW_WIDTH,i*65*scale/100);
+            lines_y[i].moveTo(0,i*y_int/2);
+            lines_y[i].lineTo(VIEW_WIDTH,i*y_int/2);
             lines_y[i].x = 0;
-            lines_y[i].y =(i-20)*65*scale/100 + yOffset;
+            lines_y[i].y =(i-20)*y_int/2 + yOffset;
 
             this.state.gridContainer.addChild(lines_y[i]);
 
             lines_x[i] = new PIXI.Graphics();
             lines_x[i].lineStyle(1, 0x0000FF, 1);
 
-            lines_x[i].moveTo(i*65*scale/100,0);
-            lines_x[i].lineTo(i*65*scale/100,VIEW_WIDTH);
-            lines_x[i].x = (i-20)*65*scale/100 + xOffset;
+            lines_x[i].moveTo(i*x_int/2,0);
+            lines_x[i].lineTo(i*x_int/2,VIEW_WIDTH);
+            lines_x[i].x = (i-20)*x_int/2 + xOffset;
             lines_x[i].y = 0;
             this.state.gridContainer.addChild(lines_x[i]);
         }
@@ -290,8 +292,7 @@ export default class GridView extends React.Component {
         const VIEW_WIDTH = this.state.viewWidth;
         const x_int = this.state.x_int;
         const y_int = this.state.y_int;
-
-        if (b.size == 0) b.size = 10;
+        if (b.size == 0) b.size = 1;
         var size = b.size*x_int;
         var bot = new PIXI.Graphics();
         bot.beginFill(0x0EB530); //green
