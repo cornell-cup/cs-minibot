@@ -20,18 +20,30 @@ class HBridge():
         self.right_pin = right_pin
         self.right_pwm = right_pwm
 
+        self.left_speed = 0
+        self.right_speed = 0
+
         left_pwm.set_frequency(100)
         right_pwm.set_frequency(100)
 
+    def get_speed(self):
+        """
+        Returns the (left speed, right speed) tuple
+        """
+        return (self.left_speed, self.right_speed)
+        
     def set_speed(self, left, right):
         """
         Sets the speed of both motors.
         Args:
-            left (float): The speed of the left motor (-1 to 1).
-            right (float): The speed of the right motor (-1 to 1).
+            left (float): The speed of the left motor (-100 to 100).
+            right (float): The speed of the right motor (-100 to 100).
         """
-        left = max(min(left, 1.0), -1.0)
-        right = max(min(right, 1.0), -1.0)
+        self.left_speed = max(min(left, 100.0), -100.0)
+        self.right_speed = max(min(right, 100.0), -100.0)
+        # divide by hundred because PWMs have values between 1 and -1
+        left = self.left_speed/100.0
+        right = self.right_speed/100.0
 
         if left < 0:
             self.left_pin.set_high()
@@ -46,3 +58,5 @@ class HBridge():
         else:
             self.right_pin.set_low()
             self.right_pwm.set_duty_cycle(1-abs(right))
+
+
