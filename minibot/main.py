@@ -105,14 +105,7 @@ def run_script_with_name(bot,script_name):
 
 def run_script(bot):
     UserScript = importlib.reload(us)
-    #f = open('/home/pi/cs-minibot/minibot/scripts/UserScript.py','r')
-    #file_contents = f.read()
-
-    #print(file_contents)
-    #f.close()
     UserScript.run(bot)
-    
-    #print("done")
     
 
 if __name__ == "__main__":
