@@ -78,7 +78,6 @@ def process_string(value):
     cmds = value.splitlines()
     str = "def run(bot):\n"
     for i in range(len(cmds)):
-        print("command = " + cmds[i])
         str += "    " +cmds[i] + "\n"
     return str
 
