@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Minibot Wifi Setup</title>
+    </head>
+<body>
+    <h1>Hello!</h1>
+    <p>It's time to set up your raspberry pi with your Wifi's name and password.</p>
+
+    <form TYPE=POST>
+        Wifi Network Name (SSID):<br>
+        <input id="network_name" type="text"><br>
+        Wifi Password:<br>
+        <input id="network_password" type="password"><br>
+        <button id="wifi_submit">Submit & Reboot Pi</button>
+    </form>
+
+<script>
+document.getElementById('wifi_submit').addEventListener('click', function(event) {
+    var post = new XMLHttpRequest();
+    var network_name = document.getElementById('network_name').value;
+    var network_password = document.getElementById('network_password').value;
+
+    post.open("POST", "/submitWifiCreds", true);
+    post.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    post.send("{\"wifiname\": \"" + network_name + "\", \"wifipass\": \"" + network_password + "\"}");
+});
+</script>
+</body>
+</html>
