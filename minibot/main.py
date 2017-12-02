@@ -13,7 +13,11 @@ import time
 import importlib
 import os
 
-us = importlib.import_module('minibot.scripts.UserScript')
+"""
+    Loads UserScript file.
+    Reloads file when it is run from GUI to reflect changes.
+"""
+US = importlib.import_module('minibot.scripts.UserScript')
 
 CONFIG_LOCATION = '/home/pi/cs-minibot/minibot/configs/config.json'
 
@@ -62,7 +66,7 @@ def parse_command(cmd, bot):
         val = process_string(value)
         user_script_file.write(val)
         user_script_file.close()
-        p=spawn_script_process(p, bot)
+        p = spawn_script_process(p, bot)
     elif key == "RUN":
         filename = os.path.basename(value)
         filepath = "/home/pi/cs-minibot/minibot/scripts/" + filename
@@ -103,7 +107,7 @@ def run_script_with_name(bot,script_name):
     UserScript.run(bot)
 
 def run_script(bot):
-    UserScript = importlib.reload(us)
+    UserScript = importlib.reload(US)
     UserScript.run(bot)
     
 
