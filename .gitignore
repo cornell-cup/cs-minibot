@@ -110,3 +110,5 @@ ENV/
 .idea/
 
 node_modules/
+
+gui/package-lock.json

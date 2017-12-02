@@ -81,6 +81,14 @@ of this repo.
 ./start_gui.sh
 ```
 
+To quit the BaseStation, run the following line.
+
+```
+pkill -f main.py
+```
+
+where `main.py` is the relative location of the `gui/main.py` file.
+
 Go to any browser on your computer and go to `localhost:1234/gui` to see the GUI in action.
 If you are having trouble running the previous line, make sure that python3 is installed.
 You can check this by typing `python3` in your terminal.
