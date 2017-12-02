@@ -13,6 +13,8 @@ import time
 import importlib
 import os
 
+us = importlib.import_module('minibot.scripts.UserScript')
+
 CONFIG_LOCATION = '/home/pi/cs-minibot/minibot/configs/config.json'
 
 p = None
@@ -60,7 +62,7 @@ def parse_command(cmd, bot):
         val = process_string(value)
         user_script_file.write(val)
         user_script_file.close()
-        p = spawn_script_process(p, bot)
+        spawn_script_process(bot)
     elif key == "RUN":
         filename = os.path.basename(value)
         filepath = "/home/pi/cs-minibot/minibot/scripts/" + filename
@@ -76,17 +78,16 @@ def process_string(value):
     cmds = value.splitlines()
     str = "def run(bot):\n"
     for i in range(len(cmds)):
+        print("command = " + cmds[i])
         str += "    " +cmds[i] + "\n"
     return str
 
-def spawn_script_process(p,bot):
-    if (p is not None and p.is_alive()):
-        p.terminate()
+def spawn_script_process(bot):
     time.sleep(0.1)
     p = Thread(target=run_script, args=[bot])
     p.start()
+    
     # Return control to main after .1 seconds
-    return p
 
 def spawn_named_script_process(p,bot,script_name):
     if (p is not None and p.is_alive()):
@@ -102,8 +103,16 @@ def run_script_with_name(bot,script_name):
     UserScript.run(bot)
 
 def run_script(bot):
-    from scripts import UserScript
+    UserScript = importlib.reload(us)
+    #f = open('/home/pi/cs-minibot/minibot/scripts/UserScript.py','r')
+    #file_contents = f.read()
+
+    #print(file_contents)
+    #f.close()
     UserScript.run(bot)
+    
+    #print("done")
+    
 
 if __name__ == "__main__":
     main()
