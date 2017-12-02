@@ -30,9 +30,11 @@ class HBridge():
             left (float): The speed of the left motor (-1 to 1).
             right (float): The speed of the right motor (-1 to 1).
         """
-        left = max(min(left, 1.0), -1.0)
-        right = max(min(right, 1.0), -1.0)
-
+        left = -max(min(left, 1.0), -1.0)
+        right = -max(min(right, 1.0), -1.0)
+        
+        print(left)
+        print(right)
         if left < 0:
             self.left_pin.set_high()
             self.left_pwm.set_duty_cycle(abs(left))
