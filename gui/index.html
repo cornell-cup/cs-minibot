@@ -105,7 +105,7 @@
 	</xml>
 
 	<!-- loading file as text -->
-	<script> function loadFileAsText(){
+	<!--script> function loadFileAsText(){
   	var fileToLoad = document.getElementById("upload").files[0];
 
  	 var fileReader = new FileReader();
@@ -116,6 +116,21 @@
  	 fileReader.readAsText(fileToLoad, "UTF-8");
  	 }
 	</script>
+
+	<!-- loading file as blocks -->
+	<!--script> function loadFileAsBlocks(){
+  	var xmlToLoad = document.getElementById("blockUpload").files[0];
+
+ 	 var xmlReader = new FileReader();
+ 	 xmlReader.onload = function(fileLoadedEvent){
+  	    var textFromFileLoaded = fileLoadedEvent.target.result;
+  	    // document.getElementById("blockdata").value = textFromFileLoaded;
+  	    var dom = Blockly.Xml.textToDom(fileLoadedEvent);
+  	    Blockly.Xml.domToWorkspace(dom, Blockly.getMainWorkspace());
+ 	 };
+ 	 xmlReader.readAsText(fileToLoad, "UTF-8");
+ 	 }
+	</script-->
 
 	<!-- basic imports -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>

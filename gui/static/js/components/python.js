@@ -56,7 +56,6 @@ export default class Python extends React.Component {
         so that they may run Python scripts that have been written
         externally without Blockly.
     */
-
     upload(event){
         console.log("upload listener");
         var _this = this;
