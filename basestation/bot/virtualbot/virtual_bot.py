@@ -119,9 +119,9 @@ class VirtualBot(object):
                 data (str): A string to be parsed. Must start with* "<<<<" and
                     end with ">>>>". Key-value pair should be separated by ":"
             """
-            start = data.index("<<<<")
-            comma = data.index(",")
-            end = data.index(">>>>")
+            start = data.find("<<<<")
+            comma = data.find(",")
+            end = data.find(">>>>")
             if start != -1 and comma != -1 and end != -1:
                 key = data[start + 4:comma]
                 value = data[comma + 1:end]

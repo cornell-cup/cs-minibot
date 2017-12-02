@@ -15,16 +15,20 @@ class DiscoveredBot extends React.Component {
         var styles = {
             ipAddress: {
                 float: "left",
-                marginRight: 5
+                marginRight: 5,
+                marginBottom: 0,
+            },
+            bottomSpacing: {
+                marginBottom: 5
             }
         }
         return (
-            <div className="discoveredbot">
+            <div style={styles.bottomSpacing} className="discoveredBot">
                 <p style={styles.ipAddress}>{this.props.ip_address}</p>
                 <button
                     id={'discoverBot' + this.props.idx}
                     value={this.props.ip_address}
-                    onClick={() => this.props.changeIPAddress(this.props.ip_address)} className="addBot">
+                    onClick={() => this.props.changeIPAddress(this.props.ip_address)} className="btn btn-sm addBot">
                     Add
                 </button>
             </div>
@@ -219,7 +223,16 @@ export default class AddBot extends React.Component {
                                 Refresh
                             </button>
                         </div>
-                        <div className="discovered-bot" id="discovered">
+                        <div className="discoveredBots" id="discovered">
+                            {
+                                this.state.discoveredBots.map(function(ip, idx){
+                                    return <DiscoveredBot
+                                                key={idx}
+                                                idx={idx}
+                                                ip_address={ip}
+                                                changeIPAddress={_this.changeIPAddress} />;
+                                })
+                            }
                             {
                                 this.state.discoveredBots.map(function(ip, idx){
                                     return <DiscoveredBot
