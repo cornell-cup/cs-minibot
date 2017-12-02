@@ -62,7 +62,7 @@ def parse_command(cmd, bot):
         val = process_string(value)
         user_script_file.write(val)
         user_script_file.close()
-        spawn_script_process(bot)
+        p=spawn_script_process(p, bot)
     elif key == "RUN":
         filename = os.path.basename(value)
         filepath = "/home/pi/cs-minibot/minibot/scripts/" + filename
@@ -82,10 +82,11 @@ def process_string(value):
         str += "    " +cmds[i] + "\n"
     return str
 
-def spawn_script_process(bot):
+def spawn_script_process(p, bot):
     time.sleep(0.1)
     p = Thread(target=run_script, args=[bot])
     p.start()
+    return p
     
     # Return control to main after .1 seconds
 
