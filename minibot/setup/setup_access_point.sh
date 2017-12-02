@@ -16,8 +16,8 @@ check_dependencies () {
 
 copy_conf_wifi_setup () {
     # copies configuration files to setup the wifi access point
-    sudo cp minibot-conf/minibot-dnsmasq.conf /etc/dnsmasq.conf
-    sudo cp minibot-conf/minibot-hostapd.conf /etc/hostapd/hostapd.conf
+    sudo cp minibot-ap-conf/minibot-dnsmasq.conf /etc/dnsmasq.conf
+    sudo cp minibot-ap-conf/minibot-hostapd.conf /etc/hostapd/hostapd.conf
 
     # remove old config if exists
     sudo sed -i -- 's/allow-hotplug wlan0//g' /etc/network/interfaces
@@ -26,7 +26,7 @@ copy_conf_wifi_setup () {
     sudo sed -i -- 's/#DAEMON_CONF=""/DAEMON_CONF="\/etc\/hostapd\/hostapd.conf"/g' /etc/default/hostapd
 
     # add new information to interfaces and dhcpcd.conf
-    sudo cp minibot-conf/minibot-interfaces /etc/network/interfaces
+    sudo cp minibot-ap-conf/minibot-interfaces /etc/network/interfaces
     
     sudo grep "denyinterfaces wlan0" /etc/dhcpcd.conf >/dev/null
     if [[ $? != 0 ]]

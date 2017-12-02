@@ -31,4 +31,10 @@ then
 	# reboot to apply changes
 	sudo reboot
 fi
+
+# Starts Minibot connection for BaseStation
+cd /home/pi/cs-minibot/minibot
+# TODO: Remove direct call to main.py with bash script.
+PYTHONPATH=.. python3 main.py
+
 exit 0
