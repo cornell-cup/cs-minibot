@@ -27,29 +27,42 @@ export default class ControlPanel extends React.Component {
 
     }
 
+
+     /* sends a command to bot according to the button pressed */
     onKeyDown(event){
         if (this.state.keyboard){
            if(event.keyCode==87) {
-                setTimeout(this.sendMotors(100,100,100,100),500);
-                this.sendMotors(0,0,0,0);
-              console.log('w');
+                // If the 'W' key is pressed,move forward
+                this.sendMotors(20,20,20,20);
+                var a=this;
+                setTimeout(function(){
+                    a.sendMotors(0,0,0,0);
+                },500);
             }
             else if (event.keyCode==65){
-                setTimeout(this.sendMotors(-100, 100, 0, 0),500);
-                this.sendMotors(0,0,0,0);
-               console.log('a');
+                // If the 'A' key is pressed, turn left
+                this.sendMotors(0,20,0,0);
+                var a=this;
+                setTimeout(function(){
+                    a.sendMotors(0,0,0,0);
+                },500);
             }
-            else if (event.keyCode==83){
-                setTimeout(this.sendMotors(100, -100, 0, 0),500);
-                this.sendMotors(0,0,0,0);
-                console.log('d');
+            else if (event.keyCode==68){
+                // If the 'D' key is pressed, turn right
+                this.sendMotors(20,0,0,0);
+                var a=this;
+                setTimeout(function(){
+                    a.sendMotors(0,0,0,0);
+                },500);
             }
-            else if(event.keyCode==68){
-                setTimeout(this.sendMotors(-100,-100,0,0),500);
-                this.sendMotors(0,0,0,0);
-                console.log('s');
+            else if(event.keyCode==83){
+                //If the 'S' ket is pressed,move backward
+                this.sendMotors(-20,-20,-20,-20);
+                var a=this;
+                setTimeout(function(){
+                    a.sendMotors(0,0,0,0);
+                },500);
             }
-
         }
     }
 
