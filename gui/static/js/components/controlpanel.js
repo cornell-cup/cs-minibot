@@ -1,6 +1,6 @@
 var React = require('react');
 var axios = require('axios');
-
+var lastKeyPressed;
 export default class ControlPanel extends React.Component {
     //TODO (#31): add listeners for Keyboard controls
     constructor(props) {
@@ -29,41 +29,44 @@ export default class ControlPanel extends React.Component {
         window.addEventListener('keydown', this.onKeyDown);
     }
 
-
      /* sends a command to bot according to the button pressed */
     onKeyDown(event){
         if (this.state.keyboard){
-           if(event.keyCode==87) {
-                // If the 'W' key is pressed,move forward
-                this.sendMotors(20,20,20,20);
-                var a=this;
-                setTimeout(function(){
-                    a.sendMotors(0,0,0,0);
-                },500);
+            const pow = this.state.power;
+            if (event.keyCode == lastKeyPressed) {
+                // Stop
+                this.sendMotors(0,0,0,0);
+                lastKeyPressed = -1;
             }
-            else if (event.keyCode==65){
-                // If the 'A' key is pressed, turn left
-                this.sendMotors(0,20,0,0);
-                var a=this;
-                setTimeout(function(){
-                    a.sendMotors(0,0,0,0);
-                },500);
-            }
-            else if (event.keyCode==68){
-                // If the 'D' key is pressed, turn right
-                this.sendMotors(20,0,0,0);
-                var a=this;
-                setTimeout(function(){
-                    a.sendMotors(0,0,0,0);
-                },500);
-            }
-            else if(event.keyCode==83){
-                //If the 'S' ket is pressed,move backward
-                this.sendMotors(-20,-20,-20,-20);
-                var a=this;
-                setTimeout(function(){
-                    a.sendMotors(0,0,0,0);
-                },500);
+            else{
+                if(event.keyCode==87) {
+                    // If the 'W' key is pressed,move forward
+                    this.sendMotors(pow, pow, pow, pow);
+                }
+                else if(event.keyCode==83){
+                    //If the 'S' ket is pressed,move backward
+                    this.sendMotors(-pow, -pow, -pow, -pow);
+                }
+                else if (event.keyCode==65) {
+                    // If the 'A' key is pressed,ccw
+                    this.sendMotors(-pow, pow, -pow, pow);
+                }
+                else if (event.keyCode==68){
+                    // If the 'D' key is pressed,cw
+                    this.sendMotors(pow, -pow, pow, -pow);
+                }
+                else if (event.keyCode==81){
+                    // If the 'Q' key is pressed,left
+                    this.sendMotors(-pow, pow, pow, -pow);
+                }
+                else if (event.keyCode==69){
+                    // If the 'E' key is pressed,right
+                    this.sendMotors(pow, -pow, -pow, pow);
+                }
+                else{
+                    return;
+                }
+                lastKeyPressed = event.keyCode;
             }
         }
     }
