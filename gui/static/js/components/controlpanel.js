@@ -31,7 +31,9 @@ export default class ControlPanel extends React.Component {
         window.addEventListener('keyup', this.onKeyUp);
     }
 
-     /* sends a command to bot according to the button pressed */
+    /**
+     * Sends a command to bot according to the button pressed.
+     */
     onKeyDown(event) {
         if (this.state.keyboard) {
             console.log('Keydown.');
@@ -74,11 +76,16 @@ export default class ControlPanel extends React.Component {
         }
     }
 
+    /**
+     * When a keyboard key is released, send a stop command to the motors.
+     */
     onKeyUp(event) {
         this.sendMotors(0,0,0,0);
     }
 
-    /* handler for input changes to modify the state */
+    /**
+     * Handler for input changes to modify the state.
+     */
     handleInputChange(event) {
         const target = event.target;
         const value = target.value;
@@ -108,7 +115,9 @@ export default class ControlPanel extends React.Component {
         this.getScripts();
     }
 
-    /* sends a key-value command to bot */
+    /**
+     * Sends a key-value command to bot.
+     */
     sendKV(event){
         const pow = this.state.power;
         const target = event.target;
@@ -172,9 +181,10 @@ export default class ControlPanel extends React.Component {
         }
     }
 
-    /* sends a motor command to bot
+    /**
+     * Sends a motor command to bot
      * input: front left, front right, back left, back right (all ints)
-     **/
+     */
     sendMotors(fl,fr,bl,br){
         const _this = this;
         axios({
@@ -261,7 +271,9 @@ export default class ControlPanel extends React.Component {
         });
     }
 
-    /* removes selected bot from list */
+    /**
+     * Removes selected bot from list.
+     */
     removeBot(){
         console.log("remove bot listener");
         axios({
@@ -278,7 +290,9 @@ export default class ControlPanel extends React.Component {
     }
 
 
-    /* toggles xbox controls on or off */
+    /**
+     * Toggles xbox controls on or off.
+     */
     xboxToggle(checked){
         console.log('xboxToggle '+checked);
         if (checked){
@@ -442,78 +456,3 @@ export default class ControlPanel extends React.Component {
         )
     }
 }
-
-// $(document).ready(function() {
-//     /*
-//      * Event listener for key inputs. Sends to selected bot.
-//      */
-//     var lastKeyPressed;
-//     window.onkeydown = function (e) {
-//         let keyboardEnable = document.getElementById('keyboard-controls').checked;
-//         if (!keyboardEnable) return;
-//
-//         let pow = getPower();
-//         let code = e.keyCode ? e.keyCode : e.which;
-//
-//         if (code === lastKeyPressed) return;
-//
-//         if (code === 87) {
-//             // w=forward
-//             sendMotors(pow, pow, pow, pow);
-//
-//         } else if (code === 83) {
-//             // s=backward
-//             sendMotors(-pow, -pow, -pow, -pow);
-//
-//         } else if (code == 65) {
-//             // a=ccw
-//             sendMotors(-pow, pow, -pow, pow);
-//
-//         } else if (code == 68) {
-//             // d=cw
-//             sendMotors(pow, -pow, pow, -pow);
-//
-//         } else if (code == 81) {
-//             // q=left
-//             sendMotors(-pow, pow, pow, -pow);
-//
-//         } else if (code == 69) {
-//             // e=right
-//             sendMotors(pow, -pow, -pow, pow);
-//         } else {
-//             return;
-//         }
-//         lastKeyPressed = code;
-//     };
-//
-//     window.onkeyup = function (e) {
-//         let keyboardEnable = document.getElementById('keyboard-controls').checked;
-//         if (!keyboardEnable) return;
-//
-//         let code = e.keyCode ? e.keyCode : e.which;
-//
-//         if (code === lastKeyPressed) {
-//             // Stop
-//             sendMotors(0,0,0,0);
-//             lastKeyPressed = -1;
-//         }
-//     };
-// });
-//
-// /*
-// *   Send KV -- allows users to manually send key and value to bot (for debugging/testing
-//     purposes)
-// */
-// function sendKV(){
-//     $.ajax({
-//         method:'POST',
-//         url:'/sendKV',
-//         dataType: 'json',
-//         data: JSON.stringify({
-//             key:$("#kv_key").val(),
-//             value:$("#kv_value").val(),
-//             name:getBotID()
-//         }),
-//         contentType: 'application/json'
-//     });
-// }
