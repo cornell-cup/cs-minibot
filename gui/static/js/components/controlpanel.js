@@ -27,18 +27,21 @@ export default class ControlPanel extends React.Component {
         this.selectScript = this.selectScript.bind(this);
         this.onKeyDown = this.onKeyDown.bind(this);
         window.addEventListener('keydown', this.onKeyDown);
+        this.onKeyUp = this.onKeyUp.bind(this);
+        window.addEventListener('keyup', this.onKeyUp);
     }
 
      /* sends a command to bot according to the button pressed */
-    onKeyDown(event){
-        if (this.state.keyboard){
+    onKeyDown(event) {
+        if (this.state.keyboard) {
+            console.log('Keydown.');
             const pow = this.state.power;
-            if (event.keyCode == lastKeyPressed) {
+            if (false) { //event.keyCode == lastKeyPressed) {
                 // Stop
                 this.sendMotors(0,0,0,0);
                 lastKeyPressed = -1;
             }
-            else{
+            else {
                 if(event.keyCode==87) {
                     // If the 'W' key is pressed,move forward
                     this.sendMotors(pow, pow, pow, pow);
@@ -69,6 +72,10 @@ export default class ControlPanel extends React.Component {
                 lastKeyPressed = event.keyCode;
             }
         }
+    }
+
+    onKeyUp(event) {
+        this.sendMotors(0,0,0,0);
     }
 
     /* handler for input changes to modify the state */
@@ -166,8 +173,8 @@ export default class ControlPanel extends React.Component {
     }
 
     /* sends a motor command to bot
-    * input: front left, front right, back left, back right (all ints)
-    * */
+     * input: front left, front right, back left, back right (all ints)
+     **/
     sendMotors(fl,fr,bl,br){
         const _this = this;
         axios({
