@@ -1,0 +1,40 @@
+#!/bin/sh -e
+#
+# rc.local
+#
+# This script is executed at the end of each multiuser runlevel.
+# Make sure that the script will "exit 0" on success or any other
+# value on error.
+#
+# In order to enable or disable this script just change the execution
+# bits.
+#
+# By default this script does nothing.
+
+MINIBOTAP=$(cat /home/pi/cs-minibot/minibot/setup/APstatus)
+if [ $MINIBOTAP -eq 1 ]
+then
+	# access point is on at this point, 
+	# start the website to let the user enter creds
+    cd /home/pi/cs-minibot/minibot/setup
+	python3 setup_app.py
+	sudo reboot
+fi
+
+cd /home/pi/cs-minibot/minibot/setup
+sudo ./handle_startup_wifi_connection.sh
+
+MINIBOTAP=$(cat /home/pi/cs-minibot/minibot/setup/APstatus)
+if [ $MINIBOTAP -eq 1 ]
+then
+	# access point setting changed by handle_startup_wifi_connection script
+	# reboot to apply changes
+	sudo reboot
+fi
+
+# Starts Minibot connection for BaseStation
+cd /home/pi/cs-minibot/minibot
+# TODO: Remove direct call to main.py with bash script.
+PYTHONPATH=.. python3 main.py
+
+exit 0
