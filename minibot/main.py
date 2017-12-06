@@ -13,6 +13,12 @@ import time
 import importlib
 import os
 
+"""
+    Loads UserScript file.
+    Reloads file when it is run from GUI to reflect changes.
+"""
+US = importlib.import_module('minibot.scripts.UserScript')
+
 CONFIG_LOCATION = '/home/pi/cs-minibot/minibot/configs/config.json'
 
 p = None
@@ -69,6 +75,10 @@ def parse_command(cmd, bot):
             p = spawn_named_script_process(p, bot, filename.split('.')[0])
         else:
             print("Invalid File path")
+    else:
+        bot.extraCMD.put( (key, value) )
+        print("Unknown key: " + key)
+        print("Cmd: " + cmd)
 
 # Copy script sent from GUI into 'run' command
 # So we can call that method to initiate the commands
@@ -79,14 +89,13 @@ def process_string(value):
         str += "    " +cmds[i] + "\n"
     return str
 
-def spawn_script_process(p,bot):
-    if (p is not None and p.is_alive()):
-        p.terminate()
+def spawn_script_process(p, bot):
     time.sleep(0.1)
     p = Thread(target=run_script, args=[bot])
     p.start()
-    # Return control to main after .1 seconds
     return p
+    
+    # Return control to main after .1 seconds
 
 def spawn_named_script_process(p,bot,script_name):
     if (p is not None and p.is_alive()):
@@ -102,8 +111,9 @@ def run_script_with_name(bot,script_name):
     UserScript.run(bot)
 
 def run_script(bot):
-    from scripts import UserScript
+    UserScript = importlib.reload(US)
     UserScript.run(bot)
+    
 
 if __name__ == "__main__":
     main()
