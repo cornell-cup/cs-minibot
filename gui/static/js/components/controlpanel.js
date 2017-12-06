@@ -34,51 +34,45 @@ export default class ControlPanel extends React.Component {
 
     /**
      * Sends a command to bot according to the button pressed.
+     * @param {Event} event The key down event.
      */
     onKeyDown(event) {
         if (this.state.keyboard) {
-            console.log('Keydown.');
             const pow = this.state.power;
-            if (false) { //event.keyCode == lastKeyPressed) {
-                // Stop
-                this.sendMotors(0,0,0,0);
-                lastKeyPressed = -1;
+
+            if(event.keyCode==87) {
+                // If the 'W' key is pressed,move forward
+                this.sendMotors(pow, pow, pow, pow);
+            }
+            else if(event.keyCode==83) {
+                //If the 'S' ket is pressed,move backward
+                this.sendMotors(-pow, -pow, -pow, -pow);
+            }
+            else if (event.keyCode==65) {
+                // If the 'A' key is pressed,ccw
+                this.sendMotors(-pow, pow, -pow, pow);
+            }
+            else if (event.keyCode==68) {
+                // If the 'D' key is pressed,cw
+                this.sendMotors(pow, -pow, pow, -pow);
+            }
+            else if (event.keyCode==81) {
+                // If the 'Q' key is pressed,left
+                this.sendMotors(-pow, pow, pow, -pow);
+            }
+            else if (event.keyCode==69) {
+                // If the 'E' key is pressed,right
+                this.sendMotors(pow, -pow, -pow, pow);
             }
             else {
-                if(event.keyCode==87) {
-                    // If the 'W' key is pressed,move forward
-                    this.sendMotors(pow, pow, pow, pow);
-                }
-                else if(event.keyCode==83){
-                    //If the 'S' ket is pressed,move backward
-                    this.sendMotors(-pow, -pow, -pow, -pow);
-                }
-                else if (event.keyCode==65) {
-                    // If the 'A' key is pressed,ccw
-                    this.sendMotors(-pow, pow, -pow, pow);
-                }
-                else if (event.keyCode==68){
-                    // If the 'D' key is pressed,cw
-                    this.sendMotors(pow, -pow, pow, -pow);
-                }
-                else if (event.keyCode==81){
-                    // If the 'Q' key is pressed,left
-                    this.sendMotors(-pow, pow, pow, -pow);
-                }
-                else if (event.keyCode==69){
-                    // If the 'E' key is pressed,right
-                    this.sendMotors(pow, -pow, -pow, pow);
-                }
-                else{
-                    return;
-                }
-                lastKeyPressed = event.keyCode;
+                return;
             }
         }
     }
 
     /**
      * When a keyboard key is released, send a stop command to the motors.
+     * @param {Event} event The key up event.
      */
     onKeyUp(event) {
         this.sendMotors(0,0,0,0);
