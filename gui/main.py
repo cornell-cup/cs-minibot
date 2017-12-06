@@ -33,7 +33,8 @@ class BaseInterface:
             ("/removeBot", RemoveBotHandler),
             ("/sendKV", SendKVHandler),
             ("/vision", VisionHandler),
-            ("/updateloc", VisionHandler)
+            ("/updateloc", VisionHandler),
+            ("/addScenario", AddScenarioHandler)
         ]
         self.settings = {
             "static_path": os.path.join(os.path.dirname(__file__), "static")
@@ -63,6 +64,7 @@ class AddScenarioHandler(tornado.web.RequestHandler):
         # BaseStation().get_simulator_manager().simulator.set_scenario_list(listofscenario)
         # BaseStation().vision_manager.up
         self.write(json.dumps(listofscenario).encode())
+        print(listofscenario)
 
 class BaseStationHandler(tornado.web.RequestHandler):
     """
@@ -259,7 +261,6 @@ MISSING ENDPOINTS:
 High priority:
 - updateLoc
 - trackedBots
-- addScenario
 
 Low priority:
 - postOccupancyMatrix

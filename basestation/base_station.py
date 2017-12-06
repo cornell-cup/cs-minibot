@@ -1,5 +1,6 @@
 from basestation.bot.bot_manager import BotManager
 from basestation.vision.vision_manager import VisionManager
+from basestation.simulator.simulator_manager import SimulatorManager
 
 # We define a metaclass for BaseStation - the BaseStation will be an instance
 #  of the metaclass Singleton. This is very powerful as it reflects how the
@@ -34,6 +35,7 @@ class BaseStation(object, metaclass=Singleton):
         """
         self.bot_manager = BotManager()
         self.vision_manager = VisionManager()
+        self.simulator_manager = SimulatorManager()
         return
 
     def get_bot_manager(self):
@@ -47,3 +49,9 @@ class BaseStation(object, metaclass=Singleton):
         Gets the vision manager associated with current BaseStation.
         """
         return self.vision_manager
+
+    def get_simulator_manager(self):
+        """
+        Gets the simulator manager associated with current BaseStation.
+        """
+        return self.simulator_manager

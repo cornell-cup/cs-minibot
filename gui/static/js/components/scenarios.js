@@ -27,20 +27,24 @@ export default class ScenariosItem extends React.Component {
 
     /* handler for add scenario (load currently displayed scenario into simulator) */
     addScenario(event){
-        console.log("add scenario listener");
-        axios({
-            method:'POST',
-            url:'/addScenario',
-            data: JSON.stringify({items: this.state.items}),
-            dataType: 'text',
-            contentType: 'application/json; charset=utf-8'
-        })
-        .then(function(response) {
-            console.log('added scenario successfully');
-        })
-        .catch(function (error) {
-            console.log(error);
-        });
+        if (this.state.numBots != 1) {
+            alert("There must be one bot!");
+        } else {
+            console.log("add scenario listener");
+            axios({
+                method:'POST',
+                url:'/addScenario',
+                data: JSON.stringify({items: this.state.items}),
+                dataType: 'text',
+                contentType: 'application/json; charset=utf-8'
+            })
+            .then(function(response) {
+                console.log('added scenario successfully');
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        }
     }
 
     /* saves currently loaded scenario to file */
