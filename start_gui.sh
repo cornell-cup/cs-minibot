@@ -8,7 +8,7 @@ if [ "$1" = "webpack" ]; then
     npm run webpack
     echo "=========== WEBPACK SETUP COMPLETE ============"
 else
-    echo "Skipping webpack..."
+    echo "Skipping webpack! To run webpack, add \"webpack\" parameter."
 fi
 
 PYTHONPATH=.. python3 main.py
