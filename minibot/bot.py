@@ -42,6 +42,11 @@ class Bot():
                       PWM(self.actuators["left"]["pinPWM"]),
                       DigitalOutput(self.actuators["right"]["pinHighLow"]),
                       PWM(self.actuators["right"]["pinPWM"]))
+        self.stop()
+
+        #Starts wheels
+        wheelEnabler = DigitalOutput(config["wheelEnablerPin"])
+        wheelEnabler.set_high()
 
         for sensor in config["sensors"]:
             name = sensor["name"]
