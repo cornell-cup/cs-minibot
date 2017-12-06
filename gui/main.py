@@ -34,7 +34,9 @@ class BaseInterface:
             ("/sendKV", SendKVHandler),
             ("/vision", VisionHandler),
             ("/updateloc", UpdateLocationHandler),
-            ("/findScripts", FindScriptsHandler)
+            ("/findScripts", FindScriptsHandler),
+            ("/runXbox", RunXboxHandler),
+            ("/stopXbox", StopXboxHandler)
         ]
         self.settings = {
             "static_path": os.path.join(os.path.dirname(__file__), "static")
@@ -180,13 +182,20 @@ class ScriptHandler(tornado.web.RequestHandler):
             logging.warning("[ERROR] Bot not detected when trying to send script.")
 
 
-class XboxHandler(tornado.web.RequestHandler):
+class RunXboxHandler(tornado.web.RequestHandler):
     """
-    Handles XBOX.
+    Handles run XBOX.
     """
     def post(self):
-        pass
+        print("Run xbox")
 
+class StopXboxHandler(tornado.web.RequestHandler):
+    """
+    Handles stop XBOX
+    """
+
+    def post(self):
+        print("stop xbox")
 
 class VisionHandler(tornado.web.RequestHandler):
     """

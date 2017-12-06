@@ -31,7 +31,9 @@ def main():
     tcpInstance = TCP()
     print(tcpInstance)
     thread_udp = Thread(target= minibot.hardware.communication.UDP.udpBeacon)
-    thread_udp.start()    
+    thread_udp.start()
+
+
     while True:
         tcpCmd = tcpInstance.get_command()
         parse_command(tcpCmd, bot)
