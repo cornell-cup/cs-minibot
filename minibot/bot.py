@@ -42,6 +42,7 @@ class Bot():
                       PWM(self.actuators["left"]["pinPWM"]),
                       DigitalOutput(self.actuators["right"]["pinHighLow"]),
                       PWM(self.actuators["right"]["pinPWM"]))
+        self.stop()
 
         for sensor in config["sensors"]:
             name = sensor["name"]
