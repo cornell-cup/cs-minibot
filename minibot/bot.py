@@ -70,7 +70,7 @@ class Bot():
         :param power The percentage of the bot's power to use from 0-100
         :return True if the action is supported
         """
-        self.motors.set_speed(power/100,power/100)
+        self.motors.set_speed(power,power)
 
     def move_backward(self, power):
         """
@@ -78,7 +78,7 @@ class Bot():
         :param power The percentage of the bot's power to use from 0-100
         :return True if the action is supported
         """
-        self.motors.set_speed(-power/100,-power/100)
+        self.motors.set_speed(-power,-power)
 
     def turn_clockwise(self, power):
         """
@@ -86,7 +86,7 @@ class Bot():
         :param power The percentage of the bot's power to use from 0-100
         :return True if the action is supported
         """
-        self.motors.set_speed(power/100,-power/100)
+        self.motors.set_speed(power,-power)
 
     def turn_counter_clockwise(self, power):
         """
@@ -94,7 +94,7 @@ class Bot():
         :param power The percentage of the bot's power to use from 0-100
         :return True if the action is supported
         """
-        self.motors.set_speed(-power/100,power/100)
+        self.motors.set_speed(-power,power)
 
     def set_wheel_power(self, left, right):
         """
@@ -106,7 +106,7 @@ class Bot():
         :param back_right power to deliver to the back_right wheel
         :return True if the action is supported
         """
-        self.motors.set_speed(left/100,right/100)
+        self.motors.set_speed(left,right)
 
     def wait(self, t):
         """
@@ -154,6 +154,12 @@ class Bot():
         Returns all sensors in a list
         """
         return self.sensors.values()
+
+    def get_motors(self):
+        """
+        Returns motor object
+        """
+        return self.motors
 
     def poll_sensors(self):
         """
