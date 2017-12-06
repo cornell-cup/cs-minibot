@@ -127,7 +127,7 @@ export default class AddBot extends React.Component {
                 ip: this.state.ip,
                 port: this.state.port,
                 name: this.state.name,
-                type: "minibot"
+                type: this.state.type
             })
             })
                 .then(function(response) {
@@ -196,7 +196,7 @@ export default class AddBot extends React.Component {
                                 <th>
                                     <select id="bot-type" name="type" value={this.state.type} onChange={this.handleInputChange}>
                                         <option value ="minibot">Minibot</option>
-                                        <option value = "simulator.simbot">Simulated Minibot</option>
+                                        <option value = "simbot">Simulated Minibot</option>
                                     </select>
                                 </th>
                             </tr>
