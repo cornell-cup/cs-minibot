@@ -2,7 +2,6 @@ var React = require('react');
 var axios = require('axios');
 var lastKeyPressed;
 export default class ControlPanel extends React.Component {
-    //TODO (#31): add listeners for Keyboard controls
     constructor(props) {
         super(props);
         this.state = {
@@ -25,6 +24,8 @@ export default class ControlPanel extends React.Component {
         this.getTrackedBots = this.getTrackedBots.bind(this);
         this.selectBot = this.selectBot.bind(this);
         this.selectScript = this.selectScript.bind(this);
+
+        // Keyboard controls.
         this.onKeyDown = this.onKeyDown.bind(this);
         window.addEventListener('keydown', this.onKeyDown);
         this.onKeyUp = this.onKeyUp.bind(this);
