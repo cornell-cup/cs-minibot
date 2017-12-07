@@ -39,6 +39,10 @@ def main():
 
         if minibot.controls.xbox.Xbox.updated:
             print("yes")
+            minibot.controls.xbox.Xbox.updated = False
+            x_left = minibot.controls.xbox.Xbox.left
+            x_right = minibot.controls.xbox.Xbox.right
+            bot.set_wheel_power(x_left, x_right)
         time.sleep(0.01)
 
 def parse_command(cmd, bot):
