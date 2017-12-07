@@ -98,8 +98,6 @@ def spawn_script_process(p, bot):
     # Return control to main after .1 seconds
 
 def spawn_named_script_process(p,bot,script_name):
-    if (p is not None and p.is_alive()):
-        p.terminate()
     time.sleep(0.1)
     p = Thread(target=run_script_with_name, args=[bot,script_name])
     p.start()
