@@ -42,7 +42,6 @@ export default class GridView extends React.Component {
         };
 
         // Setup
-        this.main = this.main.bind(this);
         this.setup = this.setup.bind(this);
         this.drawGridLines = this.drawGridLines.bind(this);
 
@@ -69,7 +68,28 @@ export default class GridView extends React.Component {
      * Executes after the component gets rendered.
      **/
     componentDidMount() {
-        this.main();
+        // TODO (#73): Implement background image loading.
+        $("#view").append(this.state.grid.view);
+
+        /* temporarily disabled background image loading */
+        // try {
+        //     var loadUrl = 'static/img/line.png';
+        //     var imageLoader = this.state.imageLoader;
+        //     imageLoader.add('background', loadUrl);
+        //     imageLoader.once("complete", ()=>{this.imageLoaded();});
+        //     imageLoader.load();
+        // }
+        // catch (err) {
+        //     console.log("background failed to load! using white background");
+        //     var background = PIXI.Texture.WHITE;
+        //     background.width = 1300;
+        //     background.height = 1300;
+        //     this.setup(background);
+        // }
+
+        console.log("using white background");
+        var background = PIXI.Texture.WHITE;
+        this.setup(background);
     }
 
     /**
@@ -117,40 +137,11 @@ export default class GridView extends React.Component {
     /**
       * Helper function which takes in a number for radians and
       * outputs a number for degrees.
-      * @param {int} radians Radian value to convert to degrees.
-      * @return {int} Converted value (in degrees).
+      * @param {float} radians Radian value to convert to degrees.
+      * @return {float} Converted value (in degrees).
       */
     toDegrees(radians) {
         return 180 * radians / Math.PI;
-    }
-
-    /**
-      * Main method responsible for the setup of GridView.
-      * Called once when the component mounts.
-      **/
-    main() {
-        // TODO (#73): Implement background image loading.
-        $("#view").append(this.state.grid.view);
-
-        /* temporarily disabled background image loading */
-        // try {
-        //     var loadUrl = 'static/img/line.png';
-        //     var imageLoader = this.state.imageLoader;
-        //     imageLoader.add('background', loadUrl);
-        //     imageLoader.once("complete", ()=>{this.imageLoaded();});
-        //     imageLoader.load();
-        // }
-        // catch (err) {
-        //     console.log("background failed to load! using white background");
-        //     var background = PIXI.Texture.WHITE;
-        //     background.width = 1300;
-        //     background.height = 1300;
-        //     this.setup(background);
-        // }
-
-        console.log("background failed to load! using white background");
-        var background = PIXI.Texture.WHITE;
-        this.setup(background);
     }
 
     /**
@@ -168,7 +159,7 @@ export default class GridView extends React.Component {
      *     of the GridView.
      **/
     setup(background) {
-        console.log('setup part 2');
+        console.log('setting up grid view');
         const backgroundSprite = new PIXI.Sprite(background);
         const scale = this.state.scale;
         const xOffset = this.state.xOffset;
@@ -219,23 +210,21 @@ export default class GridView extends React.Component {
         const y_int = this.state.y_int;
 
         for(var i=0; i<40; i=i+1){
+            //horizontal lines
             lines_y[i] = new PIXI.Graphics();
             lines_y[i].lineStyle(1, 0x0000FF, 1);
 
-            lines_y[i].moveTo(0,i*y_int/2);
-            lines_y[i].lineTo(VIEW_WIDTH,i*y_int/2);
-            lines_y[i].x = 0;
-            lines_y[i].y =(i-20)*y_int/2 + yOffset;
+            lines_y[i].moveTo(0,VIEW_WIDTH-(i-20)*y_int+yOffset);
+            lines_y[i].lineTo(VIEW_WIDTH,VIEW_WIDTH-(i-20)*y_int+yOffset);
 
             this.state.gridContainer.addChild(lines_y[i]);
 
+            //vertical lines
             lines_x[i] = new PIXI.Graphics();
             lines_x[i].lineStyle(1, 0x0000FF, 1);
 
-            lines_x[i].moveTo(i*x_int/2,0);
-            lines_x[i].lineTo(i*x_int/2,VIEW_WIDTH);
-            lines_x[i].x = (i-20)*x_int/2 + xOffset;
-            lines_x[i].y = 0;
+            lines_x[i].moveTo((i-20)*x_int+xOffset,0);
+            lines_x[i].lineTo((i-20)*x_int+xOffset,VIEW_WIDTH);
             this.state.gridContainer.addChild(lines_x[i]);
         }
     }
@@ -243,11 +232,11 @@ export default class GridView extends React.Component {
     /**
      * Pseudo-constructor for a bot object.
      *
-     * @param {int} x The x coordinate of new bot.
-     * @param {int} y The y coordinate of new bot.
-     * @param {int} angle The angle of new bot, in radians.
+     * @param {float} x The x coordinate of new bot.
+     * @param {float} y The y coordinate of new bot.
+     * @param {float} angle The angle of new bot, in radians.
      * @param {string} id The id for the new bot.
-     * @param {int} size The size of the new bot, in meters
+     * @param {float} size The size of the new bot, in meters
      * @return {Object} Object which contains information about
      *     the virtual bot.
     */
@@ -403,7 +392,7 @@ export default class GridView extends React.Component {
      **/
     getNewVisionData() {
         const _this = this;
-        const MILLIS_PER_VISION_UPDATE = 33;
+        const MILLIS_PER_VISION_UPDATE = 66;
         try {
             axios({
                 url: '/updateloc',
@@ -414,6 +403,7 @@ export default class GridView extends React.Component {
                     var data = response.data;
                     var currentTime = new Date();
                     var elapsed = (currentTime - _this.state.lastTime);
+                    _this.state.lastTime = currentTime;
                     var timeout = MILLIS_PER_VISION_UPDATE;
                     if (elapsed > MILLIS_PER_VISION_UPDATE) {
                         timeout = 2*MILLIS_PER_VISION_UPDATE - elapsed;
