@@ -6,7 +6,7 @@ Must be configured in /etc/init.d/minibotinit.sh on the RPi.
 from minibot.bot import Bot
 from minibot.hardware.communication.TCP import TCP
 import minibot.hardware.communication.UDP
-
+from minibot.controls.xbox import Xbox
 import json
 from threading import Thread
 import time
@@ -32,11 +32,13 @@ def main():
     print(tcpInstance)
     thread_udp = Thread(target= minibot.hardware.communication.UDP.udpBeacon)
     thread_udp.start()
-
-
+    xbox = Xbox()
     while True:
         tcpCmd = tcpInstance.get_command()
         parse_command(tcpCmd, bot)
+
+        if minibot.controls.xbox.Xbox.updated:
+            print("yes")
         time.sleep(0.01)
 
 def parse_command(cmd, bot):
