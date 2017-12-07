@@ -77,8 +77,8 @@ def parse_command(cmd, bot):
             print("Invalid File path")
     else:
         bot.extraCMD.put( (key, value) )
-        print("Unknown key: " + key)
-        print("Cmd: " + cmd)
+        # print("Unknown key: " + key)
+        # print("Cmd: " + cmd)
 
 # Copy script sent from GUI into 'run' command
 # So we can call that method to initiate the commands
