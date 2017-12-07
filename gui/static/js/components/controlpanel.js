@@ -143,7 +143,6 @@ export default class ControlPanel extends React.Component {
             this.startLogging();
         }
         else if(target.id=="run") {
-            console.log(this.state.currentScript);
             axios({
                 method:'POST',
                 url:'/sendKV',
