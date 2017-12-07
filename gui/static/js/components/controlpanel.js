@@ -75,7 +75,9 @@ export default class ControlPanel extends React.Component {
      * @param {Event} event The key up event.
      */
     onKeyUp(event) {
-        this.sendMotors(0,0,0,0);
+        if (this.state.keyboard) {
+            this.sendMotors(0,0,0,0);
+        }
     }
 
     /**
@@ -151,7 +153,7 @@ export default class ControlPanel extends React.Component {
                 }),
             })
             .then(function(response) {
-                console.log('sent kv');
+                console.log('Sent Run Command');
             })
             .catch(function (error) {
                 console.warn(error);
