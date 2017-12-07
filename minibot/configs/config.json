@@ -5,18 +5,18 @@
   "discoverable": true,
   "acceptTcp": true,
   "acceptXbox": true,
-  "wheelEnablerPin": 17,
+  "wheelEnablerPin": 21,
   "actuators": [
     {
        "name" : "leftMotor",
-        "pinPWM": 19,
-        "pinHighLow" :18
+        "pinPWM": 13,
+        "pinHighLow" :23
 
     },
     {
       "name" :"rightMotor",
-        "pinPWM": 13,
-        "pinHighLow": 20
+        "pinPWM": 18,
+        "pinHighLow": 24
 
     }
   ],
