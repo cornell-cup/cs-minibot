@@ -2,7 +2,7 @@
 Minibot object.
 """
 import multiprocessing
-from multiprocessing import Queue
+from queue import Queue
 from minibot.botstate import BotState
 from minibot.hardware.rpi.gpio import DigitalInput, DigitalOutput, PWM, RGPIO
 from minibot.peripherals.colorsensor import ColorSensor
@@ -27,6 +27,9 @@ class Bot():
         self.motors = None
         self._parse_config(config)
 
+        # queue for extra unrecognized commands by parser
+        self.extraCMD = Queue()
+
     def _parse_config(self, config):
         """
         Parses config dictionary and registers peripherals.
@@ -39,6 +42,16 @@ class Bot():
                       PWM(self.actuators["left"]["pinPWM"]),
                       DigitalOutput(self.actuators["right"]["pinHighLow"]),
                       PWM(self.actuators["right"]["pinPWM"]))
+        self.stop()
+
+        #Starts wheels
+        wheelEnabler = DigitalOutput(config["wheelEnablerPin"])
+        wheelEnabler.set_high()
+
+        for sensor in config["sensors"]:
+            name = sensor["name"]
+            pin = sensor["pin"]
+            self.sensors[name] = ColorSensor(self, name, pin)
 
     def get_state(self):
         """
@@ -62,7 +75,7 @@ class Bot():
         :param power The percentage of the bot's power to use from 0-100
         :return True if the action is supported
         """
-        self.motors.set_speed(power/100,power/100)
+        self.motors.set_speed(power,power)
 
     def move_backward(self, power):
         """
@@ -70,7 +83,7 @@ class Bot():
         :param power The percentage of the bot's power to use from 0-100
         :return True if the action is supported
         """
-        self.motors.set_speed(-power/100,-power/100)
+        self.motors.set_speed(-power,-power)
 
     def turn_clockwise(self, power):
         """
@@ -78,7 +91,7 @@ class Bot():
         :param power The percentage of the bot's power to use from 0-100
         :return True if the action is supported
         """
-        self.motors.set_speed(power/100,-power/100)
+        self.motors.set_speed(power,-power)
 
     def turn_counter_clockwise(self, power):
         """
@@ -86,7 +99,7 @@ class Bot():
         :param power The percentage of the bot's power to use from 0-100
         :return True if the action is supported
         """
-        self.motors.set_speed(-power/100,power/100)
+        self.motors.set_speed(-power,power)
 
     def set_wheel_power(self, left, right):
         """
@@ -98,7 +111,7 @@ class Bot():
         :param back_right power to deliver to the back_right wheel
         :return True if the action is supported
         """
-        self.motors.set_speed(left/100,right/100)
+        self.motors.set_speed(left,right)
 
     def wait(self, t):
         """
@@ -108,10 +121,56 @@ class Bot():
         time.sleep(t)
 
     def register_actuator(self,actuator):
+        """
+        Stores actuator object
+        :param actuator object
+        """
         self.actuators[actuator.name] = actuator
 
+    def register_sensor(self,sensor):
+        """
+        Stores sensor object
+        :param sensor object
+        """
+        self.sensors[sensor.name] = sensor
+
     def get_actuator_by_name(self, name):
+        """
+        Returns actuator object
+        :param name name of the actuator
+        """
         return self.actuators[name]
 
+    def get_sensor_by_name(self, name):
+        """
+        Returns sensor object
+        :param name name of the sensor
+        """
+        return self.sensors[name]
+
     def get_all_actuators(self):
+        """
+        Returns all actuators in a list
+        """
         return self.actuators.values()
+
+    def get_all_sensors(self):
+        """
+        Returns all sensors in a list
+        """
+        return self.sensors.values()
+
+    def get_motors(self):
+        """
+        Returns motor object
+        """
+        return self.motors
+
+    def poll_sensors(self):
+        """
+        Reads values from all sensors
+        """
+        data = {}
+        for sensor in self.sensors:
+            data[sensor] = self.sensors[sensor].read()
+        return data

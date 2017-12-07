@@ -33,7 +33,8 @@ class BaseInterface:
             ("/removeBot", RemoveBotHandler),
             ("/sendKV", SendKVHandler),
             ("/vision", VisionHandler),
-            ("/updateloc", VisionHandler)
+            ("/updateloc", VisionHandler),
+            ("/findScripts", FindScriptsHandler)
         ]
         self.settings = {
             "static_path": os.path.join(os.path.dirname(__file__), "static")
@@ -62,7 +63,6 @@ class BaseStationHandler(tornado.web.RequestHandler):
     def get(self):
         # self.write("Hi There")
         self.render("../gui/index.html", title="Title", items=[])
-
 
 class AddBotHandler(tornado.web.RequestHandler):
     """
@@ -207,7 +207,6 @@ class VisionHandler(tornado.web.RequestHandler):
     """
 
     def get(self):
-        # TODO: Remove hard-coded name of MinIBot.
         loc_info = BaseStation().get_vision_manager().get_locations()
         self.write(json.dumps(loc_info).encode())
 
@@ -221,6 +220,20 @@ class VisionHandler(tornado.web.RequestHandler):
         # TODO: Remove hard-coded name of MiniBot.
         BaseStation().get_vision_manager().update_location('Minibot', (x, y, z))
 
+class UpdateLocationHandler(tornado.web.RequestHandler):
+    """
+    Handles vision location update.
+    """
+    def get(self):
+        pass
+
+class FindScriptsHandler(tornado.web.RequestHandler):
+    """
+    Finds existing scripts on minibot.
+    """
+    def get(self):
+        files = BaseStation().get_bot_manager().get_minibot_scripts()
+        self.write(json.dumps(files))
 
 if __name__ == "__main__":
     """
@@ -233,7 +246,6 @@ if __name__ == "__main__":
 MISSING ENDPOINTS:
 
 High priority:
-- updateLoc
 - trackedBots
 - addScenario
 

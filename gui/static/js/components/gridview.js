@@ -141,10 +141,10 @@ export default class GridView extends React.Component {
     }
 
     /**
+
      * Handler for when background image has loaded successfully.
      **/
     imageLoaded(){
-        console.log('background successfully loaded!');
         var background = PIXI.Texture.fromImage('static/img/line.png');
         this.setup(background);
     }
