@@ -62,9 +62,10 @@ class AddScenarioHandler(tornado.web.RequestHandler):
     def post(self):
         listofscenario = json.loads(self.request.body.decode())
         # BaseStation().get_simulator_manager().simulator.set_scenario_list(listofscenario)
-        # BaseStation().vision_manager.up
+        counter = 0
+        for object in listofscenario:
+            BaseStation().vision_manager.update_location("Bot " + str(counter), (object["x"], object["y"], 0))
         self.write(json.dumps(listofscenario).encode())
-        print(listofscenario)
 
 class BaseStationHandler(tornado.web.RequestHandler):
     """
