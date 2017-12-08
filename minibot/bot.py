@@ -52,6 +52,7 @@ class Bot():
             name = sensor["name"]
             pin = sensor["pin"]
             self.sensors[name] = ColorSensor(self, name, pin)
+            print(self.sensors[name])
 
     def get_state(self):
         """
