@@ -9,6 +9,24 @@ export default class MinibotBlockly extends React.Component {
     constructor(props){
         super(props);
         this.scriptToCode = this.scriptToCode.bind(this);
+        this.state = {
+            blockly_filename:"myXmlBlocklyCode.xml",
+        };
+
+        this.handleInputChange = this.handleInputChange.bind(this);
+        this.download = this.download.bind(this);
+        this.upload = this.upload.bind(this);
+    }
+
+    /* handles input change for file name and coding textboxes */
+    handleInputChange(event) {
+        const target = event.target;
+        const value = target.value;
+        const name = target.name;
+
+        this.setState({
+            [name]: value
+        });
     }
 
     /* Runs after component loads - this generates the blockly stuff */
@@ -53,7 +71,7 @@ export default class MinibotBlockly extends React.Component {
         var xmlDom = Blockly.Xml.workspaceToDom(Blockly.getMainWorkspace());
         var xmlText = Blockly.Xml.domToPrettyText(xmlDom);
         element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(xmlText));
-        element.setAttribute('download', "myXmlBlocklyCode.xml");
+        element.setAttribute('download', this.state.blockly_filename);
         element.style.display = 'none';
         document.body.appendChild(element);
         element.click();
@@ -91,6 +109,7 @@ export default class MinibotBlockly extends React.Component {
         return (
             <div id="blockly" className = "box">
                 <div id ="blocklyDiv" style={blocklyStyle}>Blockly</div><br/>
+                Blockly File Name: <input type="text" name="blockly_filename" value={this.state.blockly_filename} onChange={this.handleInputChange}/><br/>
                 <button id="blocklySubmit" onClick={this.download}>Download</button>
                 <form>
                     <input
