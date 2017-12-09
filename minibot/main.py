@@ -56,6 +56,7 @@ def parse_command(cmd, bot):
     if key == "WHEELS":
         try:
             values = value.split(",")
+            print(int(values[0]))
             bot.set_wheel_power(int(values[0]), int(values[1]))
         except Exception as e:
             print(e)
