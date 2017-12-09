@@ -42,6 +42,24 @@ export default class MinibotBlockly extends React.Component {
         document.getElementById('data').value = window.Blockly.Python.workspaceToCode(this.workspace);
     }
 
+     /* DOWNLOAD FUNCTION
+       Allows users to download raw code as a file. Users must
+       manually input file name and file ext.
+    */
+    download(event){
+        console.log("download listener");
+        event.preventDefault();
+        var element = document.createElement('a');
+        var xmlDom = Blockly.Xml.workspaceToDom(Blockly.getMainWorkspace());
+        var xmlText = Blockly.Xml.domToPrettyText(xmlDom);
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(xmlText));
+        element.setAttribute('download', "myXmlBlocklyCode.xml");
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+    }
+
     upload(event){
         console.log("upload listener");
         var _this = this;
@@ -56,15 +74,11 @@ export default class MinibotBlockly extends React.Component {
 
     loadFileAsBlocks(event){
   	    var xmlToLoad = document.getElementById("blockUpload").files[0];
-
  	    var xmlReader = new FileReader();
  	    xmlReader.onload = function(event){
             var textFromFileLoaded = event.target.result;
             console.log(textFromFileLoaded);
-            // document.getElementById("blockdata").value = textFromFileLoaded;
             var dom = Blockly.Xml.textToDom(textFromFileLoaded);
-
-
             Blockly.getMainWorkspace().clear();
             Blockly.Xml.domToWorkspace(dom, Blockly.getMainWorkspace());
          };
@@ -77,6 +91,7 @@ export default class MinibotBlockly extends React.Component {
         return (
             <div id="blockly" className = "box">
                 <div id ="blocklyDiv" style={blocklyStyle}>Blockly</div><br/>
+                <button id="blocklySubmit" onClick={this.download}>Download</button>
                 <form>
                     <input
                         type="file"
@@ -84,7 +99,6 @@ export default class MinibotBlockly extends React.Component {
                         multiplesize="1"
                         accept=".xml"
                         onChange = {this.loadFileAsBlocks}
-                        //onChange = {this.upload}
                     />
                 </form>
             </div>
