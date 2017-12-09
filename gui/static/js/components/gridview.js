@@ -10,7 +10,7 @@ export default class GridView extends React.Component {
 
         this.state = {
             ms_per_update: 33, // modbot update interval in ms
-            bots: [],
+            tracked_objects: [], //list of JSON objects representing either bots or obstacles
             viewWidth:  520, //size of simulator display in pixels
             startScale: 4, //number of meters displayed by simulator at start, 4 is 4x4 meters
 
@@ -42,12 +42,11 @@ export default class GridView extends React.Component {
         };
 
         // Setup
-        this.main = this.main.bind(this);
         this.setup = this.setup.bind(this);
         this.drawGridLines = this.drawGridLines.bind(this);
 
         // Display
-        this.displayBots = this.displayBots.bind(this);
+        this.displayObjects = this.displayObjects.bind(this);
         this.drawBot = this.drawBot.bind(this);
         this.drawScenarioObject = this.drawScenarioObject.bind(this);
 
@@ -69,66 +68,6 @@ export default class GridView extends React.Component {
      * Executes after the component gets rendered.
      **/
     componentDidMount() {
-        this.main();
-    }
-
-    /**
-     * Handler for input changes to modify the state.
-     * @param {Event} event Event which triggers input change.
-     **/
-    handleInputChange(event) {
-        const target = event.target;
-        const value = target.value;
-        const name = target.name;
-        this.setState({
-            [name]: value
-        });
-
-        // Handles zooming and panning
-        if(name=="xOffset"||name=="yOffset"||name=="scale"){
-            const x = this.state.xOffset;
-            const y = this.state.yOffset;
-            const scale = this.state.scale;
-            const VIEW_WIDTH = this.state.viewWidth;
-            const START_SCALE = this.state.startScale;
-
-            this.state.x_int = VIEW_WIDTH/4*(scale/100);
-            this.state.y_int = VIEW_WIDTH/4*(scale/100);
-
-            var stage = this.state.stage;
-            var grid = this.state.grid;
-            var bots = this.state.bots;
-
-            this.state.gridContainer.removeChildren();
-            this.state.botContainer.removeChildren();
-            this.drawGridLines();
-
-            if(this.state.occupancyMatrix !== null) {
-                this.displayOccupancyMatrix(40, 40, 1.0);
-            }
-
-            this.displayBots();
-            // TODO (#73): Impelment fillOccupancyMatrix().
-            // this.fillOccupancyMatrix(scale, x, y);
-            grid.render(stage);
-        }
-    }
-
-    /**
-      * Helper function which takes in a number for radians and
-      * outputs a number for degrees.
-      * @param {int} radians Radian value to convert to degrees.
-      * @return {int} Converted value (in degrees).
-      */
-    toDegrees(radians) {
-        return 180 * radians / Math.PI;
-    }
-
-    /**
-      * Main method responsible for the setup of GridView.
-      * Called once when the component mounts.
-      **/
-    main() {
         // TODO (#73): Implement background image loading.
         $("#view").append(this.state.grid.view);
 
@@ -148,11 +87,61 @@ export default class GridView extends React.Component {
         //     this.setup(background);
         // }
 
+        console.log("using white background");
         var background = PIXI.Texture.WHITE;
         this.setup(background);
     }
 
     /**
+     * Handler for input changes to modify the state.
+     * @param {Event} event Event which triggers input change.
+     **/
+    handleInputChange(event) {
+        const target = event.target;
+        const value = target.value;
+        const name = target.name;
+        this.setState({
+            [name]: value
+        });
+
+        // Handles zooming and panning
+        if(name=="xOffset"||name=="yOffset"||name=="scale"){
+            const scale = this.state.scale;
+            const VIEW_WIDTH = this.state.viewWidth;
+
+            this.state.x_int = VIEW_WIDTH/4*(scale/100);
+            this.state.y_int = VIEW_WIDTH/4*(scale/100);
+
+            var stage = this.state.stage;
+            var grid = this.state.grid;
+
+            this.state.gridContainer.removeChildren();
+            this.state.botContainer.removeChildren();
+            this.drawGridLines();
+
+            if(this.state.occupancyMatrix !== null) {
+                this.displayOccupancyMatrix(40, 40, 1.0);
+            }
+
+            this.displayObjects();
+            // TODO (#73): Impelment fillOccupancyMatrix().
+            // this.fillOccupancyMatrix(scale, x, y);
+            grid.render(stage);
+        }
+    }
+
+    /**
+      * Helper function which takes in a number for radians and
+      * outputs a number for degrees.
+      * @param {float} radians Radian value to convert to degrees.
+      * @return {float} Converted value (in degrees).
+      */
+    toDegrees(radians) {
+        return 180 * radians / Math.PI;
+    }
+
+    /**
+
      * Handler for when background image has loaded successfully.
      **/
     imageLoaded(){
@@ -166,11 +155,9 @@ export default class GridView extends React.Component {
      *     of the GridView.
      **/
     setup(background) {
+        console.log('setting up grid view');
         const backgroundSprite = new PIXI.Sprite(background);
         const scale = this.state.scale;
-        const xOffset = this.state.xOffset;
-        const yOffset = this.state.yOffset;
-        const bots = this.state.bots;
 
         backgroundSprite.scale.x =  1300*scale/100;
         backgroundSprite.scale.y =  1300*scale/100;
@@ -182,7 +169,7 @@ export default class GridView extends React.Component {
         this.state.back.addChild(backgroundSprite);
 
         this.drawGridLines();
-        this.displayBots();
+        this.displayObjects();
 
         this.getNewVisionData();
         // this.pollBotNames();
@@ -216,23 +203,21 @@ export default class GridView extends React.Component {
         const y_int = this.state.y_int;
 
         for(var i=0; i<40; i=i+1){
+            //horizontal lines
             lines_y[i] = new PIXI.Graphics();
             lines_y[i].lineStyle(1, 0x0000FF, 1);
 
-            lines_y[i].moveTo(0,i*y_int/2);
-            lines_y[i].lineTo(VIEW_WIDTH,i*y_int/2);
-            lines_y[i].x = 0;
-            lines_y[i].y =(i-20)*y_int/2 + yOffset;
+            lines_y[i].moveTo(0,VIEW_WIDTH-(i-20)*y_int+yOffset);
+            lines_y[i].lineTo(VIEW_WIDTH,VIEW_WIDTH-(i-20)*y_int+yOffset);
 
             this.state.gridContainer.addChild(lines_y[i]);
 
+            //vertical lines
             lines_x[i] = new PIXI.Graphics();
             lines_x[i].lineStyle(1, 0x0000FF, 1);
 
-            lines_x[i].moveTo(i*x_int/2,0);
-            lines_x[i].lineTo(i*x_int/2,VIEW_WIDTH);
-            lines_x[i].x = (i-20)*x_int/2 + xOffset;
-            lines_x[i].y = 0;
+            lines_x[i].moveTo((i-20)*x_int+xOffset,0);
+            lines_x[i].lineTo((i-20)*x_int+xOffset,VIEW_WIDTH);
             this.state.gridContainer.addChild(lines_x[i]);
         }
     }
@@ -240,11 +225,11 @@ export default class GridView extends React.Component {
     /**
      * Pseudo-constructor for a bot object.
      *
-     * @param {int} x The x coordinate of new bot.
-     * @param {int} y The y coordinate of new bot.
-     * @param {int} angle The angle of new bot, in radians.
+     * @param {float} x The x coordinate of new bot.
+     * @param {float} y The y coordinate of new bot.
+     * @param {float} angle The angle of new bot, in radians.
      * @param {string} id The id for the new bot.
-     * @param {int} size The size of the new bot, in meters
+     * @param {float} size The size of the new bot, in meters
      * @return {Object} Object which contains information about
      *     the virtual bot.
     */
@@ -262,10 +247,10 @@ export default class GridView extends React.Component {
     }
 
     /**
-     * Displays all bots onto the GridView given an array of bots.
+     * Displays all objects being tracked by the gridview.
      **/
-    displayBots() {
-        const botArray = this.state.bots;
+    displayObjects() {
+        const botArray = this.state.tracked_objects;
         const scale = this.state.scale;
         const xOffset = parseInt(this.state.xOffset);
         const yOffset = parseInt(this.state.yOffset);
@@ -400,7 +385,7 @@ export default class GridView extends React.Component {
      **/
     getNewVisionData() {
         const _this = this;
-        const MILLIS_PER_VISION_UPDATE = 33;
+        const MILLIS_PER_VISION_UPDATE = 66;
         try {
             axios({
                 url: '/updateloc',
@@ -411,6 +396,7 @@ export default class GridView extends React.Component {
                     var data = response.data;
                     var currentTime = new Date();
                     var elapsed = (currentTime - _this.state.lastTime);
+                    _this.state.lastTime = currentTime;
                     var timeout = MILLIS_PER_VISION_UPDATE;
                     if (elapsed > MILLIS_PER_VISION_UPDATE) {
                         timeout = 2*MILLIS_PER_VISION_UPDATE - elapsed;
@@ -424,24 +410,18 @@ export default class GridView extends React.Component {
                     var botContainer = _this.state.botContainer;
                     if (!_this.state.lock) {
                         _this.state.lock = true;
-                        var bots = [];
+                        var visionData = [];
                         botContainer.removeChildren();
                         for (var b in data) {
-                            var bot = data[b];
-                            var botX = bot.x;
-                            var botY = bot.y;
-                            var botAngle = bot.angle;
-                            var botSize = bot.size;
-                            var botType = bot.type;
-                            var botId = bot.id;
-                            bots.push(_this.newBot(bot.x, bot.y, bot.angle, bot.id, bot.size, bot.type));
+                            var item = data[b];
+                            visionData.push(_this.newBot(item.x, item.y, item.angle, item.id, item.size, item.type));
                         }
-                        _this.state.bots = bots;
+                        _this.state.tracked_objects = visionData;
                         stage.removeChild(_this.state.gridContainer);
                         _this.state.gridContainer = new PIXI.Container();
                         _this.drawGridLines();
                         stage.addChild(_this.state.gridContainer);
-                        _this.displayBots();
+                        _this.displayObjects();
                         grid.render(stage);
                         _this.state.lock = false;
                     }
@@ -626,7 +606,7 @@ export default class GridView extends React.Component {
     //         drawGridLines(scale, xOffset, yOffset);
     // //    displayOccupancyMatrix(40, 40, 1.0);
     //
-    //         displayBots(bots, scale, xOffset, yOffset);
+    //         displayObjects(bots, scale, xOffset, yOffset);
     //         fillOccupancyMatrix(scale, xOffset, yOffset);
     //
     //         grid.render(stage);

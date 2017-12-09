@@ -19,9 +19,9 @@ class VisionManager:
 
         Args:
              bot_name (obj:`str`): Name of the bot.
-             loc_info {'x':, 'y':,'z':,'size':,'angle':,'type':}
+             loc_info {'x':float, 'y':float,'z':float,'size':float,'angle':float,'type':str} OR (float x, float y, float z)
         """
-        #THIS NEEDS TO BE REDONE LATER
+
         if isinstance(loc_info, tuple):
             if bot_name not in self.locations: self.locations[bot_name] = {
                 'size': 1,
@@ -42,8 +42,9 @@ class VisionManager:
         Args:
             bot_name (obj:`str`): Name of the bot.
         Returns:
-            (int, int, int): X, Y, and Z coordinates of the bot.
+            (float, float, float): X, Y, and Z coordinates of the bot.
         """
+        #this should really be changed return a dictionary instead of a tuple
         loc_data = self.locations[bot_name]
         return loc_data['x'], loc_data['y'], loc_data['z']
 
@@ -53,7 +54,7 @@ class VisionManager:
         NOTE: angle hardcoded to 0, size hardcoded to 1
 
         Returns:
-            list of {'id':str, 'x':int, 'y':int, 'size':float, 'angle':int}
+            list of {'id':str, 'x':float, 'y':float, 'size':float, 'angle':float}
         """
         botlist = []
         for k in self.locations:

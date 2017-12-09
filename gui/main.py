@@ -34,7 +34,7 @@ class BaseInterface:
             ("/sendKV", SendKVHandler),
             ("/vision", VisionHandler),
             ("/updateloc", VisionHandler),
-            ("/addScenario", AddScenarioHandler)
+            ("/findScripts", FindScriptsHandler)
         ]
         self.settings = {
             "static_path": os.path.join(os.path.dirname(__file__), "static")
@@ -218,7 +218,6 @@ class VisionHandler(tornado.web.RequestHandler):
     """
 
     def get(self):
-        # TODO: Remove hard-coded name of MinIBot.
         loc_info = BaseStation().get_vision_manager().get_locations()
         self.write(json.dumps(loc_info).encode())
 
@@ -231,8 +230,6 @@ class VisionHandler(tornado.web.RequestHandler):
 
         # TODO: Remove hard-coded name of MiniBot.
         BaseStation().get_vision_manager().update_location('Minibot', (x, y, z))
-
-
 
 class UpdateLocationHandler(tornado.web.RequestHandler):
     """
@@ -260,7 +257,6 @@ if __name__ == "__main__":
 MISSING ENDPOINTS:
 
 High priority:
-- updateLoc
 - trackedBots
 
 Low priority:

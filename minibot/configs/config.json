@@ -5,6 +5,7 @@
   "discoverable": true,
   "acceptTcp": true,
   "acceptXbox": true,
+  "wheelEnablerPin": 17,
   "actuators": [
     {
        "name" : "leftMotor",
