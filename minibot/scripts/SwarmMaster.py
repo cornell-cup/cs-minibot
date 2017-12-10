@@ -14,7 +14,6 @@ def run(bot):
     z = ZMQExchange()
     z.setMediator()
     z.setBroadcaster()
-    
     TCP.tcp.send_to_basestation("SwarmIP", z.getIP("wlan0"))
 
     mediateThread = Thread(target=z.mediate)
@@ -27,7 +26,6 @@ def run(bot):
 def colorbot(bot,z):
     speed = 10
     cs = bot.get_sensor_by_name("ColorSensor")
-
     pinkFirstTime = True
     orangeFirstTime = True
     
@@ -94,7 +92,7 @@ def echobot(bot,z):
     try:
         while(True):
             # msg is a tuple of left motor and right motor, respectively.
-            msg = bot.get_actuator_by_name("two_wheel_movement").get_value()
+            msg = bot.get_motors().get_speed()
             print("MSG: " + msg)
             z.broadcast(msg)
             time.sleep(0.1)
