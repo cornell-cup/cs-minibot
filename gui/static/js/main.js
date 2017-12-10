@@ -87,7 +87,6 @@ class ControlTab extends React.Component {
      }
 
      setCurrentBot(botName){
-        console.log(botName);
         this.setState({
             currentBot: botName
         });
