@@ -34,7 +34,8 @@ class BaseInterface:
             ("/sendKV", SendKVHandler),
             ("/vision", VisionHandler),
             ("/updateloc", VisionHandler),
-            ("/findScripts", FindScriptsHandler)
+            ("/findScripts", FindScriptsHandler),
+            ("/addScenario", AddScenarioHandler)
         ]
         self.settings = {
             "static_path": os.path.join(os.path.dirname(__file__), "static")
@@ -64,7 +65,16 @@ class AddScenarioHandler(tornado.web.RequestHandler):
         # BaseStation().get_simulator_manager().simulator.set_scenario_list(listofscenario)
         counter = 0
         for object in listofscenario:
-            BaseStation().vision_manager.update_location("Bot " + str(counter), (object["x"], object["y"], 0))
+            print(object)
+            BaseStation().vision_manager.update_location("Object " + str(counter), {
+                'x': int(object['x']),
+                'y': int(object['y']),
+                'z': 0,
+                'size': object['size'],
+                'angle': object['angle'],
+                'type': object['type']
+            })
+            counter = counter + 1
         self.write(json.dumps(listofscenario).encode())
 
 class BaseStationHandler(tornado.web.RequestHandler):

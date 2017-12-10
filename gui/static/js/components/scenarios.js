@@ -156,7 +156,7 @@ export default class ScenariosItem extends React.Component {
                 console.log("add bot");
                 this.state.numBots++;
                 console.log("numBot:" + this.state.numBots);
-                li.push({type: this.state.type, angle: this.state.angle,  x: this.state.posx, y: this.state.posy});
+                li.push({type: this.state.type, angle: this.state.angle,  x: this.state.posx, y: this.state.posy, size: '0'});
             } else {
                 li.push({type: this.state.type, angle: this.state.angle, size: this.state.size, x: this.state.posx, y: this.state.posy});
             }
