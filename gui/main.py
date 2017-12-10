@@ -241,6 +241,7 @@ class VisionHandler(tornado.web.RequestHandler):
         tag_id = info['id']
         x, y, z = info['x'], info['y'], info['z']
         logging.info("Received vision data " + str((tag_id, x, y, z)))
+        print("Vision data: " + str((tag_id, x, y, z)))
 
         # TODO: Remove hard-coded name of MiniBot.
         BaseStation().get_vision_manager().update_location('Minibot', (x, y, z))

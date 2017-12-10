@@ -394,6 +394,8 @@ export default class GridView extends React.Component {
             }).then(
                 function visionDataGot(response) {
                     var data = response.data;
+                    console.warn("Vision data received!");
+                    console.log(data); debugger;
                     var currentTime = new Date();
                     var elapsed = (currentTime - _this.state.lastTime);
                     _this.state.lastTime = currentTime;
