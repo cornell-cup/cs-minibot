@@ -27,20 +27,24 @@ export default class ScenariosItem extends React.Component {
 
     /* handler for add scenario (load currently displayed scenario into simulator) */
     addScenario(event){
-        console.log("add scenario listener");
-        axios({
-            method:'POST',
-            url:'/addScenario',
-            data: JSON.stringify({items: this.state.items}),
-            dataType: 'text',
-            contentType: 'application/json; charset=utf-8'
-        })
-        .then(function(response) {
-            console.log('added scenario successfully');
-        })
-        .catch(function (error) {
-            console.log(error);
-        });
+        if (this.state.numBots != 1) {
+            alert("There must be one bot!");
+        } else {
+            console.log("add scenario listener");
+            axios({
+                method:'POST',
+                url:'/addScenario',
+                data: this.state.items,
+                dataType: 'text',
+                contentType: 'application/json; charset=utf-8'
+            })
+            .then(function(response) {
+                console.log('added scenario successfully');
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        }
     }
 
     /* saves currently loaded scenario to file */
@@ -96,7 +100,7 @@ export default class ScenariosItem extends React.Component {
                 var regexPosition = /\[\d,\d\]/;
                 jsonArray.forEach(function(object) {
                 //checks that bot contains position and angle
-                    if (regexPosition.test(object.position) && object.type == "simulator.simbot" && object.position != "undefined" && object.angle != "undefined")  {
+                    if (regexPosition.test(object.position) && object.type == "bot" && object.position != "undefined" && object.angle != "undefined")  {
                         tempNumBot++;
                         li.push({type: object.type, angle: object.angle, position: object.position});
                     }
@@ -108,23 +112,18 @@ export default class ScenariosItem extends React.Component {
                         throw "wrong format or position (prob position)!";
                     }
                 });
-
                 //file can only have 1 bot
                 if (tempNumBot != 1) {
                     throw "too many bots!";
                 }
-
                 _this.setState({items: li});
                 _this.state.numBots = 1;
             } catch(err) {
                 console.log(err);
                 alert("Invalid file! Please submit a properly formatted file!");
             }
-
-
         }
         reader.readAsText(file);
-
     }
 
     /* handles input change for input fields */
@@ -147,19 +146,19 @@ export default class ScenariosItem extends React.Component {
         //check that inputs are valid
         if (this.state.angle > 360) alert("The angle is too large!");
         else if (this.state.angle == '' || this.state.posx == '' || this.state.posy == '') alert("Fields cannot be empty!");
-        else if (this.state.type == "simulator.simbot" && this.state.numBots == 1) alert("Only one bot can be added!");
+        else if (this.state.type == "bot" && this.state.numBots == 1) alert("Only one bot can be added!");
         else {
             var li = this.state.items;
             var positionString = "[" + this.state.posx + "," + this.state.posy + "]";
             console.log(this.state.type);
 
-            if (this.state.type == "simulator.simbot") {
+            if (this.state.type == "bot") {
                 console.log("add bot");
                 this.state.numBots++;
                 console.log("numBot:" + this.state.numBots);
-                li.push({type: this.state.type, angle: this.state.angle, position: positionString});
+                li.push({type: this.state.type, angle: this.state.angle,  x: this.state.posx, y: this.state.posy, size: '0'});
             } else {
-                li.push({type: this.state.type, angle: this.state.angle, size: this.state.size, position: positionString});
+                li.push({type: this.state.type, angle: this.state.angle, size: this.state.size, x: this.state.posx, y: this.state.posy});
             }
 
             this.setState({items: li});
@@ -171,7 +170,7 @@ export default class ScenariosItem extends React.Component {
         console.log("handle remove");
         console.log(this.state);
         var li = this.state.items;
-        if (li[event.idx].type == "simulator.simbot") {
+        if (li[event.idx].type == "bot") {
             this.state.numBots--;
         }
         console.log("type: " + li[event.idx].type);
@@ -206,7 +205,7 @@ export default class ScenariosItem extends React.Component {
             <div id = "scenariobox" className = "box">
                 <button onClick={this.saveScenario} style={styles.Button}>Save</button>
                 <form><input type="file" style={styles.Button} accept=".txt" id="loadBtn" onChange={this.loadScenario}/></form>
-                <button style={styles.Button}>Add to Simulator</button>
+                <button style={styles.Button} onClick={this.addScenario}>Add to Simulator</button>
                 <table style={styles.ScenariosItem}>
                     <tbody>
                         <tr>
@@ -214,7 +213,7 @@ export default class ScenariosItem extends React.Component {
                             <th>
                                 <select name="type" value={this.state.value} onChange={this.handleInputChange} style={styles.Form}>
                                     <option value ="scenario_object">Scenario Object</option>
-                                    <option value = "simulator.simbot">Simulated Minibot</option>
+                                    <option value = "bot">Simulated Minibot</option>
                                 </select>
                             </th>
                             <td><button style={styles.Button} onClick={this.handleSubmit}>Add</button></td>
@@ -224,7 +223,7 @@ export default class ScenariosItem extends React.Component {
                             <th>Angle: </th>
                             <td><input type="number" name="angle" onChange={this.handleInputChange} style={styles.Form}/></td>
                             <th>Size: </th>
-                            <td><input type="number" name="size"  disabled={this.state.type == "simulator.simbot"} onChange={this.handleInputChange} style={styles.Form}/></td>
+                            <td><input type="number" name="size"  disabled={this.state.type == "bot"} onChange={this.handleInputChange} style={styles.Form}/></td>
                         </tr>
                         <tr>
                             <th>Position X: </th>
@@ -253,7 +252,7 @@ export default class ScenariosItem extends React.Component {
                                     </tr>
                                     <tr>
                                         <th>Position: </th>
-                                        <td>{item.position}</td>
+                                        <td>[{item.x}, {item.y}]</td>
                                         <td><button style={styles.Button} onClick = {() => _this.handleRemove({idx})}>Remove</button></td>
                                         <td></td>
                                     </tr>

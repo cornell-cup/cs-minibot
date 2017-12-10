@@ -34,7 +34,8 @@ class BaseInterface:
             ("/sendKV", SendKVHandler),
             ("/vision", VisionHandler),
             ("/updateloc", VisionHandler),
-            ("/findScripts", FindScriptsHandler)
+            ("/findScripts", FindScriptsHandler),
+            ("/addScenario", AddScenarioHandler)
         ]
         self.settings = {
             "static_path": os.path.join(os.path.dirname(__file__), "static")
@@ -55,6 +56,30 @@ class BaseInterface:
         """
         return tornado.web.Application(self.handlers, **self.settings)
 
+class AddScenarioHandler(tornado.web.RequestHandler):
+    """
+    Adds scenario objects to gridview
+    """
+    def post(self):
+        listofscenario = json.loads(self.request.body.decode())
+        # BaseStation().get_simulator_manager().simulator.set_scenario_list(listofscenario)
+        counter = 1
+        BaseStation().vision_manager.clear_list()
+        for object in listofscenario:
+            if object['type'] == 'bot':
+                obj_name = "Bot"
+            else:
+                obj_name = "Object " + str(counter)
+                counter = counter + 1
+
+            BaseStation().vision_manager.update_location(obj_name, {
+                'x': int(object['x']),
+                'y': int(object['y']),
+                'size': object['size'],
+                'angle': object['angle'],
+                'type': object['type']
+            })
+        self.write(json.dumps(listofscenario).encode())
 
 class BaseStationHandler(tornado.web.RequestHandler):
     """
@@ -247,7 +272,6 @@ MISSING ENDPOINTS:
 
 High priority:
 - trackedBots
-- addScenario
 
 Low priority:
 - postOccupancyMatrix

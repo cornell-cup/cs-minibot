@@ -335,7 +335,7 @@ export default class GridView extends React.Component {
         scenarioObject.beginFill(0x0EB530);
         scenarioObject.drawRect(0, 0, size, size);
         scenarioObject.pivot = new PIXI.Point(size/2, size/2);
-        scenarioObject.rotation = scenario_obj.angle;
+        scenarioObject.rotation = -scenario_obj.angle;
         scenarioObject.endFill();
 
         var cx = (scenario_obj.x)*x_int;
