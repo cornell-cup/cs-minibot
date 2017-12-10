@@ -20,9 +20,8 @@ export default class MinibotBlockly extends React.Component {
 
     /* handles input change for file name and coding textboxes */
     handleInputChange(event) {
-        const target = event.target;
-        const value = target.value;
-        const name = target.name;
+        const value = event.target.value;
+        const name = event.target.name;
 
         this.setState({
             [name]: value
