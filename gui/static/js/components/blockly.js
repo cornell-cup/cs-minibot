@@ -102,11 +102,11 @@ export default class MinibotBlockly extends React.Component {
  	 }
 
     render(){
-        var blocklyStyle = {margin:'0', height: '70vh', width: '55vw'};
+        var blocklyStyle = {margin:'0', height: '67vh', width: '55vw'};
         return (
             <div id="blockly" className = "box">
                 <div id ="blocklyDiv" style={blocklyStyle}>Blockly</div><br/>
-                Blockly File Name: <input type="text" name="blockly_filename" value={this.state.blockly_filename} onChange={this.handleInputChange}/><br/>
+                Blockly File Name: <input type="text" name="blockly_filename" value={this.state.blockly_filename} onChange={this.handleInputChange}/>
                 <button id="blocklySubmit" onClick={this.download}>Download</button>
                 <form>
                     <input
