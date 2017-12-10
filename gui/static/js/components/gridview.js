@@ -289,7 +289,7 @@ export default class GridView extends React.Component {
         bot.y = cy;
 
         // draw bot coordinate text
-        let botCoordText = new PIXI.Text('(' + b.x.toFixed(2) + ',' + b.y.toFixed(2) + ',' + toDegrees(b.angle).toFixed(2) + ')',{fontFamily : 'Arial', fontSize: 11, fill : 0xff1010, align : 'center'});
+        let botCoordText = new PIXI.Text('(' + b.x.toFixed(2) + ',' + b.y.toFixed(2) + ',' + this.toDegrees(b.angle).toFixed(2) + ')',{fontFamily : 'Arial', fontSize: 11, fill : 0xff1010, align : 'center'});
         botCoordText.x = cx;
         botCoordText.y = cy + 14; //arbitrary constant for offset
 
