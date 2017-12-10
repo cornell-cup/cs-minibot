@@ -27,13 +27,13 @@ def run(bot):
 def colorbot(bot,z):
     speed = 10
     cs = bot.get_sensor_by_name("ColorSensor")
-    cs.calibrate()
+
     pinkFirstTime = True
     orangeFirstTime = True
     
     try:
         while(True):
-            c = cs.read_color()
+            c = cs.get_color_name()
             if(c=="RED"):
                 # stop
                 msg = (0,0)
