@@ -209,13 +209,14 @@ int main(int argc, char** argv) {
 
                 Mat tag2orig = device_transform_matrix[i] * tag2cam;
                 Mat tagXYZS = tag2orig * genout;
+                double scale = 0.3;
                 printf("%zu :: %d :: % 3.3f % 3.3f % 3.3f\n",
                         i, det->id,
-                        tagXYZS.at<double>(0), tagXYZS.at<double>(1), tagXYZS.at<double>(2));
+                        scale * tagXYZS.at<double>(0), scale * tagXYZS.at<double>(1), scale * tagXYZS.at<double>(2));
 
                 // Send data to basestation
                 sprintf(postDataBuffer, "{\"id\":%d,\"x\":%f,\"y\":%f,\"z\":%f}",
-                        det->id, tagXYZS.at<double>(0), tagXYZS.at<double>(1), tagXYZS.at<double>(2));
+                        det->id, scale * tagXYZS.at<double>(0), scale * tagXYZS.at<double>(1), scale * tagXYZS.at<double>(2));
                 curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postDataBuffer);
                 // TODO Check for error response
                 curl_easy_perform(curl);

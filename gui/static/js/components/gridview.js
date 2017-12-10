@@ -202,7 +202,7 @@ export default class GridView extends React.Component {
         const x_int = this.state.x_int;
         const y_int = this.state.y_int;
 
-        for(var i=0; i<40; i=i+1){
+        for(var i=0; i<100; i=i+1){ // prev 40
             //horizontal lines
             lines_y[i] = new PIXI.Graphics();
             lines_y[i].lineStyle(1, 0x0000FF, 1);
@@ -395,7 +395,7 @@ export default class GridView extends React.Component {
                 function visionDataGot(response) {
                     var data = response.data;
                     console.warn("Vision data received!");
-                    console.log(data); debugger;
+                    console.log(data);
                     var currentTime = new Date();
                     var elapsed = (currentTime - _this.state.lastTime);
                     _this.state.lastTime = currentTime;
@@ -419,6 +419,7 @@ export default class GridView extends React.Component {
                             visionData.push(_this.newBot(item.x, item.y, item.angle, item.id, item.size, item.type));
                         }
                         _this.state.tracked_objects = visionData;
+                        console.log(_this.state.tracked_objects);
                         stage.removeChild(_this.state.gridContainer);
                         _this.state.gridContainer = new PIXI.Container();
                         _this.drawGridLines();
