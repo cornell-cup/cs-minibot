@@ -215,6 +215,19 @@ class FindScriptsHandler(tornado.web.RequestHandler):
         files = BaseStation().get_bot_manager().get_minibot_scripts()
         self.write(json.dumps(files))
 
+class LogHandler(tornado.web.RequestHandler):
+    """
+    Finds existing scripts on minibot.
+    """
+    def get(self):
+        info = json.loads(self.request.body.decode())
+        name = info['name']
+
+        # Sends KV through command center.
+        bot = BaseStation().get_bot_manager().\
+            get_bot_by_name(name)
+        self.write(json.dumps(bot.poll_sensors()))
+
 if __name__ == "__main__":
     """
     Main method for running base station GUI.

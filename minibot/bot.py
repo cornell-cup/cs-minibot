@@ -172,5 +172,5 @@ class Bot():
         """
         data = {}
         for sensor in self.sensors:
-            data[sensor] = self.sensors[sensor].read()
+            data[sensor] = self.sensors[sensor].get_color_name()
         return data

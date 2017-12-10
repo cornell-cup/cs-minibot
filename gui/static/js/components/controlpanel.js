@@ -261,6 +261,7 @@ export default class ControlPanel extends React.Component {
             processData: false,
         })
         .then(function(response) {
+            console.log(response.data)
             console.log('started logging data');
         })
         .catch(function (error) {
