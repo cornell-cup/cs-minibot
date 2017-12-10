@@ -51,8 +51,8 @@ class Bot():
         for sensor in config["sensors"]:
             name = sensor["name"]
             pin = sensor["pin"]
-            self.sensors[name] = ColorSensor(self, name, pin)
-
+            self.sensors[name] = ColorSensor(name, pin)
+            print(self.sensors[name])
     def get_state(self):
         """
         Gets the BotState of the minibot.
