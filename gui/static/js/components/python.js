@@ -43,8 +43,12 @@ export default class Python extends React.Component {
         console.log("download listener");
         event.preventDefault();
         var element = document.createElement('a');
+        var filename = this.state.filename;
+        if(filename.substring(filename.length-4)!=".xml"){
+            filename += ".py";
+        }
         element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(this.state.data));
-        element.setAttribute('download', this.state.filename);
+        element.setAttribute('download', filename);
         element.style.display = 'none';
         document.body.appendChild(element);
         element.click();

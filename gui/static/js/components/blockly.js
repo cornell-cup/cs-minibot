@@ -68,8 +68,12 @@ export default class MinibotBlockly extends React.Component {
         var element = document.createElement('a');
         var xmlDom = Blockly.Xml.workspaceToDom(Blockly.getMainWorkspace());
         var xmlText = Blockly.Xml.domToPrettyText(xmlDom);
+        var filename = this.state.blockly_filename;
+        if(filename.substring(filename.length-4)!=".xml"){
+            filename += ".xml";
+        }
         element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(xmlText));
-        element.setAttribute('download', this.state.blockly_filename);
+        element.setAttribute('download', filename);
         element.style.display = 'none';
         document.body.appendChild(element);
         element.click();
