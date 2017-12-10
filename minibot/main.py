@@ -77,8 +77,6 @@ def parse_command(cmd, bot):
             print("Invalid File path")
     else:
         bot.extraCMD.put( (key, value) )
-        print("Unknown key: " + key)
-        print("Cmd: " + cmd)
 
 # Copy script sent from GUI into 'run' command
 # So we can call that method to initiate the commands
@@ -98,8 +96,6 @@ def spawn_script_process(p, bot):
     # Return control to main after .1 seconds
 
 def spawn_named_script_process(p,bot,script_name):
-    if (p is not None and p.is_alive()):
-        p.terminate()
     time.sleep(0.1)
     p = Thread(target=run_script_with_name, args=[bot,script_name])
     p.start()

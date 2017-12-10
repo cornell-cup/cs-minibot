@@ -59,5 +59,5 @@ class VisionManager:
         botlist = []
         for k in self.locations:
             v = self.locations[k]
-            botlist.append({'id':k, 'x':v['x'], 'y':v['y'], 'size':v['size'], 'angle':v['angle']})
+            botlist.append({'id':k, 'x':v['x'], 'y':v['y'], 'size':v['size'], 'angle':v['angle'], 'type':v['type']})
         return botlist
