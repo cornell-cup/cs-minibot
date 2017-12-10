@@ -15,9 +15,7 @@ using std::vector;
 
 #define TAG_SIZE 6.5f
 
-Mat draw(){
 
-}
 
 int main(int argc, char** argv) {
     // Display usage
@@ -131,7 +129,7 @@ int main(int argc, char** argv) {
     Mat frame, gray;
 
 
-    Mat disp;
+    Mat disp = cv::Mat::zeros(cv::Size(500, 500), CV_8UC3);;
     vector<int> tag0(3);
     vector<int> tag1(3);
     vector<int> tag2(3);
@@ -160,7 +158,7 @@ int main(int argc, char** argv) {
             if (!devices[i].isOpened()) {
                 continue;
             }
-            disp.setTo(cv::Scalar(0,0,0));
+            disp = Mat(500,500, CV_8UC3, cv::Scalar(0,0,0));
 
             devices[i] >> frame;
             cvtColor(frame, gray, COLOR_BGR2GRAY);
@@ -243,26 +241,26 @@ int main(int argc, char** argv) {
                 printf("%zu :: %d :: % 3.3f % 3.3f % 3.3f\n",
                         i, det->id,
                         tagXYZS.at<double>(0), tagXYZS.at<double>(1), tagXYZS.at<double>(2));
-                if(det->id == 12){
-                  tag0[0] = tagXYZS.at<double>(0);
-                  tag0[1] = tagXYZS.at<double>(1);
-                  tag0[2] = tagXYZS.at<double>(2);
+                if(det->id == 12 && 1 == i){
+                  tag0[0] = 4*(50 + tagXYZS.at<double>(0));
+                  tag0[1] = 4*(100 + tagXYZS.at<double>(1));
+                  tag0[2] = 4*(50 + tagXYZS.at<double>(2));
 
                 }
-                else if(det->id == 11){
-                  tag1[0] = tagXYZS.at<double>(0);
-                  tag1[1] = tagXYZS.at<double>(1);
-                  tag1[2] = tagXYZS.at<double>(2);
+                else if(det->id == 11 && 1 == i){
+                  tag1[0] = 4*(50 + tagXYZS.at<double>(0));
+                  tag1[1] = 4*(100 + tagXYZS.at<double>(1));
+                  tag1[2] = 4*(50 + tagXYZS.at<double>(2));
                 }
-                else if(det->id == 10){
-                  tag2[0] = tagXYZS.at<double>(0);
-                  tag2[1] = tagXYZS.at<double>(1);
-                  tag2[2] = tagXYZS.at<double>(2);
+                else if(det->id == 10 && 1 == i){
+                  tag2[0] = 4*(50 + tagXYZS.at<double>(0));
+                  tag2[1] = 4*(100 + tagXYZS.at<double>(1));
+                  tag2[2] = 4*(50 + tagXYZS.at<double>(2));
                 }
-                else if(det->id == 13){
-                  tag3[0] = tagXYZS.at<double>(0);
-                  tag3[1] = tagXYZS.at<double>(1);
-                  tag3[2] = tagXYZS.at<double>(2);
+                else if(det->id == 13 && 1 == i){
+                  tag3[0] = 4*(50 + tagXYZS.at<double>(0));
+                  tag3[1] = 4*(100 + tagXYZS.at<double>(1));
+                  tag3[2] = 4*(50 + tagXYZS.at<double>(2));
                 }
                 // Send data to basestation
                 sprintf(postDataBuffer, "{\"id\":%d,\"x\":%f,\"y\":%f,\"z\":%f}",
@@ -271,88 +269,98 @@ int main(int argc, char** argv) {
                 // TODO Check for error response
                 curl_easy_perform(curl);
             }
-            int dist = sqrt((tag1[0]-tag2[0])*(tag1[0]-tag2[0]) + (tag1[1]-tag2[1])*(tag1[1]-tag2[1]));
-            if(dist > 20){
-              midpnt[0] = (tag1[0]+tag2[0])/2;
-              midpnt[1] = (tag1[1]+tag2[1])/2;
-            }
-            else{
-              midpnt[0] = 0;
-              midpnt[1] = 0;
-            }
 
-            line(disp, Point(tag0[0]+10,tag0[1]+10),
-                     Point(tag0[0]-10,tag0[1]-10),
-                     Scalar(0xff, 0, 0), 2);
-            line(disp, Point(tag0[0]+10,tag0[1]+10),
-                     Point(tag0[0]+10,tag0[1]-10),
-                     Scalar(0xff, 0, 0), 2);
-            line(disp, Point(tag0[0]+10,tag0[1]-10),
-                     Point(tag0[0]-10,tag0[1]-10),
-                     Scalar(0xff, 0, 0), 2);
-            line(disp, Point(tag0[0]-10,tag0[1]+10),
-                     Point(tag0[0]-10,tag0[1]-10),
-                     Scalar(0xff, 0, 0), 2);
-            line(disp, Point(tag0[0]-10,tag0[1]+10),
-                     Point(tag0[0]+10,tag0[1]+10),
-                     Scalar(0xff, 0, 0), 2);
 
-           line(disp, Point(tag1[0]+10,tag1[1]+10),
-                    Point(tag1[0]-10,tag1[1]-10),
-                    Scalar(0xff, 0, 0xff), 2);
-           line(disp, Point(tag1[0]+10,tag1[1]+10),
-                    Point(tag1[0]+10,tag1[1]-10),
-                    Scalar(0xff, 0, 0xff), 2);
-           line(disp, Point(tag1[0]+10,tag1[1]-10),
-                    Point(tag1[0]-10,tag1[1]-10),
-                    Scalar(0xff, 0, 0xff), 2);
-           line(disp, Point(tag1[0]-10,tag1[1]+10),
-                    Point(tag1[0]-10,tag1[1]-10),
-                    Scalar(0xff, 0, 0xff), 2);
-           line(disp, Point(tag1[0]-10,tag1[1]+10),
-                    Point(tag1[0]+10,tag1[1]+10),
-                    Scalar(0xff, 0, 0xff), 2);
-
-           line(disp, Point(tag2[0]+10,tag2[1]+10),
-                    Point(tag2[0]-10,tag2[1]-10),
-                    Scalar(0, 0xff, 0), 2);
-           line(disp, Point(tag2[0]+10,tag2[1]+10),
-                    Point(tag2[0]+10,tag2[1]-10),
-                    Scalar(0, 0xff, 0), 2);
-           line(disp, Point(tag2[0]+10,tag2[1]-10),
-                    Point(tag2[0]-10,tag2[1]-10),
-                    Scalar(0, 0xff, 0), 2);
-           line(disp, Point(tag2[0]-10,tag2[1]+10),
-                    Point(tag2[0]-10,tag2[1]-10),
-                    Scalar(0, 0xff, 0), 2);
-           line(disp, Point(tag2[0]-10,tag2[1]+10),
-                    Point(tag2[0]+10,tag2[1]+10),
-                    Scalar(0, 0xff, 0), 2);
-
-           line(disp, Point(tag3[0]+10,tag3[1]+10),
-                    Point(tag3[0]-10,tag3[1]-10),
-                    Scalar(0, 0, 0xff), 2);
-           line(disp, Point(tag3[0]+10,tag3[1]+10),
-                    Point(tag3[0]+10,tag3[1]-10),
-                    Scalar(0, 0, 0xff), 2);
-           line(disp, Point(tag3[0]+10,tag3[1]-10),
-                    Point(tag3[0]-10,tag3[1]-10),
-                    Scalar(0, 0, 0xff), 2);
-           line(disp, Point(tag3[0]-10,tag3[1]+10),
-                    Point(tag3[0]-10,tag3[1]-10),
-                    Scalar(0, 0, 0xff), 2);
-           line(disp, Point(tag3[0]-10,tag3[1]+10),
-                    Point(tag3[0]+10,tag3[1]+10),
-                    Scalar(0, 0, 0xff), 2);
-
-            line(disp, Point(tag0[0],tag0[1]),Point(midpnt[0],midpnt[1]),Scalar(0xff,0xff,0xff),3);
-            line(disp, Point(midpnt[0],midpnt[1]),Point(tag1[0],tag1[1]),Scalar(0xff,0xff,0xff),3);
-
-            imshow("topview",disp);
             zarray_destroy(detections);
 
             imshow(std::to_string(i), frame);
         }
+
+        int dist = sqrt((tag1[0]-tag2[0])*(tag1[0]-tag2[0]) + (tag1[1]-tag2[1])*(tag1[1]-tag2[1]));
+        int dist2 = sqrt((tag1[0]-tag0[0])*(tag1[0]-tag0[0]) + (tag1[1]-tag0[1])*(tag1[1]-tag0[1]));
+        int dist3 = sqrt((tag2[0]-tag0[0])*(tag2[0]-tag0[0]) + (tag2[1]-tag0[1])*(tag2[1]-tag0[1]));
+
+        if(dist > 50){
+          midpnt[0] = (tag1[0]+tag2[0])/2;
+          midpnt[1] = (tag1[1]+tag2[1])/2;
+        }
+        else if(dist2 > dist3){
+            midpnt[0] = tag2[0];
+            midpnt[1] = tag2[1] - 20;
+        }
+        else{
+            midpnt[0] = tag1[0];
+            midpnt[1] = tag1[1] + 20;
+        }
+
+        line(disp, Point(tag0[0]+10,tag0[1]+10),
+                 Point(tag0[0]-10,tag0[1]-10),
+                 Scalar(0xff, 0, 0), 2);
+        line(disp, Point(tag0[0]+10,tag0[1]+10),
+                 Point(tag0[0]+10,tag0[1]-10),
+                 Scalar(0xff, 0, 0), 2);
+        line(disp, Point(tag0[0]+10,tag0[1]-10),
+                 Point(tag0[0]-10,tag0[1]-10),
+                 Scalar(0xff, 0, 0), 2);
+        line(disp, Point(tag0[0]-10,tag0[1]+10),
+                 Point(tag0[0]-10,tag0[1]-10),
+                 Scalar(0xff, 0, 0), 2);
+        line(disp, Point(tag0[0]-10,tag0[1]+10),
+                 Point(tag0[0]+10,tag0[1]+10),
+                 Scalar(0xff, 0, 0), 2);
+
+       line(disp, Point(tag1[0]+10,tag1[1]+10),
+                Point(tag1[0]-10,tag1[1]-10),
+                Scalar(0xff, 0, 0xff), 2);
+       line(disp, Point(tag1[0]+10,tag1[1]+10),
+                Point(tag1[0]+10,tag1[1]-10),
+                Scalar(0xff, 0, 0xff), 2);
+       line(disp, Point(tag1[0]+10,tag1[1]-10),
+                Point(tag1[0]-10,tag1[1]-10),
+                Scalar(0xff, 0, 0xff), 2);
+       line(disp, Point(tag1[0]-10,tag1[1]+10),
+                Point(tag1[0]-10,tag1[1]-10),
+                Scalar(0xff, 0, 0xff), 2);
+       line(disp, Point(tag1[0]-10,tag1[1]+10),
+                Point(tag1[0]+10,tag1[1]+10),
+                Scalar(0xff, 0, 0xff), 2);
+
+       line(disp, Point(tag2[0]+10,tag2[1]+10),
+                Point(tag2[0]-10,tag2[1]-10),
+                Scalar(0, 0xff, 0), 2);
+       line(disp, Point(tag2[0]+10,tag2[1]+10),
+                Point(tag2[0]+10,tag2[1]-10),
+                Scalar(0, 0xff, 0), 2);
+       line(disp, Point(tag2[0]+10,tag2[1]-10),
+                Point(tag2[0]-10,tag2[1]-10),
+                Scalar(0, 0xff, 0), 2);
+       line(disp, Point(tag2[0]-10,tag2[1]+10),
+                Point(tag2[0]-10,tag2[1]-10),
+                Scalar(0, 0xff, 0), 2);
+       line(disp, Point(tag2[0]-10,tag2[1]+10),
+                Point(tag2[0]+10,tag2[1]+10),
+                Scalar(0, 0xff, 0), 2);
+
+       line(disp, Point(tag3[0]+10,tag3[1]+10),
+                Point(tag3[0]-10,tag3[1]-10),
+                Scalar(0, 0, 0xff), 2);
+       line(disp, Point(tag3[0]+10,tag3[1]+10),
+                Point(tag3[0]+10,tag3[1]-10),
+                Scalar(0, 0, 0xff), 2);
+       line(disp, Point(tag3[0]+10,tag3[1]-10),
+                Point(tag3[0]-10,tag3[1]-10),
+                Scalar(0, 0, 0xff), 2);
+       line(disp, Point(tag3[0]-10,tag3[1]+10),
+                Point(tag3[0]-10,tag3[1]-10),
+                Scalar(0, 0, 0xff), 2);
+       line(disp, Point(tag3[0]-10,tag3[1]+10),
+                Point(tag3[0]+10,tag3[1]+10),
+                Scalar(0, 0, 0xff), 2);
+
+        line(disp, Point(tag0[0],tag0[1]),Point(midpnt[0],midpnt[1]),Scalar(0xff,0xff,0xff),3);
+        line(disp, Point(midpnt[0],midpnt[1]),Point(tag3[0],tag3[1]),Scalar(0xff,0xff,0xff),3);
+
+        imshow("topview",disp);
 
         key = waitKey(16);
     }
