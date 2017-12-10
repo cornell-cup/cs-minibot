@@ -34,7 +34,6 @@ class BaseStation(object, metaclass=Singleton):
         """
         self.bot_manager = BotManager()
         self.vision_manager = VisionManager()
-        self.simulator_manager = SimulatorManager()
         return
 
     def get_bot_manager(self):
