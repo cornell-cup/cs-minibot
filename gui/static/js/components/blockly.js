@@ -65,7 +65,6 @@ export default class MinibotBlockly extends React.Component {
        manually input file name and file ext.
     */
     download(event){
-        console.log("download listener");
         event.preventDefault();
         var element = document.createElement('a');
         var xmlDom = Blockly.Xml.workspaceToDom(Blockly.getMainWorkspace());
@@ -79,7 +78,6 @@ export default class MinibotBlockly extends React.Component {
     }
 
     upload(event){
-        console.log("upload listener");
         var _this = this;
         var file = event.target.files[0];
         var reader = new FileReader();
