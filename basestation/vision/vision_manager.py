@@ -61,3 +61,9 @@ class VisionManager:
             v = self.locations[k]
             botlist.append({'id':k, 'x':v['x'], 'y':v['y'], 'size':v['size'], 'angle':v['angle'], 'type':v['type']})
         return botlist
+
+    def clear_list(self):
+        """
+        Clears list of locations
+        """
+        self.locations = {}
