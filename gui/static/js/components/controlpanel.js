@@ -253,12 +253,10 @@ export default class ControlPanel extends React.Component {
 
     /* starts data logging */
     startLogging(){
-        console.log("logging data listener");
         axios({
             method:'POST',
             url:'/logdata',
             data: JSON.stringify({name: this.props.currentBot}),
-            processData: false,
         })
         .then(function(response) {
             console.log(response.data)

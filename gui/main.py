@@ -34,7 +34,8 @@ class BaseInterface:
             ("/sendKV", SendKVHandler),
             ("/vision", VisionHandler),
             ("/updateloc", UpdateLocationHandler),
-            ("/findScripts", FindScriptsHandler)
+            ("/findScripts", FindScriptsHandler),
+            ("/logdata", LogHandler)
         ]
         self.settings = {
             "static_path": os.path.join(os.path.dirname(__file__), "static")
@@ -219,7 +220,7 @@ class LogHandler(tornado.web.RequestHandler):
     """
     Finds existing scripts on minibot.
     """
-    def get(self):
+    def post(self):
         info = json.loads(self.request.body.decode())
         name = info['name']
 
