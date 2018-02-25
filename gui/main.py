@@ -35,7 +35,8 @@ class BaseInterface:
             ("/vision", VisionHandler),
             ("/updateloc", VisionHandler),
             ("/findScripts", FindScriptsHandler),
-            ("/addScenario", AddScenarioHandler)
+            ("/addScenario", AddScenarioHandler),
+            ("/sendGV", UpdateDirectionHandler)
         ]
         self.settings = {
             "static_path": os.path.join(os.path.dirname(__file__), "static")
@@ -274,6 +275,32 @@ class FindScriptsHandler(tornado.web.RequestHandler):
     def get(self):
         files = BaseStation().get_bot_manager().get_minibot_scripts()
         self.write(json.dumps(files))
+
+class UpdateDirectionHandler(tornado.web.RequestHandler):
+    """
+    Updates bot with new coordinates
+    """
+    def post(self):
+        info = json.loads(self.request.body.decode())
+        print("Received info: ", info)
+
+        id = info['id']
+        d = info['key']
+
+        BaseStation().sim_manager.update_direction(id, d)
+        bot = BaseStation().sim_manager.get_bot(id)
+        BaseStation().vision_manager.clear_list()
+        BaseStation().get_vision_manager().update_location(str(id), {
+            'x': bot.get_x(),
+            'y': bot.get_y(),
+            'z': 0,
+            'size': bot.get_size(),
+            'angle': bot.get_angle(),
+            'type': 'bot'
+        })
+        print(str(bot.get_x()) + " " + str(bot.get_y()))
+        self.write(json.dumps(info).encode())
+
 
 if __name__ == "__main__":
     """

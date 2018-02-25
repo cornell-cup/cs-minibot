@@ -20,7 +20,6 @@ class SimManager():
         """
         sim_bot = SimBot(id, angle, x, y, size)
         self.__track_bots.append(sim_bot)
-        print(sim_bot)
 
     def update_direction(self, id: int, d: str):
         """
@@ -34,15 +33,22 @@ class SimManager():
         """
         bot = self.__track_bots[id]
         if d == 'f':
-            bot.set_y(bot.get_y + 1)
+            bot.set_y(bot.get_y() + 1)
         elif d == 'b':
-            bot.set_y(bot.get_y - 1)
+            bot.set_y(bot.get_y() - 1)
         elif d == 'l':
-            bot.set_x(bot.get_x - 1)
+            bot.set_x(bot.get_x() - 1)
         else:
-            bot.set_x(bot.get_x + 1)
+            bot.set_x(bot.get_x() + 1)
         return bot
 
+    def get_bot(self, id: int):
+        """
+        Returns the simbot with specified id
+        Args:
+            id (int): unique id of bot (should match index of list)
+        """
+        return self.__track_bots[id]
 
 
 
