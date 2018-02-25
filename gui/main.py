@@ -62,23 +62,38 @@ class AddScenarioHandler(tornado.web.RequestHandler):
     """
     def post(self):
         listofscenario = json.loads(self.request.body.decode())
-        # BaseStation().get_simulator_manager().simulator.set_scenario_list(listofscenario)
-        counter = 1
-        BaseStation().vision_manager.clear_list()
+
+        # BaseStation().vision_manager.clear_list()
+        # for object in listofscenario:
+        #     if object['type'] == 'bot':
+        #         obj_name = "Bot"
+        #     else:
+        #         obj_name = "Object " + str(counter)
+        #         counter = counter + 1
+        #
+        #     BaseStation().vision_manager.update_location(obj_name, {
+        #         'x': int(object['x']),
+        #         'y': int(object['y']),
+        #         'size': object['size'],
+        #         'angle': object['angle'],
+        #         'type': object['type']
+        #     })
+        counter = 0
+        list_of_bots: []
         for object in listofscenario:
             if object['type'] == 'bot':
-                obj_name = "Bot"
-            else:
-                obj_name = "Object " + str(counter)
-                counter = counter + 1
-
-            BaseStation().vision_manager.update_location(obj_name, {
-                'x': int(object['x']),
-                'y': int(object['y']),
-                'size': object['size'],
-                'angle': object['angle'],
-                'type': object['type']
-            })
+                BaseStation().sim_manager.add_bot(counter, int(object['angle']), int(object['x']),
+                                                  int(object['y']), int(object['size']))
+                #TODO: figure out why there is a z-coordinate
+                BaseStation().get_vision_manager().update_location(str(counter), {
+                    'x': int(object['x']),
+                    'y': int(object['y']),
+                    'z': 0,
+                    'size': int(object['size']),
+                    'angle': int(object['angle']),
+                    'type': 'bot'
+                })
+                counter += 1
         self.write(json.dumps(listofscenario).encode())
 
 class BaseStationHandler(tornado.web.RequestHandler):

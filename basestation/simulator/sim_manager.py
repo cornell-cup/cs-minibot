@@ -6,7 +6,7 @@ class SimManager():
     """
     def __init__(self):
         #list of simbots
-        self.__track_bots: []
+        self.__track_bots = []
 
     def add_bot(self, id: int, angle: int, x: int, y: int, size: int):
         """
@@ -20,6 +20,7 @@ class SimManager():
         """
         sim_bot = SimBot(id, angle, x, y, size)
         self.__track_bots.append(sim_bot)
+        print(sim_bot)
 
     def update_direction(self, id: int, d: str):
         """
