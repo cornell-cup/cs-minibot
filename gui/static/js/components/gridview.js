@@ -401,7 +401,7 @@ export default class GridView extends React.Component {
                     _this.state.lastTime = currentTime;
                     var timeout = MILLIS_PER_VISION_UPDATE;
                     if (elapsed > MILLIS_PER_VISION_UPDATE) {
-                        timeout = 200*MILLIS_PER_VISION_UPDATE - elapsed;
+                        timeout = 50*MILLIS_PER_VISION_UPDATE - elapsed;
                         if (timeout < 0) {
                             timeout = 0;
                         }
