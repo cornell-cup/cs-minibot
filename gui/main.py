@@ -35,7 +35,8 @@ class BaseInterface:
             ("/vision", VisionHandler),
             ("/updateloc", VisionHandler),
             ("/findScripts", FindScriptsHandler),
-            ("/addScenario", AddScenarioHandler)
+            ("/addScenario", AddScenarioHandler),
+            ("/sendGV", UpdateDirectionHandler)
         ]
         self.settings = {
             "static_path": os.path.join(os.path.dirname(__file__), "static")
@@ -62,23 +63,38 @@ class AddScenarioHandler(tornado.web.RequestHandler):
     """
     def post(self):
         listofscenario = json.loads(self.request.body.decode())
-        # BaseStation().get_simulator_manager().simulator.set_scenario_list(listofscenario)
-        counter = 1
-        BaseStation().vision_manager.clear_list()
+
+        # BaseStation().vision_manager.clear_list()
+        # for object in listofscenario:
+        #     if object['type'] == 'bot':
+        #         obj_name = "Bot"
+        #     else:
+        #         obj_name = "Object " + str(counter)
+        #         counter = counter + 1
+        #
+        #     BaseStation().vision_manager.update_location(obj_name, {
+        #         'x': int(object['x']),
+        #         'y': int(object['y']),
+        #         'size': object['size'],
+        #         'angle': object['angle'],
+        #         'type': object['type']
+        #     })
+        counter = 0
+        list_of_bots: []
         for object in listofscenario:
             if object['type'] == 'bot':
-                obj_name = "Bot"
-            else:
-                obj_name = "Object " + str(counter)
-                counter = counter + 1
-
-            BaseStation().vision_manager.update_location(obj_name, {
-                'x': int(object['x']),
-                'y': int(object['y']),
-                'size': object['size'],
-                'angle': object['angle'],
-                'type': object['type']
-            })
+                BaseStation().sim_manager.add_bot(counter, int(object['angle']), int(object['x']),
+                                                  int(object['y']), int(object['size']))
+                #TODO: figure out why there is a z-coordinate
+                BaseStation().get_vision_manager().update_location(str(counter), {
+                    'x': int(object['x']),
+                    'y': int(object['y']),
+                    'z': 0,
+                    'size': int(object['size']),
+                    'angle': int(object['angle']),
+                    'type': 'bot'
+                })
+                counter += 1
         self.write(json.dumps(listofscenario).encode())
 
 class BaseStationHandler(tornado.web.RequestHandler):
@@ -259,6 +275,32 @@ class FindScriptsHandler(tornado.web.RequestHandler):
     def get(self):
         files = BaseStation().get_bot_manager().get_minibot_scripts()
         self.write(json.dumps(files))
+
+class UpdateDirectionHandler(tornado.web.RequestHandler):
+    """
+    Updates bot with new coordinates
+    """
+    def post(self):
+        info = json.loads(self.request.body.decode())
+        print("Received info: ", info)
+
+        id = info['id']
+        d = info['key']
+
+        BaseStation().sim_manager.update_direction(id, d)
+        bot = BaseStation().sim_manager.get_bot(id)
+        BaseStation().vision_manager.clear_list()
+        BaseStation().get_vision_manager().update_location(str(id), {
+            'x': bot.get_x(),
+            'y': bot.get_y(),
+            'z': 0,
+            'size': bot.get_size(),
+            'angle': bot.get_angle(),
+            'type': 'bot'
+        })
+        print(str(bot.get_x()) + " " + str(bot.get_y()))
+        self.write(json.dumps(info).encode())
+
 
 if __name__ == "__main__":
     """
