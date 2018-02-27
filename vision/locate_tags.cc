@@ -14,6 +14,8 @@ using std::vector;
 
 #define TAG_SIZE 6.5f
 
+void getEulerAngles(Mat &rotCamerMatrix,Vec3d &eulerAngles);
+
 int main(int argc, char** argv) {
     // Display usage
     if (argc < 3) {
@@ -180,6 +182,8 @@ int main(int argc, char** argv) {
                         device_dist_coeffs[i], rvec, tvec);
                 Matx33d r;
                 Rodrigues(rvec,r);
+                Vec3d eulerAngles;
+                getEulerAngles(rvec,eulerAngles);
 
                 vector<double> data;
                 data.push_back(r(0,0));
@@ -212,7 +216,8 @@ int main(int argc, char** argv) {
                 printf("%zu :: %d :: % 3.3f % 3.3f % 3.3f\n",
                         i, det->id,
                         tagXYZS.at<double>(0), tagXYZS.at<double>(1), tagXYZS.at<double>(2));
-
+                printf("===========\nID:: %d\nYaw:: %3.3f \nRoll:: %3.3f\nPitch:: %3.3f\n==========\n",
+                        det-> id, eulerAngles[1], eulerAngles[0], eulerAngles[2]);
                 // Send data to basestation
                 sprintf(postDataBuffer, "{\"id\":%d,\"x\":%f,\"y\":%f,\"z\":%f}",
                         det->id, tagXYZS.at<double>(0), tagXYZS.at<double>(1), tagXYZS.at<double>(2));
@@ -229,4 +234,22 @@ int main(int argc, char** argv) {
         key = waitKey(16);
     }
     curl_easy_cleanup(curl);
+}
+
+void getEulerAngles(Mat &rotCamerMatrix,Vec3d &eulerAngles){
+
+    Mat cameraMatrix,rotMatrix,transVect,rotMatrixX,rotMatrixY,rotMatrixZ;
+    double* _r = rotCamerMatrix.ptr<double>();
+    double projMatrix[12] = {_r[0],_r[1],_r[2],0,
+                          _r[3],_r[4],_r[5],0,
+                          _r[6],_r[7],_r[8],0};
+
+    decomposeProjectionMatrix( Mat(3,4,CV_64FC1,projMatrix),
+                               cameraMatrix,
+                               rotMatrix,
+                               transVect,
+                               rotMatrixX,
+                               rotMatrixY,
+                               rotMatrixZ,
+                               eulerAngles);
 }
