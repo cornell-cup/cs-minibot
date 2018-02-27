@@ -34,10 +34,10 @@ def main():
     thread_udp.start()    
     while True:
         tcpCmd = tcpInstance.get_command()
-        parse_command(tcpCmd, bot)
+        parse_command(tcpCmd, bot, tcpInstance)
         time.sleep(0.01)
 
-def parse_command(cmd, bot):
+def parse_command(cmd, bot, tcpInstance):
     """
     Parses command sent by SendKV via TCP to the bot.
     Sent from BaseStation.
@@ -72,7 +72,7 @@ def parse_command(cmd, bot):
         filepath = "/home/pi/cs-minibot/minibot/scripts/" + filename
         print(filepath)
         if os.path.isfile(filepath):
-            p = spawn_named_script_process(p, bot, filename.split('.')[0])
+            p = spawn_named_script_process(p, bot, filename.split('.')[0], tcpInstance)
         else:
             print("Invalid File path")
     else:
@@ -95,16 +95,16 @@ def spawn_script_process(p, bot):
     
     # Return control to main after .1 seconds
 
-def spawn_named_script_process(p,bot,script_name):
+def spawn_named_script_process(p,bot,script_name, tcpInstance):
     time.sleep(0.1)
-    p = Thread(target=run_script_with_name, args=[bot,script_name])
+    p = Thread(target=run_script_with_name, args=[bot,script_name, tcpInstance])
     p.start()
     # Return control to main after .1 seconds
     return p
 
-def run_script_with_name(bot,script_name):
+def run_script_with_name(bot,script_name, tcpInstance):
     UserScript = importlib.import_module("scripts." + script_name)
-    UserScript.run(bot)
+    UserScript.run(bot, tcpInstance)
 
 def run_script(bot):
     UserScript = importlib.reload(US)

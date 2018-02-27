@@ -45,7 +45,7 @@ class TCP(object):
             try:
                 message = "<<<<" + key + "," + value + ">>>>"
                 # appending \n to the message as java reader socket blocks until new line is encountered
-                self.connectionSocket.send(message + "\n")
+                self.connectionSocket.send(bytes(message + "\n",'utf-8'))
             except socket.error as e:
                 print("Send failed")
         else:

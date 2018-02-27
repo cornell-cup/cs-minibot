@@ -126,7 +126,8 @@ class ZMQExchange:
         # send the message
         if self.isBroadcaster:
             print("broadcasting", str(data))
-            msg = [bytes(self.messageTopic, 'utf-8'), bytes(str(data), 'utf-8')]
+            msg = [self.messageTopic, str(data)]
+#           msg = [bytes(self.messageTopic, 'utf-8'), bytes(str(data), 'utf-8')]
             self.pub.send_multipart(msg)
             print("broadcasted")
         
