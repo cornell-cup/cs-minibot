@@ -7,14 +7,14 @@ import time
 threads = []
 count = {"F":0,"B":0,"L":0,"R":0}
 
-def run(bot):
+def run(bot, tcpInstance):
     # Sets up TCP connection between master and minions. Starts publisher-side 
     # connection.
     # always set the mediator first
     z = ZMQExchange()
     z.setMediator()
     z.setBroadcaster()
-    TCP.tcp.send_to_basestation("SwarmIP", z.getIP("wlan0"))
+    tcpInstance.tcp.send_to_basestation("SwarmIP", z.getIP("wlan0"))
 
     mediateThread = Thread(target=z.mediate)
     mediateThread.start()

@@ -1,10 +1,27 @@
-from hardware.communication.ZMQ import ZMQExchange
-from hardware.communication.TCP import TCP
+from minibot.hardware.communication.ZMQ import ZMQExchange
+from minibot.hardware.communication.TCP import TCP
+import minibot.hardware.communication.UDP as UDP
+from minibot.bot import Bot
 from queue import Queue
-import time
+import time, json
 from threading import Thread
 
 threads = []
+
+def main():
+    CONFIG_LOCATION = '/home/pi/cs-minibot/minibot/configs/config.json'
+    config = json.loads(open(CONFIG_LOCATION).read())
+
+    print("SETTING UP TCP")
+    tcpInstance = TCP()
+
+    print("SETTING UP UDP THREAD")
+    thread_udp = Thread(target=UDP.udpBeacon)
+    thread_udp.start()
+
+    bot = Bot(config)
+    print("RUNNING SWARMBOT (minion)")
+    run(bot)
 
 def run(bot):
 
@@ -38,7 +55,7 @@ def run(bot):
                 # react to commamd
                 bot.get_actuator_by_name("two_wheel_movement").move(command[0], command[1])
                 
-                #print "running ", command
+                print("running ", command)
             time.sleep(0.01)
 
             if not TCP.tcp.isConnected():
@@ -52,3 +69,6 @@ def cleanup(z):
         t.join(1)
 
     z.stopZMQExchange()
+
+if __name__=="__main__":
+    main()
