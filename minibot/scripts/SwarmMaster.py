@@ -14,6 +14,7 @@ def run(bot, tcpInstance):
     z = ZMQExchange()
     z.setMediator()
     z.setBroadcaster()
+    print(z.getIP("wlan0"))
     tcpInstance.tcp.send_to_basestation("SwarmIP", z.getIP("wlan0"))
 
     mediateThread = Thread(target=z.mediate)

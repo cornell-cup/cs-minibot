@@ -75,6 +75,9 @@ class TCPConnection(object):
         Returns:
             (bool): True if the message was sent successfully. False otherwise.
         """
+        print(key)
+        print(value)
+        print(getIP())
         payload = "<<<<" + key + "," + value + ">>>>"
         try:
             self.__client_socket.send(payload.encode())
