@@ -119,6 +119,7 @@ class VirtualBot(object):
                 data (str): A string to be parsed. Must start with* "<<<<" and
                     end with ">>>>". Key-value pair should be separated by ":"
             """
+            print(data)
             start = data.find("<<<<")
             comma = data.find(",")
             end = data.find(">>>>")
@@ -138,12 +139,16 @@ class VirtualBot(object):
                 key (str): An instruction to be executed.
                 value (str): Should qualify the `key`.
             """
-            if len(value) != 0:
+            print("key",key)
+            print("value",value)
+            if len(value) == 0:
                 # MiniBot requesting information
+                print("request")
                 value_to_send = bot_exchange.msg_map.get(key, None)
                 self.tcp_connection_obj.sendKV(key, value_to_send)
             else:
                 # MiniBot sending information
+                print("tcp act on incoming", key)
                 bot_exchange.msg_map[key] = value
 
             return

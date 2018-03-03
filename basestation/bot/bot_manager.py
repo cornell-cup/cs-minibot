@@ -116,6 +116,7 @@ class BotManager(object):
         """
         path = "./minibot/scripts"
         files = [f for f in listdir(path) if isfile(join(path, f))]
+        print("======= MINIBOT SCRIPTS ========", files)
         return files
 
     def __generate_bot_number(self) -> int:

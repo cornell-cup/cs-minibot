@@ -77,7 +77,6 @@ class TCPConnection(object):
         """
         print(key)
         print(value)
-        print(getIP())
         payload = "<<<<" + key + "," + value + ">>>>"
         try:
             self.__client_socket.send(payload.encode())

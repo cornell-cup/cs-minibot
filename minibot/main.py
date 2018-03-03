@@ -5,7 +5,7 @@ Must be configured in /etc/init.d/minibotinit.sh on the RPi.
 
 from minibot.bot import Bot
 from minibot.hardware.communication.TCP import TCP
-import minibot.hardware.communication.UDP
+import minibot.hardware.communication.UDP as UDP
 
 import json
 from threading import Thread
@@ -30,7 +30,7 @@ def main():
     bot = Bot(config)
     tcpInstance = TCP()
     print(tcpInstance)
-    thread_udp = Thread(target= minibot.hardware.communication.UDP.udpBeacon)
+    thread_udp = Thread(target=UDP.udpBeacon)
     thread_udp.start()    
     while True:
         tcpCmd = tcpInstance.get_command()
