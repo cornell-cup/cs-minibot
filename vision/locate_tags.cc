@@ -182,8 +182,6 @@ int main(int argc, char** argv) {
                         device_dist_coeffs[i], rvec, tvec);
                 Matx33d r;
                 Rodrigues(rvec,r);
-                Vec3d eulerAngles;
-                getEulerAngles(rvec,eulerAngles);
 
                 vector<double> data;
                 data.push_back(r(0,0));
@@ -216,8 +214,14 @@ int main(int argc, char** argv) {
                 printf("%zu :: %d :: % 3.3f % 3.3f % 3.3f\n",
                         i, det->id,
                         tagXYZS.at<double>(0), tagXYZS.at<double>(1), tagXYZS.at<double>(2));
-                printf("===========\nID:: %d\nYaw:: %3.3f \nRoll:: %3.3f\nPitch:: %3.3f\n==========\n",
-                        det-> id, eulerAngles[1], eulerAngles[0], eulerAngles[2]);
+ 
+   		float eulerAngles[3];
+        	eulerAngles[0] = -asin(-tag2orig.at<double>(2,0));
+        	eulerAngles[1] = atan2(tag2orig.at<double>(2,1), tag2orig.at<double>(2,2));
+        	eulerAngles[2] = atan2(tag2orig.at<double>(1,0), tag2orig.at<double>(0,0));   		
+		float rd = (180.0/3.14159);
+
+                printf("===========\nID:: %d\nRoll:: %3.3f\nPitch:: %3.3f\nYaw:: %3.3f \n==========\n", det-> id, eulerAngles[0]*rd, eulerAngles[1]*rd, eulerAngles[2]*rd);
                 // Send data to basestation
                 sprintf(postDataBuffer, "{\"id\":%d,\"x\":%f,\"y\":%f,\"z\":%f}",
                         det->id, tagXYZS.at<double>(0), tagXYZS.at<double>(1), tagXYZS.at<double>(2));
