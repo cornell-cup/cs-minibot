@@ -61,7 +61,7 @@ class BotManager(object):
                 raise Exception("The connection was not active. Not adding the "
                                 + "bot.")
 
-    def add_simbot(self, bot_name: str, id: int, angle: int, x: int, y: int, size: int):
+    def add_simbot(self, id: int, angle: int, x: int, y: int, size: int):
         """
         Adds a simbot to the list of tracked simbots
         Args:
@@ -73,6 +73,7 @@ class BotManager(object):
         """
         name = self.__sim_names[randint(0, len(self.__sim_names))]
         sim_bot = SimBot(id, angle, x, y, size)
+        print(sim_bot)
         self.__bot_map[name] = sim_bot
         return name
 

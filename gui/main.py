@@ -82,7 +82,7 @@ class AddScenarioHandler(tornado.web.RequestHandler):
         counter = 0
         list_of_bots: []
         for object in listofscenario:
-            if object['type'] == 'bot':
+            if object['type'] == 'simbot':
                 BaseStation().bot_manager.add_simbot(counter, int(object['angle']), int(object['x']),
                                                   int(object['y']), int(object['size']))
                 #TODO: figure out why there is a z-coordinate
@@ -95,6 +95,7 @@ class AddScenarioHandler(tornado.web.RequestHandler):
                     'type': 'bot'
                 })
                 counter += 1
+
         self.write(json.dumps(listofscenario).encode())
 
 class BaseStationHandler(tornado.web.RequestHandler):

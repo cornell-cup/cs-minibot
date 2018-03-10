@@ -2,13 +2,12 @@ class SimBot(object):
     """
     Manages all properties of one simbot object
     """
-    def __init__(self, bot_name: str, id: int, angle: int, x: int, y: int, size: int):
+    def __init__(self, id: int, angle: int, x: int, y: int, size: int):
         self.__angle = angle
         self.__id = id
         self.__x = x
         self.__y = y
         self.__size = size
-        self.__name = bot_name
 
     def get_id(self):
         return self.__id
