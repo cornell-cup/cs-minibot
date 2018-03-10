@@ -289,8 +289,10 @@ class UpdateDirectionHandler(tornado.web.RequestHandler):
         id = info['id']
         d = info['key']
 
-        BaseStation().sim_manager.update_direction(id, d)
         bot = BaseStation().bot_manager.get_bot_by_name(id)
+        print("id " + id)
+        print("d " + d)
+        bot.update_direction(d)
         BaseStation().vision_manager.clear_list()
         BaseStation().get_vision_manager().update_location(str(id), {
             'x': bot.get_x(),

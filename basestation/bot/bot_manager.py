@@ -49,17 +49,16 @@ class BotManager(object):
             Exception: Raised if the TCP connection was or went inactive
                 while creating the VirtualBot object.
         """
-        if type == "minibot":
-            new_vbot = VirtualBot(self.__safe_escape_name(bot_name), ip, port=port)
+        new_vbot = VirtualBot(self.__safe_escape_name(bot_name), ip, port=port)
 
-            if new_vbot.is_bot_connection_active():
-                new_vbot_name = new_vbot.get_name()
-                self.__bot_map[new_vbot_name] = new_vbot
-                return new_vbot.get_name()
-            else:
-                del new_vbot
-                raise Exception("The connection was not active. Not adding the "
-                                + "bot.")
+        if new_vbot.is_bot_connection_active():
+            new_vbot_name = new_vbot.get_name()
+            self.__bot_map[new_vbot_name] = new_vbot
+            return new_vbot.get_name()
+        else:
+            del new_vbot
+            raise Exception("The connection was not active. Not adding the "
+                            + "bot.")
 
     def add_simbot(self, id: int, angle: int, x: int, y: int, size: int):
         """
@@ -73,8 +72,7 @@ class BotManager(object):
         """
         name = self.__sim_names[randint(0, len(self.__sim_names))]
         sim_bot = SimBot(id, angle, x, y, size)
-        print(sim_bot)
-        self.__bot_map[name] = sim_bot
+        self.__bot_map["SIM " + name] = sim_bot
         return name
 
 

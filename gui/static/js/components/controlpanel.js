@@ -81,7 +81,7 @@ export default class ControlPanel extends React.Component {
                 method:'POST',
                 url:'/sendGV',
                 data: JSON.stringify({
-                    id: 0, //0 for now bc only one simbot
+                    id: this.props.currentBot,
                     key: this.state.key
                 }),
                 })
@@ -267,7 +267,7 @@ export default class ControlPanel extends React.Component {
      */
     selectBot(event) {
         this.props.setCurrentBot(event.target.value);
-        if (event.target.value == '(DEBUG) Sim Bot - GridView') {
+        if (event.target.value.includes("SIM ")) {
             this.state.isSimBot = true
         }
         else {
