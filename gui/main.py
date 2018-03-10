@@ -83,7 +83,7 @@ class AddScenarioHandler(tornado.web.RequestHandler):
         list_of_bots: []
         for object in listofscenario:
             if object['type'] == 'bot':
-                BaseStation().sim_manager.add_bot(counter, int(object['angle']), int(object['x']),
+                BaseStation().bot_manager.add_simbot(counter, int(object['angle']), int(object['x']),
                                                   int(object['y']), int(object['size']))
                 #TODO: figure out why there is a z-coordinate
                 BaseStation().get_vision_manager().update_location(str(counter), {
@@ -289,7 +289,7 @@ class UpdateDirectionHandler(tornado.web.RequestHandler):
         d = info['key']
 
         BaseStation().sim_manager.update_direction(id, d)
-        bot = BaseStation().sim_manager.get_bot(id)
+        bot = BaseStation().bot_manager.get_bot_by_name(id)
         BaseStation().vision_manager.clear_list()
         BaseStation().get_vision_manager().update_location(str(id), {
             'x': bot.get_x(),

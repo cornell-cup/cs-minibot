@@ -24,8 +24,9 @@ class BotManager(object):
         self.__bot_map = {}
         self.__udp_connection = UDPConnection()
         self.__udp_connection.start()
+        #This is for fun. Changed to either unique ID generator or to user custom name
         self.__sim_names = ["leo", "jesse", "ashley", "lesley", "celine", "danny", "heather", "lauren", "chelsea", "jimmy", "han",
-                 "trevor", "matt li", "james", "danny mf yang", "fire lord", "kevin", "anmol"]
+                 "trevor", "matt li", "james", "danny mf yang", "fire lord", "kevin", "anmol", "scott 'the cornell cup' wu"]
         return
 
     def add_bot(self, bot_name: str, ip: str, port: int = 10000) -> Optional[str]:
