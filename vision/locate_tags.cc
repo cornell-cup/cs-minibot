@@ -14,8 +14,6 @@ using std::vector;
 
 #define TAG_SIZE 6.5f
 
-void getEulerAngles(Mat &rotCamerMatrix,Vec3d &eulerAngles);
-
 int main(int argc, char** argv) {
     // Display usage
     if (argc < 3) {
@@ -127,7 +125,14 @@ int main(int argc, char** argv) {
     int key = 0;
     Mat frame, gray;
     char postDataBuffer[100];
+
+
     while (key != 27) { // Quit on escape keypress
+
+    	// map to store weighted coordinates [x, y, z, roll, pitch, yaw, total weight]
+    	// weightings are based on distance from camera to tag
+        std::map <int, float[7]> weightedCoords;
+
         for (size_t i = 0; i < devices.size(); i++) {
             if (!devices[i].isOpened()) {
                 continue;
@@ -142,13 +147,26 @@ int main(int argc, char** argv) {
                 .buf = gray.data
             };
 
-            zarray_t* detections = apriltag_detector_detect(td, &im);
-
-            vector<Point2f> img_points(4);
-            vector<Point3f> obj_points(4);
-            Mat rvec(3, 1, CV_64FC1);
+			zarray_t* detections = apriltag_detector_detect(td, &im);            
+			vector<Point2f> img_points(4);
+         	vector<Point3f> obj_points(4);
+           	Mat rvec(3, 1, CV_64FC1);
             Mat tvec(3, 1, CV_64FC1);
+
+            printf("~~~~~~~~~~~~~ Camera %d ~~~~~~~~~~~~\n", (int)i);
+
+            // get the coordinates of the camera
+            vector<double> data2;
+            data2.push_back(0);
+            data2.push_back(0);
+            data2.push_back(0);
+            data2.push_back(1);
+            Mat genout = Mat(data2,true).reshape(1, 4);
+            Mat cameraXYZS = device_transform_matrix[i] * genout;
+            printf("coordinates: (%f, %f, %f)\n", cameraXYZS.at<double>(0), cameraXYZS.at<double>(1), cameraXYZS.at<double>(2));
+
             for (int j = 0; j < zarray_size(detections); j++) {
+	
                 // Get the ith detection
                 apriltag_detection_t *det;
                 zarray_get(detections, j, &det);
@@ -202,29 +220,42 @@ int main(int argc, char** argv) {
                 data.push_back(1);
                 Mat tag2cam = Mat(data,true).reshape(1, 4);
 
-                vector<double> data2;
-                data2.push_back(0);
-                data2.push_back(0);
-                data2.push_back(0);
-                data2.push_back(1);
-                Mat genout = Mat(data2,true).reshape(1, 4);
-
                 Mat tag2orig = device_transform_matrix[i] * tag2cam;
                 Mat tagXYZS = tag2orig * genout;
-                printf("%zu :: %d :: % 3.3f % 3.3f % 3.3f\n",
-                        i, det->id,
-                        tagXYZS.at<double>(0), tagXYZS.at<double>(1), tagXYZS.at<double>(2));
- 
-   		float eulerAngles[3];
-        	eulerAngles[0] = -asin(-tag2orig.at<double>(2,0));
-        	eulerAngles[1] = atan2(tag2orig.at<double>(2,1), tag2orig.at<double>(2,2));
-        	eulerAngles[2] = atan2(tag2orig.at<double>(1,0), tag2orig.at<double>(0,0));   		
-		float rd = (180.0/3.14159);
 
-                printf("===========\nID:: %d\nRoll:: %3.3f\nPitch:: %3.3f\nYaw:: %3.3f \n==========\n", det-> id, eulerAngles[0]*rd, eulerAngles[1]*rd, eulerAngles[2]*rd);
-                // Send data to basestation
+                // compute euler angles
+             
+                float eulerAngles[3];
+                eulerAngles[0] = asin(tag2orig.at<double>(2,0));
+                eulerAngles[1] = atan2(tag2orig.at<double>(2,1), tag2orig.at<double>(2,2));
+                eulerAngles[2] = atan2(tag2orig.at<double>(1,0), tag2orig.at<double>(0,0));         
+                float rd = (180.0/3.14159); // constant to convert radians to degrees
+
+                // compute distance from camera to tag
+                
+                float xDistance = cameraXYZS.at<double>(0)-tagXYZS.at<double>(0);
+                float yDistance = cameraXYZS.at<double>(1)-tagXYZS.at<double>(1);
+                float zDistance = cameraXYZS.at<double>(2)-tagXYZS.at<double>(2);
+                float distance  = sqrt(pow(xDistance,2) + pow(yDistance,2) + pow(zDistance,2));
+
+                printf("----Tag %d\n", det->id);
+                printf("xyz: (%3.3f,%3.3f,%3.3f)\n", tagXYZS.at<double>(0), tagXYZS.at<double>(1), tagXYZS.at<double>(2));
+                printf("rpy: (%3.3f,%3.3f,%3.3f)\n", eulerAngles[0]*rd, eulerAngles[1]*rd, eulerAngles[2]*rd);
+                printf("Camera to Tag: %3.3f\n", distance);
+
+                // sava distances in weighted coords map
+
+                weightedCoords[det->id][0] += tagXYZS.at<double>(0)/distance;
+                weightedCoords[det->id][1] += tagXYZS.at<double>(1)/distance;
+                weightedCoords[det->id][2] += tagXYZS.at<double>(2)/distance;
+                weightedCoords[det->id][3] += eulerAngles[0]*rd/distance;
+                weightedCoords[det->id][4] += eulerAngles[1]*rd/distance;
+                weightedCoords[det->id][5] += eulerAngles[2]*rd/distance;
+                weightedCoords[det->id][6] += 1/distance;
+
+                // Send data to basestation - incomplete
                 sprintf(postDataBuffer, "{\"id\":%d,\"x\":%f,\"y\":%f,\"z\":%f}",
-                        det->id, tagXYZS.at<double>(0), tagXYZS.at<double>(1), tagXYZS.at<double>(2));
+                                det->id, tagXYZS.at<double>(0), tagXYZS.at<double>(1), tagXYZS.at<double>(2));
                 curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postDataBuffer);
                 // TODO Check for error response
                 curl_easy_perform(curl);
@@ -235,25 +266,21 @@ int main(int argc, char** argv) {
             imshow(std::to_string(i), frame);
         }
 
+        printf("~~~~~~~~~~~~~ Overall Weightings ~~~~~~~~~~~~\n");
+
+        std::map<int, float[7]>::iterator it = weightedCoords.begin();
+
+        while (it != weightedCoords.end()) {
+            printf("----Tag %d\n", it->first);
+            printf("xyz: (%3.3f,%3.3f,%3.3f)\n", it->second[0]/it->second[6], it->second[1]/it->second[6], it->second[2]/it->second[6]);
+            printf("rpy: (%3.3f,%3.3f,%3.3f)\n", it->second[3]/it->second[6], it->second[4]/it->second[6], it->second[5]/it->second[6]); 
+            it++;
+        }
+        printf("==============================================\n");
+    
+
         key = waitKey(16);
     }
+
     curl_easy_cleanup(curl);
-}
-
-void getEulerAngles(Mat &rotCamerMatrix,Vec3d &eulerAngles){
-
-    Mat cameraMatrix,rotMatrix,transVect,rotMatrixX,rotMatrixY,rotMatrixZ;
-    double* _r = rotCamerMatrix.ptr<double>();
-    double projMatrix[12] = {_r[0],_r[1],_r[2],0,
-                          _r[3],_r[4],_r[5],0,
-                          _r[6],_r[7],_r[8],0};
-
-    decomposeProjectionMatrix( Mat(3,4,CV_64FC1,projMatrix),
-                               cameraMatrix,
-                               rotMatrix,
-                               transVect,
-                               rotMatrixX,
-                               rotMatrixY,
-                               rotMatrixZ,
-                               eulerAngles);
 }
