@@ -125,6 +125,7 @@ class AddBotHandler(tornado.web.RequestHandler):
         if bot_type == 'minibot':
             bot_name = BaseStation().get_bot_manager().add_bot(name, ip, port)
         else:
+            #TODO: add bot type
             print('adding simulated bot')
             bot_name = name
             BaseStation().get_vision_manager().update_location(name, {

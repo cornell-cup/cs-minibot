@@ -2,12 +2,13 @@ class SimBot(object):
     """
     Manages all properties of one simbot object
     """
-    def __init__(self, id: int, angle: int, x: int, y: int, size: int):
+    def __init__(self, bot_name: str, id: int, angle: int, x: int, y: int, size: int):
         self.__angle = angle
         self.__id = id
         self.__x = x
         self.__y = y
         self.__size = size
+        self.__name = bot_name
 
     def get_id(self):
         return self.__id
@@ -38,4 +39,24 @@ class SimBot(object):
 
     def set_size(self, size: int):
         self.__size = size
+
+    def update_direction(self, d: str):
+        """
+        Updates the simbot's coordinates based on input direction (f, b, l, r)
+
+        Args:
+            d (str): 'f' (forward), 'b' (backward), 'l' (left), 'r' (right)
+        Returns:
+            SimBot object with updated coordinates
+        """
+        if d == 'f':
+            self.set_y(self.get_y() + 1)
+        elif d == 'b':
+            self.set_y(self.get_y() - 1)
+        elif d == 'l':
+            self.set_x(self.get_x() - 1)
+        else:
+            self.set_x(self.get_x() + 1)
+        return self
+
 

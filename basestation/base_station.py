@@ -50,10 +50,4 @@ class BaseStation(object, metaclass=Singleton):
         """
         return self.vision_manager
 
-    def get_sim_manager(self):
-        """
-        Gets the simulator manager associated iwth the current BaseStation.
-        """
-        return self.sim_manager
-
 

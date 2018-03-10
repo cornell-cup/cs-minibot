@@ -1,37 +1,41 @@
 from basestation.bot.connection.udp_connection import UDPConnection
 from basestation.bot.virtualbot.virtual_bot import VirtualBot
+from basestation.bot.simbot.sim_bot import SimBot
 
 from typing import Optional
 from os import listdir
 from os.path import isfile, join
+from random import *
 
 
 class BotManager(object):
     """
-    Tracks and manages all virtual bots (vbots. Any vbot that you create a
+    Tracks and manages all virtual bots (bots. Any bot that you create a
     connection to should be tracked under this manager to prevent errors.
-    VBots are uniquely identified by their names.
+    Bots are uniquely identified by their names.
     """
 
     def __init__(self):
         """
-        Initializes the UDP connection listener, creates an empty vbot map, and
-        starts the vbot counter.
+        Initializes the UDP connection listener, creates an empty bot map, and
+        starts the bot counter.
         """
-        self.__vbot_counter = 0
-        self.__vbot_map = {}
+        self.__bot_counter = 0
+        self.__bot_map = {}
         self.__udp_connection = UDPConnection()
         self.__udp_connection.start()
+        self.__sim_names = ["leo", "jesse", "ashley", "lesley", "celine", "danny", "heather", "lauren", "chelsea", "jimmy", "han",
+                 "trevor", "matt li", "james", "danny mf yang", "fire lord", "kevin", "anmol"]
         return
 
-    def add_bot(self, vbot_name: str, ip: str, port: int = 10000) -> Optional[str]:
+    def add_bot(self, bot_name: str, ip: str, port: int = 10000) -> Optional[str]:
 
         """
 
         Adds a virtual bot to the virtual bot manager list.
 
         Args:
-            vbot_name (str): MiniBot's name.
+            bot_name (str): MiniBot's name.
             ip (str): The IP of the MiniBot.
             port (int, optional): The port of the MiniBot's TCP Connection.
                 Default = 10000
@@ -44,16 +48,33 @@ class BotManager(object):
             Exception: Raised if the TCP connection was or went inactive
                 while creating the VirtualBot object.
         """
-        new_vbot = VirtualBot(self.__safe_escape_name(vbot_name), ip, port=port)
+        if type == "minibot":
+            new_vbot = VirtualBot(self.__safe_escape_name(bot_name), ip, port=port)
 
-        if new_vbot.is_bot_connection_active():
-            new_vbot_name = new_vbot.get_name()
-            self.__vbot_map[new_vbot_name] = new_vbot
-            return new_vbot.get_name()
-        else:
-            del new_vbot
-            raise Exception("The connection was not active. Not adding the "
-                            + "bot.")
+            if new_vbot.is_bot_connection_active():
+                new_vbot_name = new_vbot.get_name()
+                self.__bot_map[new_vbot_name] = new_vbot
+                return new_vbot.get_name()
+            else:
+                del new_vbot
+                raise Exception("The connection was not active. Not adding the "
+                                + "bot.")
+
+    def add_simbot(self, bot_name: str, id: int, angle: int, x: int, y: int, size: int):
+        """
+        Adds a simbot to the list of tracked simbots
+        Args:
+            id (int): unique id of bot (should match index of list)
+            angle (int): angle that bot is facing
+            x (int): x-coordinate of bot
+            y (int): y-coordinate of bot
+            size (int): assuming square bot, length of one side of the bot
+        """
+        name = self.__sim_names[randint(0, len(self.__sim_names))]
+        sim_bot = SimBot(id, angle, x, y, size)
+        self.__bot_map[name] = sim_bot
+        return name
+
 
     def get_bot_by_name(self, name: str) -> Optional[VirtualBot]:
         """
@@ -64,7 +85,7 @@ class BotManager(object):
         Args:
             name (str): The name of the MiniBot.
         """
-        return self.__vbot_map.get(name, None)
+        return self.__bot_map.get(name, None)
 
     def remove_bot_by_name(self, name: str):
         """
@@ -78,15 +99,15 @@ class BotManager(object):
             (bool): True if VirtualBot successfully removed, False if
                 operation failed.
         """
-        vbot = self.__vbot_map.get(name, None)
+        bot = self.__bot_map.get(name, None)
 
         try:
-            del self.__vbot_map[name]
+            del self.__bot_map[name]
         except KeyError:
             return False
 
-        if vbot is not None:
-            del vbot
+        if bot is not None:
+            del bot
             return True
         else:
             return False
@@ -95,13 +116,13 @@ class BotManager(object):
         """
         Returns a list of VirtualBots currently tracked.
         """
-        return list(self.__vbot_map.values())
+        return list(self.__bot_map.values())
 
     def get_all_tracked_bots_names(self) -> list:
         """
         Returns a list of the names of VirtualBots currently tracked.
         """
-        return list(self.__vbot_map.keys())
+        return list(self.__bot_map.keys())
 
     def get_all_discovered_bots(self) -> list:
         """
@@ -128,12 +149,12 @@ class BotManager(object):
         # possible problem: Let's say these bots exist: bot, bot0, testbot,
         # and we want to add testbot to the list. I have a hunch that it will be
         # added as testbot1 instead of testbot0.
-        self.__vbot_counter += 1
-        return self.__vbot_counter
+        self.__bot_counter += 1
+        return self.__bot_counter
 
     def __safe_escape_name(self, name: str) -> str:
         """
-        Safely escapes the name of the vbot to ensure it is unique and
+        Safely escapes the name of the bot to ensure it is unique and
         returns that string. This has a simple implementation for now,
         but could be extended to guarantee uniqueness. For anyone using a
         MiniBot, this means names should only used [a-zA-Z] characters.
