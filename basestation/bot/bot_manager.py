@@ -24,7 +24,7 @@ class BotManager(object):
         self.__bot_map = {}
         self.__udp_connection = UDPConnection()
         self.__udp_connection.start()
-        #This is for fun. Changed to either unique ID generator or to user custom name
+        #This is for FUN. Changed to either unique ID generator or to user custom name
         self.__sim_names = ["leo", "jesse", "ashley", "lesley", "celine", "danny", "heather", "lauren", "chelsea", "jimmy", "han",
                  "trevor", "matt li", "james", "danny mf yang", "fire lord", "kevin", "anmol", "scott 'the cornell cup' wu"]
         return
@@ -72,6 +72,7 @@ class BotManager(object):
         """
         name = self.__sim_names[randint(0, len(self.__sim_names))]
         sim_bot = SimBot(id, angle, x, y, size)
+        # "SIM" to differentiate simbots from physical (virtual) bots
         self.__bot_map["SIM " + name] = sim_bot
         return name
 

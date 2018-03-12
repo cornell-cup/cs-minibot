@@ -290,8 +290,6 @@ class UpdateDirectionHandler(tornado.web.RequestHandler):
         d = info['key']
 
         bot = BaseStation().bot_manager.get_bot_by_name(id)
-        print("id " + id)
-        print("d " + d)
         bot.update_direction(d)
         BaseStation().vision_manager.clear_list()
         BaseStation().get_vision_manager().update_location(str(id), {
@@ -302,7 +300,6 @@ class UpdateDirectionHandler(tornado.web.RequestHandler):
             'angle': bot.get_angle(),
             'type': 'bot'
         })
-        print(str(bot.get_x()) + " " + str(bot.get_y()))
         self.write(json.dumps(info).encode())
 
 

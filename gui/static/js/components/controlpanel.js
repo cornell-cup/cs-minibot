@@ -410,7 +410,6 @@ export default class ControlPanel extends React.Component {
                                 Choose bot:
                                 <select value={this.props.currentBot} onChange={this.selectBot} id="botlist" name="bots">
                                     <option value="(DEBUG) Sim Bot">(DEBUG) Sim Bot</option>
-                                    <option value="(DEBUG) Sim Bot - GridView">(DEBUG) Sim Bot - GridView</option>
                                     {
                                         this.state.trackedBots.map(function(botname, idx){
                                             return <option
