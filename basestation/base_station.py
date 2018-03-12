@@ -47,3 +47,5 @@ class BaseStation(object, metaclass=Singleton):
         Gets the vision manager associated with current BaseStation.
         """
         return self.vision_manager
+
+

@@ -43,6 +43,8 @@ export default class GridView extends React.Component {
 
         // Setup
         this.setup = this.setup.bind(this);
+        var background = PIXI.Texture.WHITE;
+        this.setup(background);
         this.drawGridLines = this.drawGridLines.bind(this);
 
         // Display
@@ -89,7 +91,7 @@ export default class GridView extends React.Component {
 
         console.log("using white background");
         var background = PIXI.Texture.WHITE;
-        this.setup(background);
+        //this.setup(background);
     }
 
     /**
@@ -399,7 +401,7 @@ export default class GridView extends React.Component {
                     _this.state.lastTime = currentTime;
                     var timeout = MILLIS_PER_VISION_UPDATE;
                     if (elapsed > MILLIS_PER_VISION_UPDATE) {
-                        timeout = 2*MILLIS_PER_VISION_UPDATE - elapsed;
+                        timeout = 50*MILLIS_PER_VISION_UPDATE - elapsed;
                         if (timeout < 0) {
                             timeout = 0;
                         }

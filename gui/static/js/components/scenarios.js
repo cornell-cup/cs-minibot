@@ -100,7 +100,7 @@ export default class ScenariosItem extends React.Component {
                 var regexPosition = /\[\d,\d\]/;
                 jsonArray.forEach(function(object) {
                 //checks that bot contains position and angle
-                    if (regexPosition.test(object.position) && object.type == "bot" && object.position != "undefined" && object.angle != "undefined")  {
+                    if (regexPosition.test(object.position) && object.type == "simbot" && object.position != "undefined" && object.angle != "undefined")  {
                         tempNumBot++;
                         li.push({type: object.type, angle: object.angle, position: object.position});
                     }
@@ -128,7 +128,6 @@ export default class ScenariosItem extends React.Component {
 
     /* handles input change for input fields */
     handleInputChange(event) {
-        console.log("handle input change");
         console.log(this.state);
         const target = event.target;
         const value = target.value;
@@ -140,19 +139,18 @@ export default class ScenariosItem extends React.Component {
 
     /* checks that object contains correct info and adds object to list*/
     handleSubmit() {
-        console.log("handle submit");
         console.log(this.state);
 
         //check that inputs are valid
         if (this.state.angle > 360) alert("The angle is too large!");
         else if (this.state.angle == '' || this.state.posx == '' || this.state.posy == '') alert("Fields cannot be empty!");
-        else if (this.state.type == "bot" && this.state.numBots == 1) alert("Only one bot can be added!");
+        else if (this.state.type == "simbot" && this.state.numBots == 1) alert("Only one bot can be added!");
         else {
             var li = this.state.items;
             var positionString = "[" + this.state.posx + "," + this.state.posy + "]";
             console.log(this.state.type);
 
-            if (this.state.type == "bot") {
+            if (this.state.type == "simbot") {
                 console.log("add bot");
                 this.state.numBots++;
                 console.log("numBot:" + this.state.numBots);
@@ -170,7 +168,7 @@ export default class ScenariosItem extends React.Component {
         console.log("handle remove");
         console.log(this.state);
         var li = this.state.items;
-        if (li[event.idx].type == "bot") {
+        if (li[event.idx].type == "simbot") {
             this.state.numBots--;
         }
         console.log("type: " + li[event.idx].type);
@@ -213,7 +211,7 @@ export default class ScenariosItem extends React.Component {
                             <th>
                                 <select name="type" value={this.state.value} onChange={this.handleInputChange} style={styles.Form}>
                                     <option value ="scenario_object">Scenario Object</option>
-                                    <option value = "bot">Simulated Minibot</option>
+                                    <option value = "simbot">Simbot</option>
                                 </select>
                             </th>
                             <td><button style={styles.Button} onClick={this.handleSubmit}>Add</button></td>
@@ -223,7 +221,7 @@ export default class ScenariosItem extends React.Component {
                             <th>Angle: </th>
                             <td><input type="number" name="angle" onChange={this.handleInputChange} style={styles.Form}/></td>
                             <th>Size: </th>
-                            <td><input type="number" name="size"  disabled={this.state.type == "bot"} onChange={this.handleInputChange} style={styles.Form}/></td>
+                            <td><input type="number" name="size"  disabled={this.state.type == "simbot"} onChange={this.handleInputChange} style={styles.Form}/></td>
                         </tr>
                         <tr>
                             <th>Position X: </th>

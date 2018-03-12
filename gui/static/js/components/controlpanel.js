@@ -7,11 +7,14 @@ export default class ControlPanel extends React.Component {
         this.state = {
             power: 50,
             discoveredBots: [],
+            trackKeyboardPress: [],
             keyboard: false,
             xbox: false,
             trackedBots: [],
             scripts: [],
-            currentScript: ""
+            currentScript: "",
+            isSimBot: false,
+            key: ""
         };
 
         this.handleInputChange = this.handleInputChange.bind(this);
@@ -43,10 +46,12 @@ export default class ControlPanel extends React.Component {
             if(event.keyCode==87) {
                 // If the 'W' key is pressed,move forward
                 this.sendMotors(pow, pow, pow, pow);
+                this.state.key = "f";
             }
             else if(event.keyCode==83) {
                 //If the 'S' ket is pressed,move backward
                 this.sendMotors(-pow, -pow, -pow, -pow);
+                this.state.key = "b";
             }
             else if (event.keyCode==65) {
                 // If the 'A' key is pressed,ccw
@@ -59,14 +64,34 @@ export default class ControlPanel extends React.Component {
             else if (event.keyCode==81) {
                 // If the 'Q' key is pressed,left
                 this.sendMotors(-pow, pow, pow, -pow);
+                this.state.key = "l";
             }
             else if (event.keyCode==69) {
                 // If the 'E' key is pressed,right
                 this.sendMotors(pow, -pow, -pow, pow);
+                this.state.key = "r";
             }
             else {
                 return;
             }
+
+            if (this.state.isSimBot) {
+                console.log(this.state.key);
+                axios({
+                method:'POST',
+                url:'/sendGV',
+                data: JSON.stringify({
+                    id: this.props.currentBot,
+                    key: this.state.key
+                }),
+                })
+                .then(function(response) {
+                    console.log('sendGV');
+                })
+                .catch(function (error) {
+                    console.warn(error);
+                });
+                }
         }
     }
 
@@ -242,6 +267,12 @@ export default class ControlPanel extends React.Component {
      */
     selectBot(event) {
         this.props.setCurrentBot(event.target.value);
+        if (event.target.value.includes("SIM ")) {
+            this.state.isSimBot = true
+        }
+        else {
+            this.state.isSimBot = false
+        }
     }
 
     /**
