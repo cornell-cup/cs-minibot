@@ -17,7 +17,7 @@ cd ~
 git clone https://github.com/opencv/opencv.git
 cd opencv && git checkout 3.3.0 && cd ..
 git clone https://github.com/opencv/opencv_contrib.git
-cd opencv && git checkout 3.3.0 && cd ..
+cd opencv_contrib && git checkout 3.3.0 && cd ..
 
 # Run cmake-gui
 cmake-gui
