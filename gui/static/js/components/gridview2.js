@@ -19,25 +19,46 @@ export default class GridView extends React.Component {
     }
 
     drawGrid() {
-        var x_axis_scale = d3.scaleLinear().domain([-this.state.width/2, this.state.width/2]).range([0, this.state.width]);
-        var y_axis_scale = d3.scaleLinear().domain([-this.state.height/2, this.state.height/2]).range([this.state.height, 0]);
+        var x_axis_scale = d3.scaleLinear()
+                             .domain([-this.state.width/2, this.state.width/2])
+                             .range([0, this.state.width]);
 
-        var x_axis = d3.axisBottom(x_axis_scale).ticks(10).tickSize(this.state.height);
-        var y_axis = d3.axisRight(y_axis_scale).ticks(10).tickSize(this.state.width);
+        var y_axis_scale = d3.scaleLinear()
+                             .domain([-this.state.height/2, this.state.height/2])
+                             .range([this.state.height, 0]);
 
-        this.svg.attr("width", this.state.width + 60).attr("height", this.state.height + 60).append("g").attr("transform", "translate(" + 80 + "," + 20 + ")");
+        var x_axis = d3.axisBottom(x_axis_scale)
+                       .ticks(10)
+                       .tickSize(this.state.height);
 
-        this.svg.append("rect").attr("width", this.state.width).attr("height", this.state.height);
+        var y_axis = d3.axisRight(y_axis_scale)
+                       .ticks(10)
+                       .tickSize(this.state.width);
 
-        var gX = this.svg.append("g").attr("class", "x-axis").call(x_axis);
-        var gY = this.svg.append("g").attr("class", "y-axis").call(y_axis);
+        this.svg.attr("width", this.state.width + 60)
+                .attr("height", this.state.height + 60)
+                .append("g").attr("transform", "translate(" + 80 + "," + 20 + ")");
+
+        this.svg.append("rect")
+                .attr("width", this.state.width)
+                .attr("height", this.state.height);
+
+        var gX = this.svg.append("g")
+                         .attr("class", "x-axis")
+                         .call(x_axis);
+
+        var gY = this.svg.append("g")
+                         .attr("class", "y-axis")
+                         .call(y_axis);
+
         d3.selectAll("rect").style('fill', 'white');
        
         var view = this.svg.append("g").attr("class", "view");
         var transform = null;
         if (transform) view.attr("transform", transform);
 
-        var zoom = d3.zoom().scaleExtent([0.5, 5])
+        var zoom = d3.zoom()
+            .scaleExtent([0.5, 5])
             .translateExtent([[-2 * this.state.width, -2* this.state.height], [this.state.width * 2, this.state.height * 2]])
             .on("zoom", zoomed);
 
