@@ -1,12 +1,14 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
+//var d3 = require('d3');
+//import * as d3 from 'd3';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import Python from './components/python.js';
 import Blockly from './components/blockly.js';
 import ControlPanel from './components/controlpanel.js';
 import Scenarios from './components/scenarios.js';
 import AddBot from './components/addbot.js';
-import GridView from './components/gridview.js';
+import GridView from './components/gridview2.js';
 
 /**
  * Component for the Navbar on top
