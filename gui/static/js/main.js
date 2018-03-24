@@ -1,5 +1,7 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
+//var d3 = require('d3');
+//import * as d3 from 'd3';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import Python from './components/python.js';
 import Blockly from './components/blockly.js';
