@@ -11,7 +11,7 @@
 using namespace cv;
 using std::vector;
 
-#define TAG_SIZE 6.5f
+#define TAG_SIZE (6.f + (13.f/16.f))
 
 int main(int argc, char** argv) {
     // Display usage
@@ -124,15 +124,15 @@ int main(int argc, char** argv) {
 
             zarray_t* detections = apriltag_detector_detect(td, &im);
 
-            vector<Point2f> img_points(16);
-            vector<Point3f> obj_points(16);
+            vector<Point2f> img_points(48);
+            vector<Point3f> obj_points(48);
             Mat rvec(3, 1, CV_64FC1);
             Mat tvec(3, 1, CV_64FC1);
             for (int j = 0; j < zarray_size(detections); j++) {
                 // Get the ith detection
                 apriltag_detection_t *det;
                 zarray_get(detections, j, &det);
-                if ((det -> id) <= 3) {
+                if ((det -> id) <= 11) {
                     int id = det -> id;
                     // Draw onto the frame
                     line(frame, Point(det->p[0][0], det->p[0][1]),
@@ -154,12 +154,12 @@ int main(int argc, char** argv) {
                     img_points[2 + 4*id] = Point2f(det->p[2][0], det->p[2][1]);
                     img_points[3 + 4*id] = Point2f(det->p[3][0], det->p[3][1]);
 
-                    int a = (det->id % 2) * 2 - 1;
-                    int b = -((det->id / 2) * 2 - 1);
-                    obj_points[0 + 4*id] = Point3f(-0.5f * TAG_SIZE + a * 8.5f * 0.5f, -0.5f * TAG_SIZE + b * 11.0f * 0.5f, 0.f);
-                    obj_points[1 + 4*id] = Point3f( 0.5f * TAG_SIZE + a * 8.5f * 0.5f, -0.5f * TAG_SIZE + b * 11.0f * 0.5f, 0.f);
-                    obj_points[2 + 4*id] = Point3f( 0.5f * TAG_SIZE + a * 8.5f * 0.5f,  0.5f * TAG_SIZE + b * 11.0f * 0.5f, 0.f);
-                    obj_points[3 + 4*id] = Point3f(-0.5f * TAG_SIZE + a * 8.5f * 0.5f,  0.5f * TAG_SIZE + b * 11.0f * 0.5f, 0.f);
+                    float b = (0.5 + id/8)*(1-(id%4)/2*2);
+                    float a = (1.5 - (id/4-1)*(id/4-1))*(2*(id%2)-1);
+                    obj_points[0 + 4*id] = Point3f(-0.5f * TAG_SIZE + a * 8.5f, -0.5f * TAG_SIZE + b * 11.0f, 0.f);
+                    obj_points[1 + 4*id] = Point3f( 0.5f * TAG_SIZE + a * 8.5f, -0.5f * TAG_SIZE + b * 11.0f, 0.f);
+                    obj_points[2 + 4*id] = Point3f( 0.5f * TAG_SIZE + a * 8.5f,  0.5f * TAG_SIZE + b * 11.0f, 0.f);
+                    obj_points[3 + 4*id] = Point3f(-0.5f * TAG_SIZE + a * 8.5f,  0.5f * TAG_SIZE + b * 11.0f, 0.f);
                 }
             }
 
