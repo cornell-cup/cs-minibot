@@ -8,7 +8,7 @@ import Blockly from './components/blockly.js';
 import ControlPanel from './components/controlpanel.js';
 import Scenarios from './components/scenarios.js';
 import AddBot from './components/addbot.js';
-import GridView from './components/gridview2.js';
+import GridView from './components/gridview.js';
 
 /**
  * Component for the Navbar on top
