@@ -1,5 +1,5 @@
-rotation
-weighted averaging
-linking origins
+~rotation
+t weighted averaging (testing for distance now, dev on angle based beginning)
+p linking origins
 
 gui/interface updates
