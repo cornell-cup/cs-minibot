@@ -7,11 +7,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <vector>
+#include <stack>
 
 using namespace cv;
 using std::vector;
+using std::stack;
 
 #define TAG_SIZE 6.5f
+
+
+
+vector<VideoCapture> devices;
+vector<int> device_ids;
+vector<Mat> device_camera_matrix;
+vector<Mat> device_dist_coeffs;
+
+Mat transrotationalmat(apriltag_detection_t *det1, apriltag_detection_t *det2,int device);
 
 int main(int argc, char** argv) {
     // Display usage
@@ -20,11 +31,6 @@ int main(int argc, char** argv) {
         return -1;
     }
 
-    // Parse arguments
-    vector<VideoCapture> devices;
-    vector<int> device_ids;
-    vector<Mat> device_camera_matrix;
-    vector<Mat> device_dist_coeffs;
 
     for (int i = 1; i < argc; i++) {
         int id = atoi(argv[i]);
@@ -34,6 +40,7 @@ int main(int argc, char** argv) {
             continue;
         }
 
+        Mat camera_matrix, dist_coeffs;
         std::ifstream fin;
         fin.open(argv[i]);
         if (fin.fail()) {
@@ -41,7 +48,6 @@ int main(int argc, char** argv) {
             continue;
         }
 
-        Mat camera_matrix, dist_coeffs;
         std::string line;
         // TODO Error checking
         while (std::getline(fin, line)) {
@@ -106,12 +112,38 @@ int main(int argc, char** argv) {
     td->refine_pose = 0;
 
     Mat frame, gray;
-    while (key != 27) { // Quit on escape keypress
+    std::unordered_map<int,Mat> tagmap;
+
+    vector<double> data;
+    data.push_back(1);
+    data.push_back(0);
+    data.push_back(0);
+    data.push_back(0);
+    data.push_back(0);
+    data.push_back(1);
+    data.push_back(0);
+    data.push_back(0);
+    data.push_back(0);
+    data.push_back(0);
+    data.push_back(1);
+    data.push_back(0);
+    data.push_back(0);
+    data.push_back(0);
+    data.push_back(0);
+    data.push_back(1);
+    Mat identity = Mat(data,true).reshape(1,4);
+    tagmap.insert(std::make_pair(0,identity));
+
+    stack<int> nextvisit;
+    nextvisit.push(0);
+    int currentTag;
+    while (nextvisit.size() > 0) { // Quit on escape keypress
+        currentTag = nextvisit.top();
+        nextvisit.pop();
         for (size_t i = 0; i < devices.size(); i++) {
             if (!devices[i].isOpened()) {
                 continue;
             }
-
             devices[i] >> frame;
             cvtColor(frame, gray, COLOR_BGR2GRAY);
             image_u8_t im = {
@@ -120,122 +152,146 @@ int main(int argc, char** argv) {
                 .stride = gray.cols,
                 .buf = gray.data
             };
-
             zarray_t* detections = apriltag_detector_detect(td, &im);
-
-            vector<Point2f> img_points(16);
-            vector<Point3f> obj_points(16);
-            Mat rvec(3, 1, CV_64FC1);
-            Mat tvec(3, 1, CV_64FC1);
+            bool contains = false;
+            apriltag_detection_t *currdet;
             for (int j = 0; j < zarray_size(detections); j++) {
                 // Get the ith detection
                 apriltag_detection_t *det;
                 zarray_get(detections, j, &det);
-                if ((det -> id) <= 3) {
-                    int id = det -> id;
-                    // Draw onto the frame
-                    line(frame, Point(det->p[0][0], det->p[0][1]),
-                            Point(det->p[1][0], det->p[1][1]),
-                            Scalar(0, 0xff, 0), 2);
-                    line(frame, Point(det->p[0][0], det->p[0][1]),
-                            Point(det->p[3][0], det->p[3][1]),
-                            Scalar(0, 0, 0xff), 2);
-                    line(frame, Point(det->p[1][0], det->p[1][1]),
-                            Point(det->p[2][0], det->p[2][1]),
-                            Scalar(0xff, 0, 0), 2);
-                    line(frame, Point(det->p[2][0], det->p[2][1]),
-                            Point(det->p[3][0], det->p[3][1]),
-                            Scalar(0xff, 0, 0), 2);
-
-                    // Compute transformation using PnP
-                    img_points[0 + 4*id] = Point2f(det->p[0][0], det->p[0][1]);
-                    img_points[1 + 4*id] = Point2f(det->p[1][0], det->p[1][1]);
-                    img_points[2 + 4*id] = Point2f(det->p[2][0], det->p[2][1]);
-                    img_points[3 + 4*id] = Point2f(det->p[3][0], det->p[3][1]);
-
-                    int a = (det->id % 2) * 2 - 1;
-                    int b = -((det->id / 2) * 2 - 1);
-                    obj_points[0 + 4*id] = Point3f(-0.5f * TAG_SIZE + a * 8.5f * 0.5f, -0.5f * TAG_SIZE + b * 11.0f * 0.5f, 0.f);
-                    obj_points[1 + 4*id] = Point3f( 0.5f * TAG_SIZE + a * 8.5f * 0.5f, -0.5f * TAG_SIZE + b * 11.0f * 0.5f, 0.f);
-                    obj_points[2 + 4*id] = Point3f( 0.5f * TAG_SIZE + a * 8.5f * 0.5f,  0.5f * TAG_SIZE + b * 11.0f * 0.5f, 0.f);
-                    obj_points[3 + 4*id] = Point3f(-0.5f * TAG_SIZE + a * 8.5f * 0.5f,  0.5f * TAG_SIZE + b * 11.0f * 0.5f, 0.f);
+                if(det->id == currentTag){
+                  currdet = det;
+                  contains=true;
                 }
             }
-
-            solvePnP(obj_points, img_points, device_camera_matrix[i],
-                device_dist_coeffs[i], rvec, tvec);
-
-            Matx33d r;
-            Rodrigues(rvec,r);
-
-            // Construct the origin to camera matrix
-            vector<double> data;
-            data.push_back(r(0,0));
-            data.push_back(r(0,1));
-            data.push_back(r(0,2));
-            data.push_back(tvec.at<double>(0));
-            data.push_back(r(1,0));
-            data.push_back(r(1,1));
-            data.push_back(r(1,2));
-            data.push_back(tvec.at<double>(1));
-            data.push_back(r(2,0));
-            data.push_back(r(2,1));
-            data.push_back(r(2,2));
-            data.push_back(tvec.at<double>(2));
-            data.push_back(0);
-            data.push_back(0);
-            data.push_back(0);
-            data.push_back(1);
-            Mat origin2cam = Mat(data,true).reshape(1,4);
-
-            Mat cam2origin = origin2cam.inv();
-
-            // DEBUG Generate the location of the camera
-            vector<double> data2;
-            data2.push_back(0);
-            data2.push_back(0);
-            data2.push_back(0);
-            data2.push_back(1);
-            Mat genout = Mat(data2,true).reshape(1,4);
-            Mat camcoords = cam2origin * genout;
-
-            printf("%zu :: filler :: % 3.3f % 3.3f % 3.3f\n", i,
-                    camcoords.at<double>(0,0), camcoords.at<double>(1,0), camcoords.at<double>(2,0));
-
-            if (key == 'w') {
-                printf("written to camera %zu\n",i);
-                std::ofstream fout;
-                fout.open(std::to_string(device_ids[i]) + ".calib", std::ofstream::out);
-                fout << "camera_matrix =";
-                for (int r = 0; r < device_camera_matrix[i].rows; r++) {
-                    for (int c = 0; c < device_camera_matrix[i].cols; c++) {
-                        fout << " " << device_camera_matrix[i].at<double>(r, c);
-                    }
-                }
-                fout << std::endl;
-                fout << "dist_coeffs =";
-                for (int r = 0; r < device_dist_coeffs[i].rows; r++) {
-                    for (int c = 0; c < device_dist_coeffs[i].cols; c++) {
-                        fout << " " << device_dist_coeffs[i].at<double>(r, c);
-                    }
-                }
-                fout << std::endl;
-                fout << "transform_matrix =";
-                for (int r = 0; r < cam2origin.rows; r++) {
-                    for (int c = 0; c < cam2origin.cols; c++) {
-                        fout << " " << cam2origin.at<double>(r, c);
-                    }
-                }
-                fout << std::endl;
-                fout.close();
+            if(contains){
+              for (int j = 0; j < zarray_size(detections); j++) {
+                  // Get the ith detection
+                  apriltag_detection_t *det;
+                  zarray_get(detections, j, &det);
+                  if(det->id == currentTag){
+                    continue;
+                  }
+                  std::unordered_map<int,Mat>::iterator iter;
+                  iter = tagmap.find(det -> id);
+                  if(iter != tagmap.end()){
+                    tagmap.insert(std::make_pair(det ->id,transrotationalmat(currdet,det,i)));
+                    nextvisit.push(det->id);
+                  }
+              }
             }
+
 
 
             zarray_destroy(detections);
+            }
 
-            imshow(std::to_string(i), frame);
+
+
         }
+      // printf("written to camera %zu\n",i);
+      // std::ofstream fout;
+      // fout.open(std::to_string(device_ids[i]) + ".calib", std::ofstream::out);
+      // fout << "camera_matrix =";
+      // for (int r = 0; r < device_camera_matrix[i].rows; r++) {
+      //     for (int c = 0; c < device_camera_matrix[i].cols; c++) {
+      //         fout << " " << device_camera_matrix[i].at<double>(r, c);
+      //     }
+      // }
+      // fout << std::endl;
+      // fout << "dist_coeffs =";
+      // for (int r = 0; r < device_dist_coeffs[i].rows; r++) {
+      //     for (int c = 0; c < device_dist_coeffs[i].cols; c++) {
+      //         fout << " " << device_dist_coeffs[i].at<double>(r, c);
+      //     }
+      // }
+      // fout << std::endl;
+      // fout << "transform_matrix =";
+      // for (int r = 0; r < cam2origin.rows; r++) {
+      //     for (int c = 0; c < cam2origin.cols; c++) {
+      //         fout << " " << cam2origin.at<double>(r, c);
+      //     }
+      // }
+      // fout << std::endl;
+      // fout.close();
+}
+Mat transrotationalmat(apriltag_detection_t *det1,apriltag_detection_t *det2, int device){
+  // Compute transformation using PnP
+  vector<Point2f> img_points(4);
+  vector<Point3f> obj_points(4);
 
-        key = waitKey(16);
+  Mat rvec(3, 1, CV_64FC1);
+  Mat tvec(3, 1, CV_64FC1);
 
+
+  img_points[0] = Point2f(det1->p[0][0], det1->p[0][1]);
+  img_points[1] = Point2f(det1->p[1][0], det1->p[1][1]);
+  img_points[2] = Point2f(det1->p[2][0], det1->p[2][1]);
+  img_points[3] = Point2f(det1->p[3][0], det1->p[3][1]);
+
+  obj_points[0] = Point3f(-TAG_SIZE * 0.5f, -TAG_SIZE * 0.5f, 0.f);
+  obj_points[1] = Point3f( TAG_SIZE * 0.5f, -TAG_SIZE * 0.5f, 0.f);
+  obj_points[2] = Point3f( TAG_SIZE * 0.5f,  TAG_SIZE * 0.5f, 0.f);
+  obj_points[3] = Point3f(-TAG_SIZE * 0.5f,  TAG_SIZE * 0.5f, 0.f);
+
+  solvePnP(obj_points, img_points, device_camera_matrix[device],
+          device_dist_coeffs[device], rvec, tvec);
+  Matx33d r;
+  Rodrigues(rvec,r);
+
+  vector<double> data;
+  data.push_back(r(0,0));
+  data.push_back(r(0,1));
+  data.push_back(r(0,2));
+  data.push_back(tvec.at<double>(0));
+  data.push_back(r(1,0));
+  data.push_back(r(1,1));
+  data.push_back(r(1,2));
+  data.push_back(tvec.at<double>(1));
+  data.push_back(r(2,0));
+  data.push_back(r(2,1));
+  data.push_back(r(2,2));
+  data.push_back(tvec.at<double>(2));
+  data.push_back(0);
+  data.push_back(0);
+  data.push_back(0);
+  data.push_back(1);
+  Mat tag12cam = Mat(data,true).reshape(1, 4);
+  Mat cam2tag1 = tag12cam.inv();
+
+  // Compute transformation using PnP
+  img_points[0] = Point2f(det2->p[0][0], det2->p[0][1]);
+  img_points[1] = Point2f(det2->p[1][0], det2->p[1][1]);
+  img_points[2] = Point2f(det2->p[2][0], det2->p[2][1]);
+  img_points[3] = Point2f(det2->p[3][0], det2->p[3][1]);
+
+  obj_points[0] = Point3f(-TAG_SIZE * 0.5f, -TAG_SIZE * 0.5f, 0.f);
+  obj_points[1] = Point3f( TAG_SIZE * 0.5f, -TAG_SIZE * 0.5f, 0.f);
+  obj_points[2] = Point3f( TAG_SIZE * 0.5f,  TAG_SIZE * 0.5f, 0.f);
+  obj_points[3] = Point3f(-TAG_SIZE * 0.5f,  TAG_SIZE * 0.5f, 0.f);
+
+  solvePnP(obj_points, img_points, device_camera_matrix[device],
+          device_dist_coeffs[device], rvec, tvec);
+  Matx33d r1;
+  Rodrigues(rvec,r1);
+
+  vector<double> data2;
+  data2.push_back(r1(0,0));
+  data2.push_back(r1(0,1));
+  data2.push_back(r1(0,2));
+  data2.push_back(tvec.at<double>(0));
+  data2.push_back(r1(1,0));
+  data2.push_back(r1(1,1));
+  data2.push_back(r1(1,2));
+  data2.push_back(tvec.at<double>(1));
+  data2.push_back(r1(2,0));
+  data2.push_back(r1(2,1));
+  data2.push_back(r1(2,2));
+  data2.push_back(tvec.at<double>(2));
+  data2.push_back(0);
+  data2.push_back(0);
+  data2.push_back(0);
+  data2.push_back(1);
+  Mat tag22cam = Mat(data2,true).reshape(1, 4);
+  return cam2tag1*tag22cam;
 }
