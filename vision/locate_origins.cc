@@ -174,7 +174,7 @@ int main(int argc, char** argv) {
                   }
                   std::unordered_map<int,Mat>::iterator iter;
                   iter = tagmap.find(det -> id);
-                  if(iter != tagmap.end()){
+                  if(iter == tagmap.end()){
                     tagmap.insert(std::make_pair(det ->id,transrotationalmat(currdet,det,i)));
                     nextvisit.push(det->id);
                   }
@@ -190,20 +190,44 @@ int main(int argc, char** argv) {
 
         }
         printf("\nsearch phase completed found %d tags\n",tagmap.size());
-        for(int i = 0; i < tagmap.size(); i++){
+
+        for(auto it: tagmap){
           vector<double> data2;
           data2.push_back(0);
           data2.push_back(0);
           data2.push_back(0);
           data2.push_back(1);
           Mat genout = Mat(data2,true).reshape(1,4);
-          Mat camcoords = cam2origin * genout;
+          printf("\n======== Tag %d ========\n",it.first);
+          Mat camcoords = it.second * genout;
 
-          printf("%zu :: filler :: % 3.3f % 3.3f % 3.3f\n", i,
+          printf("%zu :: filler :: % 3.3f % 3.3f % 3.3f\n", it.first,
                   camcoords.at<double>(0,0), camcoords.at<double>(1,0), camcoords.at<double>(2,0));
 
-          printf("Found tag %d at location ",tagmap.);
         }
+        // for(int i = 0; i < tagmap.size(); i++){
+        //   vector<double> data2;
+        //   data2.push_back(0);
+        //   data2.push_back(0);
+        //   data2.push_back(0);
+        //   data2.push_back(1);
+        //   Mat genout = Mat(data2,true).reshape(1,4);
+        //   Mat tag2origin = tagmap.find();
+        //
+        //   auto search = tagmap.find(i);
+        //   if(search != example.end()) {
+        //       std::cout << "Found " << search->first << " " << search->second << '\n';
+        //   }
+        //   else {
+        //       std::cout << "Not found\n";
+        //   }
+        //   Mat camcoords = cam2origin * genout;
+        //
+        //   printf("%zu :: filler :: % 3.3f % 3.3f % 3.3f\n", i,
+        //           camcoords.at<double>(0,0), camcoords.at<double>(1,0), camcoords.at<double>(2,0));
+        //
+        //   printf("Found tag %d at location ",tagmap.);
+        // }
       // printf("written to camera %zu\n",i);
       // std::ofstream fout;
       // fout.open(std::to_string(device_ids[i]) + ".calib", std::ofstream::out);
