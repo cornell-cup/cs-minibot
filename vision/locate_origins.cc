@@ -164,9 +164,9 @@ int main(int argc, char** argv) {
                   contains=true;
                 }
             }
-            printf("Accessed device %d",i);
+            printf("Accessed device %d\n",i);
             if(contains){
-              printf("Entered with %d",zarray_size(detections));
+              printf("Entered with %d\n",zarray_size(detections));
               for (int j = 0; j < zarray_size(detections); j++) {
                   // Get the ith detection
                   apriltag_detection_t *det;
@@ -176,7 +176,7 @@ int main(int argc, char** argv) {
                   }
                   std::unordered_map<int,Mat>::iterator iter;
                   iter = tagmap.find(det -> id);
-                  if(iter != tagmap.end()){
+                  if(iter == tagmap.end()){
                     tagmap.insert(std::make_pair(det ->id,transrotationalmat(currdet,det,i)));
                     nextvisit.push(det->id);
                     printf("Added new visits %d",(det-> id));
