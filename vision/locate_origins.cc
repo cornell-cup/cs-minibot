@@ -164,7 +164,9 @@ int main(int argc, char** argv) {
                   contains=true;
                 }
             }
+            printf("Accessed device %d",i);
             if(contains){
+              printf("Entered with %d",zarray_size(detections));
               for (int j = 0; j < zarray_size(detections); j++) {
                   // Get the ith detection
                   apriltag_detection_t *det;
