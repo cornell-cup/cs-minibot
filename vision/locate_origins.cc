@@ -174,7 +174,7 @@ int main(int argc, char** argv) {
                   }
                   std::unordered_map<int,Mat>::iterator iter;
                   iter = tagmap.find(det -> id);
-                  if(iter == tagmap.end()){
+                  if(iter != tagmap.end()){
                     tagmap.insert(std::make_pair(det ->id,transrotationalmat(currdet,det,i)));
                     nextvisit.push(det->id);
                     printf("Added new visits %d",(det-> id));
