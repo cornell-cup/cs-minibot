@@ -177,6 +177,7 @@ int main(int argc, char** argv) {
                   if(iter == tagmap.end()){
                     tagmap.insert(std::make_pair(det ->id,transrotationalmat(currdet,det,i)));
                     nextvisit.push(det->id);
+                    printf("Added new visits %d",(det-> id));
                   }
               }
             }
