@@ -189,6 +189,21 @@ int main(int argc, char** argv) {
 
 
         }
+        printf("\nsearch phase completed found %d tags\n",tagmap.size());
+        for(int i = 0; i < tagmap.size(); i++){
+          vector<double> data2;
+          data2.push_back(0);
+          data2.push_back(0);
+          data2.push_back(0);
+          data2.push_back(1);
+          Mat genout = Mat(data2,true).reshape(1,4);
+          Mat camcoords = cam2origin * genout;
+
+          printf("%zu :: filler :: % 3.3f % 3.3f % 3.3f\n", i,
+                  camcoords.at<double>(0,0), camcoords.at<double>(1,0), camcoords.at<double>(2,0));
+
+          printf("Found tag %d at location ",tagmap.);
+        }
       // printf("written to camera %zu\n",i);
       // std::ofstream fout;
       // fout.open(std::to_string(device_ids[i]) + ".calib", std::ofstream::out);
