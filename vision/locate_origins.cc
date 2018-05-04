@@ -23,6 +23,7 @@ vector<Mat> device_camera_matrix;
 vector<Mat> device_dist_coeffs;
 
 Mat transrotationalmat(apriltag_detection_t *det1, apriltag_detection_t *det2,int device);
+double distance(Mat transrot);
 
 int main(int argc, char** argv) {
     // Display usage
@@ -193,7 +194,56 @@ int main(int argc, char** argv) {
 
 
 
-        }
+        }for (size_t i = 0; i < devices.size(); i++) {
+            if (!devices[i].isOpened()) {
+                continue;
+            }
+            devices[i] >> frame;
+            cvtColor(frame, gray, COLOR_BGR2GRAY);
+            image_u8_t im = {
+                .width = gray.cols,
+                .height = gray.rows,
+                .stride = gray.cols,
+                .buf = gray.data
+            };
+            zarray_t* detections = apriltag_detector_detect(td, &im);
+            bool contains = false;
+            apriltag_detection_t *currdet;
+            for (int j = 0; j < zarray_size(detections); j++) {
+                // Get the ith detection
+                apriltag_detection_t *det;
+                zarray_get(detections, j, &det);
+                if(det->id == currentTag){
+                  currdet = det;
+                  contains=true;
+                }
+            }
+            printf("Accessed device %d\n",i);
+            if(contains){
+              printf("Entered with %d\n",zarray_size(detections));
+              for (int j = 0; j < zarray_size(detections); j++) {
+                  // Get the ith detection
+                  apriltag_detection_t *det;
+                  zarray_get(detections, j, &det);
+                  if(det->id == currentTag){
+                    continue;
+                  }
+                  std::unordered_map<int,Mat>::iterator iter;
+                  iter = tagmap.find(det -> id);
+                  if(iter == tagmap.end()){
+                    iter = tagmap.find(currentTag);
+                    Mat transrot2origin = (iter->second)*transrotationalmat(currdet,det,i);
+                    tagmap.insert(std::make_pair(det ->id,transrot2origin));
+                    nextvisit.push(det->id);
+                    printf("Added new visits %d",(det-> id));
+                  }
+              }
+            }
+
+
+
+            zarray_destroy(detections);
+            }
         printf("\nsearch phase completed found %d tags\n",tagmap.size());
 
         for(auto it: tagmap){
@@ -209,6 +259,146 @@ int main(int argc, char** argv) {
           printf("%zu :: filler :: % 3.3f % 3.3f % 3.3f\n", it.first,
                   camcoords.at<double>(0,0), camcoords.at<double>(1,0), camcoords.at<double>(2,0));
 
+        }
+
+        for (size_t i = 0; i < devices.size(); i++) {
+            if (!devices[i].isOpened()) {
+                continue;
+            }
+            devices[i] >> frame;
+            cvtColor(frame, gray, COLOR_BGR2GRAY);
+            image_u8_t im = {
+                .width = gray.cols,
+                .height = gray.rows,
+                .stride = gray.cols,
+                .buf = gray.data
+            };
+            zarray_t* detections = apriltag_detector_detect(td, &im);
+            vector<int> detected_ids;
+            for (int j = 0; j < zarray_size(detections); j++) {
+                apriltag_detection_t *det;
+                zarray_get(detections, j, &det);
+                detected_ids.push_back(det->id);
+            }
+            if(detected_ids.size() == 0){
+              printf("No tags detected in camera %d", device_ids[i]);
+            }
+            else{
+              int startdex = 0;
+              double closestdist;
+              Mat closestmat;
+              int closestID;
+              bool found = false;
+              while(!found){
+                if(startdex = detected_ids.size()){
+                  printf("CRITICAL ERROR: Device has no mapped detections");
+                  break;
+                }
+                else{
+                  std::unordered_map<int,Mat>::iterator iter;
+                  iter = tagmap.find(detected_ids[startdex]);
+                  if(iter == tagmap.end()){
+                    startdex++;
+                  }
+                  else{
+                    closestdist = distance(iter->second);
+                    closestID = detected_ids[startdex];
+                    closestmat = iter->second;
+                  }
+                }
+              }
+              for(int j = startdex; j < detected_ids.size();j++){
+                std::unordered_map<int,Mat>::iterator iter;
+                iter = tagmap.find(detected_ids[j]);
+                if(iter == tagmap.end()){
+                  continue;
+                }
+                else{
+                  int temp = distance(iter->second);
+                  if(temp < closestdist){
+                    closestdist = temp;
+                    closestmat = iter->second;
+                    closestID = detected_ids[j];
+                  }
+                }
+              }
+              apriltag_detection_t *currdet;
+              for (int j = 0; j < zarray_size(detections); j++) {
+                  apriltag_detection_t *det;
+                  zarray_get(detections, j, &det);
+                  if(det->id == closestID){
+                    currdet = det;
+                    break;
+                  }
+              }
+              vector<Point2f> img_points(4);
+              vector<Point3f> obj_points(4);
+              Mat rvec(3, 1, CV_64FC1);
+              Mat tvec(3, 1, CV_64FC1);
+              img_points[0] = Point2f(currdet->p[0][0], currdet->p[0][1]);
+              img_points[1] = Point2f(currdet->p[1][0], currdet->p[1][1]);
+              img_points[2] = Point2f(currdet->p[2][0], currdet->p[2][1]);
+              img_points[3] = Point2f(currdet->p[3][0], currdet->p[3][1]);
+
+              obj_points[0] = Point3f(-TAG_SIZE * 0.5f, -TAG_SIZE * 0.5f, 0.f);
+              obj_points[1] = Point3f( TAG_SIZE * 0.5f, -TAG_SIZE * 0.5f, 0.f);
+              obj_points[2] = Point3f( TAG_SIZE * 0.5f,  TAG_SIZE * 0.5f, 0.f);
+              obj_points[3] = Point3f(-TAG_SIZE * 0.5f,  TAG_SIZE * 0.5f, 0.f);
+
+              solvePnP(obj_points, img_points, device_camera_matrix[i],
+                      device_dist_coeffs[i], rvec, tvec);
+              Matx33d r;
+              Rodrigues(rvec,r);
+
+              vector<double> data;
+              data.push_back(r(0,0));
+              data.push_back(r(0,1));
+              data.push_back(r(0,2));
+              data.push_back(tvec.at<double>(0));
+              data.push_back(r(1,0));
+              data.push_back(r(1,1));
+              data.push_back(r(1,2));
+              data.push_back(tvec.at<double>(1));
+              data.push_back(r(2,0));
+              data.push_back(r(2,1));
+              data.push_back(r(2,2));
+              data.push_back(tvec.at<double>(2));
+              data.push_back(0);
+              data.push_back(0);
+              data.push_back(0);
+              data.push_back(1);
+              Mat tag2cam = Mat(data,true).reshape(1, 4);
+              Mat cam2tag = tag2cam.inv();
+              Mat camout = closestmat*cam2tag;
+
+              printf("written to camera %zu\n",i);
+              std::ofstream fout;
+              fout.open(std::to_string(device_ids[i]) + ".calib", std::ofstream::out);
+              fout << "camera_matrix =";
+              for (int r = 0; r < device_camera_matrix[i].rows; r++) {
+                  for (int c = 0; c < device_camera_matrix[i].cols; c++) {
+                      fout << " " << device_camera_matrix[i].at<double>(r, c);
+                  }
+              }
+              fout << std::endl;
+              fout << "dist_coeffs =";
+              for (int r = 0; r < device_dist_coeffs[i].rows; r++) {
+                  for (int c = 0; c < device_dist_coeffs[i].cols; c++) {
+                      fout << " " << device_dist_coeffs[i].at<double>(r, c);
+                  }
+              }
+              fout << std::endl;
+              fout << "transform_matrix =";
+              for (int r = 0; r < camout.rows; r++) {
+                  for (int c = 0; c < camout.cols; c++) {
+                      fout << " " << camout.at<double>(r, c);
+                  }
+              }
+              fout << std::endl;
+              fout.close();
+
+            }
+            zarray_destroy(detections);
         }
         // for(int i = 0; i < tagmap.size(); i++){
         //   vector<double> data2;
@@ -226,39 +416,29 @@ int main(int argc, char** argv) {
         //   else {
         //       std::cout << "Not found\n";
         //   }
-        //   Mat camcoords = cam2origin * genout;
+        //   Mat camcoords = camout * genout;
         //
         //   printf("%zu :: filler :: % 3.3f % 3.3f % 3.3f\n", i,
         //           camcoords.at<double>(0,0), camcoords.at<double>(1,0), camcoords.at<double>(2,0));
         //
         //   printf("Found tag %d at location ",tagmap.);
         // }
-      // printf("written to camera %zu\n",i);
-      // std::ofstream fout;
-      // fout.open(std::to_string(device_ids[i]) + ".calib", std::ofstream::out);
-      // fout << "camera_matrix =";
-      // for (int r = 0; r < device_camera_matrix[i].rows; r++) {
-      //     for (int c = 0; c < device_camera_matrix[i].cols; c++) {
-      //         fout << " " << device_camera_matrix[i].at<double>(r, c);
-      //     }
-      // }
-      // fout << std::endl;
-      // fout << "dist_coeffs =";
-      // for (int r = 0; r < device_dist_coeffs[i].rows; r++) {
-      //     for (int c = 0; c < device_dist_coeffs[i].cols; c++) {
-      //         fout << " " << device_dist_coeffs[i].at<double>(r, c);
-      //     }
-      // }
-      // fout << std::endl;
-      // fout << "transform_matrix =";
-      // for (int r = 0; r < cam2origin.rows; r++) {
-      //     for (int c = 0; c < cam2origin.cols; c++) {
-      //         fout << " " << cam2origin.at<double>(r, c);
-      //     }
-      // }
-      // fout << std::endl;
-      // fout.close();
+
 }
+
+double distance(Mat transrot){
+  vector<double> data2;
+  data2.push_back(0);
+  data2.push_back(0);
+  data2.push_back(0);
+  data2.push_back(1);
+  Mat genout = Mat(data2,true).reshape(1,4);
+  Mat camcoords = transrot * genout;
+  return camcoords.at<double>(0,0)*camcoords.at<double>(0,0) +
+         camcoords.at<double>(1,0)*camcoords.at<double>(1,0) +
+         camcoords.at<double>(2,0)*camcoords.at<double>(2,0);
+}
+
 Mat transrotationalmat(apriltag_detection_t *det1,apriltag_detection_t *det2, int device){
   // Compute transformation using PnP
   vector<Point2f> img_points(4);
