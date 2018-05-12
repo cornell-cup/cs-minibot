@@ -15,8 +15,82 @@ using std::vector;
 
 #define TAG_SIZE 6.5f
 #define PI acos(-1)
+#define WINDOWSIZE 1000
+#define BOXSIZE 50
 
-void getEulerAngles(Mat &rotCamerMatrix,Vec3d &eulerAngles);
+float max(float a, float b) {
+	if(a > b)
+		return a;
+	return b;
+}
+
+int xPixel(float x, float boundaries[]) {
+	return (int)((x - boundaries[0])/(boundaries[2]-boundaries[0])*WINDOWSIZE);
+}
+
+int yPixel(float y, float boundaries[]) {
+	return WINDOWSIZE - (int)((y - boundaries[1])/(boundaries[3]-boundaries[1])*WINDOWSIZE);	
+}
+
+void drawBox(int x, int y, Mat disp, Scalar color) {
+	Point topLeft = Point(x - BOXSIZE/2, y - BOXSIZE/2);
+	Point topRight = Point(x + BOXSIZE/2, y - BOXSIZE/2);
+	Point bottomLeft = Point(x - BOXSIZE/2, y + BOXSIZE/2);
+	Point bottomRight = Point(x + BOXSIZE/2, y + BOXSIZE/2);
+
+	line(disp, topLeft, topRight, color, 2);
+	line(disp, topLeft, bottomLeft, color, 2);
+	line(disp, bottomLeft, bottomRight, color, 2);
+	line(disp, bottomRight, topRight, color, 2);
+	line(disp, topLeft, bottomRight, color, 2);
+	line(disp, bottomLeft, topRight, color, 2);
+}
+
+void drawOrigins(Mat disp, float boundaries[], std::map <int, float[7]> weightedCoords, Scalar colors[]) {
+	float minX = -1;
+	float minY = -1;
+	float maxX = -1;
+	float maxY = -1;
+
+	std::map<int, float[7]>::iterator it = weightedCoords.begin();
+
+	while(it != weightedCoords.end()) {
+		if(it->first < 10) { // Using tags < 10 as origin tags 
+			float x = it->second[0]/it->second[6];
+			float y = it->second[1]/it->second[6];
+
+			if(x < minX || minX == -1)
+				minX = x;
+			if(x > maxX || maxX == -1)
+				maxX = x;
+			if(y < minY || minY == -1)
+				minY = y;
+			if(y > maxY || maxY == -1)
+				maxY = y;
+		}
+
+		it++;
+	}
+
+	float xDiff = max(50, maxX - minX);
+	float yDiff = max(50, maxY - minY);
+
+	boundaries[0] = minX - xDiff/2;
+	boundaries[1] = minY - yDiff/2;
+	boundaries[2] = maxX + xDiff/2;
+	boundaries[3] = maxY + yDiff/2;
+
+	it = weightedCoords.begin();
+	while(it != weightedCoords.end()) {
+		if(it->first < 10) { // Using tags < 10 as origin tags 
+			float x = it->second[0]/it->second[6];
+			float y = it->second[1]/it->second[6];
+			drawBox(xPixel(x, boundaries), yPixel(y, boundaries), disp, colors[0]);
+		}
+		it++;
+	}
+}
+
 
 int main(int argc, char** argv) {
 	// Display usage
@@ -129,7 +203,7 @@ int main(int argc, char** argv) {
 	int key = 0;
 	Mat frame, gray;
 	char postDataBuffer[100];
-	
+
 	float cameraCoordinates[(int)devices.size()*3]; // For each camera i, x coordinate saved at index i*3, y at index i*3+1, z at i*3+2
 	float cam2originAngles[(int)devices.size()]; // For each camera i, the angle between the camera and the origin's normal vector is saved at index i
 
@@ -196,10 +270,13 @@ int main(int argc, char** argv) {
 	std::ofstream outputFile;
 	outputFile.open("output.txt", std::ofstream::out | std::ofstream::app);
 
-
+	Mat disp = Mat(WINDOWSIZE,WINDOWSIZE, CV_8UC3, cv::Scalar(0,0,0));
+	float boundaries[4]; // [minX, minY, maxX, maxY]
+	std::map<int, float[2]> lastPoint;
+	Scalar colors[] = {Scalar(0xff,0,0), Scalar(0,0xff,0), Scalar(0,0,0xff)};
 
 	while (key != 27) { // Quit on escape keypress
-		
+
 		// map to store weighted coordinates [x, y, z, roll, pitch, yaw, total weight]
 		// weightings are based on distance from camera to tag and angle between camera and origin's normal vector
 		std::map <int, float[7]> weightedCoords;
@@ -209,7 +286,6 @@ int main(int argc, char** argv) {
 			struct tm * curtime = localtime ( &_tm );
 			outputFile << asctime(curtime);
 		}
-
 
 		for (size_t i = 0; i < devices.size(); i++) {
 			if (!devices[i].isOpened()) {
@@ -225,13 +301,11 @@ int main(int argc, char** argv) {
 				.buf = gray.data
 			};
 
-			zarray_t* detections = apriltag_detector_detect(td, &im);
-
+			zarray_t* detections = apriltag_detector_detect(td, &im);			
 			vector<Point2f> img_points(4);
-			vector<Point3f> obj_points(4);
-			Mat rvec(3, 1, CV_64FC1);
+		 	vector<Point3f> obj_points(4);
+		   	Mat rvec(3, 1, CV_64FC1);
 			Mat tvec(3, 1, CV_64FC1);
-
 
 			printf("~~~~~~~~~~~~~ Camera %d ~~~~~~~~~~~~\n", (int)i);
 			printf("Coordinates: (%f, %f, %f)\n", cameraCoordinates[i*3], cameraCoordinates[i*3+1], cameraCoordinates[i*3+2]);
@@ -245,6 +319,7 @@ int main(int argc, char** argv) {
 
 
 			for (int j = 0; j < zarray_size(detections); j++) {
+	
 				// Get the ith detection
 				apriltag_detection_t *det;
 				zarray_get(detections, j, &det);
@@ -298,19 +373,19 @@ int main(int argc, char** argv) {
 				data.push_back(1);
 				Mat tag2cam = Mat(data,true).reshape(1, 4);
 
-				vector<double> data2;
-				data2.push_back(0);
-				data2.push_back(0);
-				data2.push_back(0);
-				data2.push_back(1);
-				Mat genout = Mat(data2,true).reshape(1, 4);
+				vector<double> zeroVector;
+				zeroVector.push_back(0);
+				zeroVector.push_back(0);
+				zeroVector.push_back(0);
+				zeroVector.push_back(1);
+				Mat genout = Mat(zeroVector,true).reshape(1, 4);
 
 				Mat tag2orig = device_transform_matrix[i] * tag2cam;
 				Mat tagXYZS = tag2orig * genout;
-				
-				// compute roll, pitch, and yaw
 
-   				float rpy[3];
+				// compute roll, pitch, and yaw
+			 
+				float rpy[3];
 				rpy[0] = asin(tag2orig.at<double>(2,0));
 				rpy[1] = atan2(tag2orig.at<double>(2,1), tag2orig.at<double>(2,2));
 				rpy[2] = atan2(tag2orig.at<double>(1,0), tag2orig.at<double>(0,0));		 
@@ -354,9 +429,9 @@ int main(int argc, char** argv) {
 				weightedCoords[det->id][5] += rpy[2]*weight;
 				weightedCoords[det->id][6] += weight;
 
-				// Send data to basestation
+				// Send data to basestation - incomplete
 				sprintf(postDataBuffer, "{\"id\":%d,\"x\":%f,\"y\":%f,\"z\":%f}",
-						det->id, tagXYZS.at<double>(0), tagXYZS.at<double>(1), tagXYZS.at<double>(2));
+								det->id, tagXYZS.at<double>(0), tagXYZS.at<double>(1), tagXYZS.at<double>(2));
 				curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postDataBuffer);
 				// TODO Check for error response
 				curl_easy_perform(curl);
@@ -368,8 +443,18 @@ int main(int argc, char** argv) {
 		}
 
 		printf("~~~~~~~~~~~~~ Overall Weighted Readings ~~~~~~~~~~~~\n");
-		if (key == 'w')
+		if(key == 'w')
 			outputFile << "~~~~~~~~~~~~~ Overall Weighted Readings ~~~~~~~~~~~~\n";
+
+		// Reset the display if 'c' is pressed
+		if(key == 'c') {
+			boundaries[0] = 0;
+			disp = Mat(WINDOWSIZE,WINDOWSIZE, CV_8UC3, cv::Scalar(0,0,0));
+		}
+
+		// Set boundaries and draw origins if not done yet
+		if(boundaries[0] == 0)
+			drawOrigins(disp, boundaries, weightedCoords, colors);
 
 		std::map<int, float[7]>::iterator it = weightedCoords.begin();
 
@@ -389,6 +474,22 @@ int main(int argc, char** argv) {
 				free(output);
 			}
 
+			if(it->first >= 10) {
+				float x = it->second[0]/it->second[6];
+				float y = it->second[1]/it->second[6];
+				Point p = Point(xPixel(x, boundaries), yPixel(y,boundaries));
+				Point p2;
+
+				if(lastPoint[it->first][0] != 0)
+					p2 = Point(xPixel(lastPoint[it->first][0], boundaries), yPixel(lastPoint[it->first][1], boundaries));
+				else
+					p2 = p;
+
+				line(disp, p, p2, colors[it->first%3], 2);
+
+				lastPoint[it->first][0] = x;
+				lastPoint[it->first][1] = y;
+			}
 
 			it++;
 		}
@@ -402,28 +503,18 @@ int main(int argc, char** argv) {
 			printf("Wrote to file: \"output.txt\"\n");
 		}
 
+		imshow("topview",disp);
+
 		key = waitKey(16);
 	}
+
 	curl_easy_cleanup(curl);
 
 	outputFile << "\n\n";
 	outputFile.close();
 }
 
-void getEulerAngles(Mat &rotCamerMatrix,Vec3d &eulerAngles){
-
-	Mat cameraMatrix,rotMatrix,transVect,rotMatrixX,rotMatrixY,rotMatrixZ;
-	double* _r = rotCamerMatrix.ptr<double>();
-	double projMatrix[12] = {_r[0],_r[1],_r[2],0,
-						  _r[3],_r[4],_r[5],0,
-						  _r[6],_r[7],_r[8],0};
-
-	decomposeProjectionMatrix( Mat(3,4,CV_64FC1,projMatrix),
-							   cameraMatrix,
-							   rotMatrix,
-							   transVect,
-							   rotMatrixX,
-							   rotMatrixY,
-							   rotMatrixZ,
-							   eulerAngles);
-}
+/* 	Things to do
+	1) Rotate origin tags in display based on their rotation relative to 0 tag
+	2) Slow down output to terminal so it is readable
+*/
