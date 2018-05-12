@@ -23,6 +23,7 @@ vector<Mat> device_camera_matrix;
 vector<Mat> device_dist_coeffs;
 
 Mat transrotationalmat(apriltag_detection_t *det1, apriltag_detection_t *det2,int device);
+Mat otransrotationalmat(apriltag_detection_t *det0, apriltag_detection_t *det1, apriltag_detection_t *det2, apriltag_detection_t *det3, apriltag_detection_t *det, int device);
 double distance(Mat transrot);
 
 int main(int argc, char** argv) {
@@ -156,6 +157,11 @@ int main(int argc, char** argv) {
             zarray_t* detections = apriltag_detector_detect(td, &im);
             bool contains = false;
             apriltag_detection_t *currdet;
+            apriltag_detection_t *det0;
+            apriltag_detection_t *det1;
+            apriltag_detection_t *det2;
+            apriltag_detection_t *det3;
+            int count = 0;
             for (int j = 0; j < zarray_size(detections); j++) {
                 // Get the ith detection
                 apriltag_detection_t *det;
@@ -164,15 +170,45 @@ int main(int argc, char** argv) {
                   currdet = det;
                   contains=true;
                 }
+                if(det->id < 4)
+                  count++;
+                if(det->id == 0)
+                  det0 = det;
+                if(det->id == 1)
+                  det1 = det;
+                if(det->id == 2)
+                  det2 = det;
+                if(det->id == 3)
+                  det3 = det;
             }
             printf("Accessed device %d\n",i);
-            if(contains){
+            if(currentTag == 0 && count == 4){
+              for (int j = 0; j < zarray_size(detections); j++) {
+                  // Get the ith detection
+                  apriltag_detection_t *det;
+                  zarray_get(detections, j, &det);
+                  if(det->id < 4){
+                    continue;
+                  }
+                  std::unordered_map<int,Mat>::iterator iter;
+                  iter = tagmap.find(det -> id);
+                  if(iter == tagmap.end()){
+                    Mat transrot2origin = otransrotationalmat(det0,det1,det2,det3,det,i);
+                    tagmap.insert(std::make_pair(det ->id,transrot2origin));
+                    nextvisit.push(det->id);
+                    printf("Added new visits %d",(det-> id));
+                  }
+              }
+            }
+            else if(count != 4 && currentTag == 0)
+              printf("Critical error! could not find master orign");
+            else if(contains && currentTag != 0){
               printf("Entered with %d\n",zarray_size(detections));
               for (int j = 0; j < zarray_size(detections); j++) {
                   // Get the ith detection
                   apriltag_detection_t *det;
                   zarray_get(detections, j, &det);
-                  if(det->id == currentTag){
+                  if(det->id == currentTag || det->id < 4){
                     continue;
                   }
                   std::unordered_map<int,Mat>::iterator iter;
@@ -438,6 +474,109 @@ double distance(Mat transrot){
          camcoords.at<double>(1,0)*camcoords.at<double>(1,0) +
          camcoords.at<double>(2,0)*camcoords.at<double>(2,0);
 }
+
+Mat otransrotationalmat(apriltag_detection_t *det0, apriltag_detection_t *det1, apriltag_detection_t *det2, apriltag_detection_t *det3, apriltag_detection_t *det, int device){
+  // Compute transformation using PnP
+  vector<Point2f> img_points(4);
+  vector<Point3f> obj_points(4);
+
+  Mat rvec(3, 1, CV_64FC1);
+  Mat tvec(3, 1, CV_64FC1);
+
+  img_points[0] = Point2f(det0->p[0][0], det0->p[0][1]);
+  img_points[1] = Point2f(det0->p[1][0], det0->p[1][1]);
+  img_points[2] = Point2f(det0->p[2][0], det0->p[2][1]);
+  img_points[3] = Point2f(det0->p[3][0], det0->p[3][1]);
+
+  img_points[4] = Point2f(det1->p[0][0], det1->p[0][1]);
+  img_points[5] = Point2f(det1->p[1][0], det1->p[1][1]);
+  img_points[6] = Point2f(det1->p[2][0], det1->p[2][1]);
+  img_points[7] = Point2f(det1->p[3][0], det1->p[3][1]);
+
+  img_points[8] = Point2f(det2->p[0][0], det2->p[0][1]);
+  img_points[9] = Point2f(det2->p[1][0], det2->p[1][1]);
+  img_points[10] = Point2f(det2->p[2][0], det2->p[2][1]);
+  img_points[11] = Point2f(det2->p[3][0], det2->p[3][1]);
+
+  img_points[12] = Point2f(det3->p[0][0], det3->p[0][1]);
+  img_points[13] = Point2f(det3->p[1][0], det3->p[1][1]);
+  img_points[14] = Point2f(det3->p[2][0], det3->p[2][1]);
+  img_points[15] = Point2f(det3->p[3][0], det3->p[3][1]);
+
+  for(int id = 0; id < 16; id++){
+    float b = -((id/2)*2-1);
+    float a = (id%2)*2-1;
+    obj_points[0 + 4*id] = Point3f(-0.5f * TAG_SIZE + a * 8.5f, -0.5f * TAG_SIZE + b * 11.0f, 0.f);
+    obj_points[1 + 4*id] = Point3f( 0.5f * TAG_SIZE + a * 8.5f, -0.5f * TAG_SIZE + b * 11.0f, 0.f);
+    obj_points[2 + 4*id] = Point3f( 0.5f * TAG_SIZE + a * 8.5f,  0.5f * TAG_SIZE + b * 11.0f, 0.f);
+    obj_points[3 + 4*id] = Point3f(-0.5f * TAG_SIZE + a * 8.5f,  0.5f * TAG_SIZE + b * 11.0f, 0.f);
+  }
+
+  solvePnP(obj_points, img_points, device_camera_matrix[device],
+          device_dist_coeffs[device], rvec, tvec);
+  Matx33d r;
+  Rodrigues(rvec,r);
+
+  vector<double> data;
+  data.push_back(r(0,0));
+  data.push_back(r(0,1));
+  data.push_back(r(0,2));
+  data.push_back(tvec.at<double>(0));
+  data.push_back(r(1,0));
+  data.push_back(r(1,1));
+  data.push_back(r(1,2));
+  data.push_back(tvec.at<double>(1));
+  data.push_back(r(2,0));
+  data.push_back(r(2,1));
+  data.push_back(r(2,2  ));
+  data.push_back(tvec.at<double>(2));
+  data.push_back(0);
+  data.push_back(0);
+  data.push_back(0);
+  data.push_back(1);
+  Mat origin2cam = Mat(data,true).reshape(1, 4);
+  Mat cam2origin = origin2cam.inv();
+
+  vector<Point2f> img_points2(4);
+  vector<Point3f> obj_points2(4);
+
+  // Compute transformation using PnP
+  img_points2[0] = Point2f(det->p[0][0], det->p[0][1]);
+  img_points2[1] = Point2f(det->p[1][0], det->p[1][1]);
+  img_points2[2] = Point2f(det->p[2][0], det->p[2][1]);
+  img_points2[3] = Point2f(det->p[3][0], det->p[3][1]);
+
+  obj_points2[0] = Point3f(-TAG_SIZE * 0.5f, -TAG_SIZE * 0.5f, 0.f);
+  obj_points2[1] = Point3f( TAG_SIZE * 0.5f, -TAG_SIZE * 0.5f, 0.f);
+  obj_points2[2] = Point3f( TAG_SIZE * 0.5f,  TAG_SIZE * 0.5f, 0.f);
+  obj_points2[3] = Point3f(-TAG_SIZE * 0.5f,  TAG_SIZE * 0.5f, 0.f);
+
+  solvePnP(obj_points2, img_points2, device_camera_matrix[device],
+          device_dist_coeffs[device], rvec, tvec);
+  Matx33d r1;
+  Rodrigues(rvec,r1);
+
+  vector<double> data2;
+  data2.push_back(r1(0,0));
+  data2.push_back(r1(0,1));
+  data2.push_back(r1(0,2));
+  data2.push_back(tvec.at<double>(0));
+  data2.push_back(r1(1,0));
+  data2.push_back(r1(1,1));
+  data2.push_back(r1(1,2));
+  data2.push_back(tvec.at<double>(1));
+  data2.push_back(r1(2,0));
+  data2.push_back(r1(2,1));
+  data2.push_back(r1(2,2));
+  data2.push_back(tvec.at<double>(2));
+  data2.push_back(0);
+  data2.push_back(0);
+  data2.push_back(0);
+  data2.push_back(1);
+  Mat tag2cam = Mat(data2,true).reshape(1, 4);
+  return cam2origin*tag2cam;
+}
+
 
 Mat transrotationalmat(apriltag_detection_t *det1,apriltag_detection_t *det2, int device){
   // Compute transformation using PnP
