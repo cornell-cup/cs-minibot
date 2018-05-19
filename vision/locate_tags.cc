@@ -14,6 +14,7 @@ using namespace cv;
 using std::vector;
 
 #define TAG_SIZE 6.5f
+#define TAG_400  4.0f
 #define PI acos(-1)
 #define WINDOWSIZE 1000
 #define BOXSIZE 50
@@ -29,7 +30,7 @@ int xPixel(float x, float boundaries[]) {
 }
 
 int yPixel(float y, float boundaries[]) {
-	return WINDOWSIZE - (int)((y - boundaries[1])/(boundaries[3]-boundaries[1])*WINDOWSIZE);	
+	return WINDOWSIZE - (int)((y - boundaries[1])/(boundaries[3]-boundaries[1])*WINDOWSIZE);
 }
 
 void drawBox(int x, int y, Mat disp, Scalar color) {
@@ -55,7 +56,7 @@ void drawOrigins(Mat disp, float boundaries[], std::map <int, float[7]> weighted
 	std::map<int, float[7]>::iterator it = weightedCoords.begin();
 
 	while(it != weightedCoords.end()) {
-		if(it->first < 10) { // Using tags < 10 as origin tags 
+		if(it->first < 10) { // Using tags < 10 as origin tags
 			float x = it->second[0]/it->second[6];
 			float y = it->second[1]/it->second[6];
 
@@ -82,7 +83,7 @@ void drawOrigins(Mat disp, float boundaries[], std::map <int, float[7]> weighted
 
 	it = weightedCoords.begin();
 	while(it != weightedCoords.end()) {
-		if(it->first < 10) { // Using tags < 10 as origin tags 
+		if(it->first < 10) { // Using tags < 10 as origin tags
 			float x = it->second[0]/it->second[6];
 			float y = it->second[1]/it->second[6];
 			drawBox(xPixel(x, boundaries), yPixel(y, boundaries), disp, colors[0]);
@@ -238,7 +239,7 @@ int main(int argc, char** argv) {
 		float originrpy[3];
 		originrpy[0] = asin(origin2cam.at<double>(2,0));
 		originrpy[1] = atan2(origin2cam.at<double>(2,1), origin2cam.at<double>(2,2));
-		originrpy[2] = atan2(origin2cam.at<double>(1,0), origin2cam.at<double>(0,0)); 
+		originrpy[2] = atan2(origin2cam.at<double>(1,0), origin2cam.at<double>(0,0));
 		float originNormalVector[3];
 		originNormalVector[0] = 0;
 		originNormalVector[1] = 0;
@@ -254,7 +255,7 @@ int main(int argc, char** argv) {
 		// apply pitch
 		x0 = originNormalVector[0];
 		y0 = originNormalVector[1];
-		z0 = originNormalVector[2];			 
+		z0 = originNormalVector[2];
 		originNormalVector[0] = x0*cos(originrpy[1]) + z0*sin(originrpy[1]);
 		originNormalVector[2] = z0*cos(originrpy[1]) - x0*sin(originrpy[1]);
 		float dotProduct = originToCameraVector[0]*originNormalVector[0] + originToCameraVector[1]*originNormalVector[1] + originToCameraVector[2]*originNormalVector[2];
@@ -301,7 +302,7 @@ int main(int argc, char** argv) {
 				.buf = gray.data
 			};
 
-			zarray_t* detections = apriltag_detector_detect(td, &im);			
+			zarray_t* detections = apriltag_detector_detect(td, &im);
 			vector<Point2f> img_points(4);
 		 	vector<Point3f> obj_points(4);
 		   	Mat rvec(3, 1, CV_64FC1);
@@ -312,14 +313,14 @@ int main(int argc, char** argv) {
 			printf("Cam to Origin Angle: %f\n", cam2originAngles[i] *180/PI);
 
 			if (key == 'w')
-				outputFile 
-					<< "~~~~~~~~~~~~~ Camera " << i << " ~~~~~~~~~~~~\n" 
+				outputFile
+					<< "~~~~~~~~~~~~~ Camera " << i << " ~~~~~~~~~~~~\n"
 					<< "Coordinates: (" << cameraCoordinates[i*3] << ", " << cameraCoordinates[i*3+1] << ", " << cameraCoordinates[i*3+2] << ")\n"
 					<< "Cam to Origin Angle: " << cam2originAngles[i]*180/PI << "\n";
 
 
 			for (int j = 0; j < zarray_size(detections); j++) {
-	
+
 				// Get the ith detection
 				apriltag_detection_t *det;
 				zarray_get(detections, j, &det);
@@ -344,11 +345,19 @@ int main(int argc, char** argv) {
 				img_points[2] = Point2f(det->p[2][0], det->p[2][1]);
 				img_points[3] = Point2f(det->p[3][0], det->p[3][1]);
 
-				obj_points[0] = Point3f(-TAG_SIZE * 0.5f, -TAG_SIZE * 0.5f, 0.f);
-				obj_points[1] = Point3f( TAG_SIZE * 0.5f, -TAG_SIZE * 0.5f, 0.f);
-				obj_points[2] = Point3f( TAG_SIZE * 0.5f,  TAG_SIZE * 0.5f, 0.f);
-				obj_points[3] = Point3f(-TAG_SIZE * 0.5f,  TAG_SIZE * 0.5f, 0.f);
-
+				if(det->id == 400){
+					obj_points[0] = Point3f(-TAG_400 * 0.5f, -TAG_400 * 0.5f, 0.f);
+					obj_points[1] = Point3f( TAG_400 * 0.5f, -TAG_400 * 0.5f, 0.f);
+					obj_points[2] = Point3f( TAG_400 * 0.5f,  TAG_400 * 0.5f, 0.f);
+					obj_points[3] = Point3f(-TAG_400 * 0.5f,  TAG_400 * 0.5f, 0.f);
+				}
+				else{
+					obj_points[0] = Point3f(-TAG_SIZE * 0.5f, -TAG_SIZE * 0.5f, 0.f);
+					obj_points[1] = Point3f( TAG_SIZE * 0.5f, -TAG_SIZE * 0.5f, 0.f);
+					obj_points[2] = Point3f( TAG_SIZE * 0.5f,  TAG_SIZE * 0.5f, 0.f);
+					obj_points[3] = Point3f(-TAG_SIZE * 0.5f,  TAG_SIZE * 0.5f, 0.f);
+				}
+				
 				solvePnP(obj_points, img_points, device_camera_matrix[i],
 						device_dist_coeffs[i], rvec, tvec);
 				Matx33d r;
@@ -384,28 +393,28 @@ int main(int argc, char** argv) {
 				Mat tagXYZS = tag2orig * genout;
 
 				// compute roll, pitch, and yaw
-			 
+
 				float rpy[3];
 				rpy[0] = asin(tag2orig.at<double>(2,0));
 				rpy[1] = atan2(tag2orig.at<double>(2,1), tag2orig.at<double>(2,2));
-				rpy[2] = atan2(tag2orig.at<double>(1,0), tag2orig.at<double>(0,0));		 
+				rpy[2] = atan2(tag2orig.at<double>(1,0), tag2orig.at<double>(0,0));
 
 				// compute distance from camera to tag
-				
+
 				float xDistance = cameraCoordinates[i*3]-tagXYZS.at<double>(0);
 				float yDistance = cameraCoordinates[i*3+1]-tagXYZS.at<double>(1);
 				float zDistance = cameraCoordinates[i*3+2]-tagXYZS.at<double>(2);
 				float distance  = sqrt(pow(xDistance,2) + pow(yDistance,2) + pow(zDistance,2));
 
 				float weight = cos(cam2originAngles[i])/distance;
-				
+
 				// print out results
 
 				printf("----Tag %d\n", det->id);
 				printf("xyz: (%3.3f,%3.3f,%3.3f)\n", tagXYZS.at<double>(0), tagXYZS.at<double>(1), tagXYZS.at<double>(2));
 				printf("rpy: (%3.3f,%3.3f,%3.3f)\n", rpy[0]*180/PI, rpy[1]*180/PI, rpy[2]*180/PI);
 				printf("Dist, Angle, Weight: (%3.3f, %3.3f, %3.3f)\n", distance, cam2originAngles[i]*180/PI, weight*100);
-				
+
 				if (key == 'w') {
 					char* output = (char*)malloc(100);
 					sprintf(output,"----Tag %d\n", det->id);
@@ -461,15 +470,15 @@ int main(int argc, char** argv) {
 		while (it != weightedCoords.end()) {
 			printf("----Tag %d\n", it->first);
 			printf("xyz: (%3.3f,%3.3f,%3.3f)\n", it->second[0]/it->second[6], it->second[1]/it->second[6], it->second[2]/it->second[6]);
-			printf("rpy: (%3.3f,%3.3f,%3.3f)\n", it->second[3]/it->second[6]*180/PI, it->second[4]/it->second[6]*180/PI, it->second[5]/it->second[6]*180/PI); 
-			
+			printf("rpy: (%3.3f,%3.3f,%3.3f)\n", it->second[3]/it->second[6]*180/PI, it->second[4]/it->second[6]*180/PI, it->second[5]/it->second[6]*180/PI);
+
 			if (key == 'w') {
 				char* output = (char*)malloc(100);
 				sprintf(output, "----Tag %d\n", it->first);
 				outputFile << output;
 				sprintf(output, "xyz: (%3.3f,%3.3f,%3.3f)\n", it->second[0]/it->second[6], it->second[1]/it->second[6], it->second[2]/it->second[6]);
 				outputFile << output;
-				sprintf(output, "rpy: (%3.3f,%3.3f,%3.3f)\n", it->second[3]/it->second[6]*180/PI, it->second[4]/it->second[6]*180/PI, it->second[5]/it->second[6]*180/PI); 
+				sprintf(output, "rpy: (%3.3f,%3.3f,%3.3f)\n", it->second[3]/it->second[6]*180/PI, it->second[4]/it->second[6]*180/PI, it->second[5]/it->second[6]*180/PI);
 				outputFile << output;
 				free(output);
 			}
@@ -498,7 +507,7 @@ int main(int argc, char** argv) {
 		if (key == 'w') {
 			char* output = (char*)malloc(100);
 			sprintf(output,"==============================================\n");
-			outputFile << output;	
+			outputFile << output;
 			free(output);
 			printf("Wrote to file: \"output.txt\"\n");
 		}
